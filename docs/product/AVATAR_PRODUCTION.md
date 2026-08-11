@@ -22,11 +22,20 @@ every practical axis:
 | Learner resumes mid-Rep | Resumes at the beat | Scrubbing a timeline |
 | Sound off, on a shop floor | Text cards still work | Nothing works |
 | Curveball interrupts | Naturally, between clips | Has to interrupt playback |
-| Synthesia credits | ~3 min for Rep 1.1 | ~4 min, and re-spent on every edit |
+| Synthesia credits | ~2.5 min for Rep 1.1 | ~4 min, and re-spent on every edit |
 
 **Build-lists and full-screen moments get no footage.** They are already
 animated natively, they read better as type, and they are the beats most likely
 to change wording. The shot list marks them `no footage — native card`.
+
+**Reading beats get no footage either, by decision.** A `reading` beat is a
+titled card the learner reads: rule, headline, reading time, body, and the
+closing paragraph set apart as the payoff. It carries the same script copy an
+avatar would have spoken — nothing is cut — but it changes the pace. A feed of
+nothing but talking heads is a video library with swiping, and a card that has
+to be read slows the learner down at the point the idea is meant to land. Rep
+1.1's `b2` is the first of these. To make another beat a reading card, change
+its `type` to `'reading'`; it drops out of the shot list automatically.
 
 ---
 
@@ -42,8 +51,8 @@ Each entry gives you a clip id, the stage direction, any on-screen text, and
 **the exact narration to paste in** — already flattened to a single paragraph,
 because the line breaks in the source are for reading, not for speaking.
 
-Rep 1.1 is **7 clips, ~3 minutes, 425 words** in full. For a demo you only need
-the first three — see *Demo order* below.
+Rep 1.1 is **6 clips, ~2.5 minutes, 337 words** in full. For a demo you need
+none beyond what is already rendered — see *Demo order* below.
 
 ---
 
@@ -91,18 +100,21 @@ the sound off, and a video-only lesson excludes them entirely.
 
 ## Demo order, if you are short on time
 
-Render the first three clips and stop. That gets you to the Curveball, which
-is the moment worth showing.
+**The demo is complete. Nothing further needs rendering.**
 
-| # | Card | Render? |
+| # | Card | Footage |
 |---|---|---|
-| 1 | `m1-r1-b1` — the opener, *"Congratulations on your promotion…"* | ~20s |
-| 2 | `m1-r1-b2` — overlay beat: avatar plus on-screen title, *The Invisible Promotion* | ~35s |
-| 3 | `m1-r1-b3` — *"Let's talk about what actually changed…"* | ~40s |
-| 4 | the three myths | **no** — native build-list |
-| 5 | ★ **Curveball** — *Separating your old job from your new one* | **no** — native |
+| 1 | `m1-r1-b1` — the opener, *"Congratulations on your promotion…"* | ✅ rendered |
+| 2 | `m1-r1-b2` — reading card, *The Invisible Promotion* | none, by decision |
+| 3 | `m1-r1-b3` — *"Let's talk about what actually changed…"* | ✅ rendered |
+| 4 | the three myths | none — native build-list |
+| 5 | ★ **Curveball** — *Separating your old job from your new one* | none — native |
 
-**Do not stop after b2.** Beat 3 ends on *"most new managers walk into it
+Five cards, two of them video, and every format the product has appears once:
+talking head, reading card, build-list, decision. That variety is the point —
+it is the thing a video library cannot show.
+
+**Do not stop after card 2.** Beat 3 ends on *"most new managers walk into it
 believing at least one of these three things"* — it is the sentence that sets
 up the myths card. Without it the myths arrive from nowhere and the Curveball
 lands on nothing.
@@ -124,9 +136,9 @@ the costly answer's feedback says *"This is Myth #3 in action"* out loud.
 
 That pairing is the pitch. Not "a talking head, and separately a quiz" — a
 claim, then an immediate test of whether they actually believed it. Rendering
-all seven clips buries it.
+every clip in the Rep buries it.
 
-Three clips, ~95 seconds of render.
+Zero further render. Both clips this demo needs are already wired in.
 
 ---
 

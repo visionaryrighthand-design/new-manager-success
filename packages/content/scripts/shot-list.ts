@@ -15,7 +15,14 @@
  * feed picks it up. Beats without a clip keep rendering as text, so footage
  * can land one Rep at a time without blocking anything.
  */
-import { module01, findRep, estimateBeatSeconds, type Rep, type Beat } from '../dist/index.js';
+import {
+  module01,
+  findRep,
+  estimateBeatSeconds,
+  beatNeedsFootage,
+  type Rep,
+  type Beat,
+} from '../dist/index.js';
 
 const args = process.argv.slice(2);
 const asCsv = args.includes('--csv');
@@ -29,11 +36,6 @@ const reps: Rep[] = repArg
 function fail(message: string): never {
   console.error(message);
   process.exit(1);
-}
-
-/** Only avatar beats get footage. Overlays keep talking, so they need it too. */
-function needsFootage(beat: Beat): boolean {
-  return Boolean(beat.speech);
 }
 
 function clipId(rep: Rep, beat: Beat): string {
@@ -51,7 +53,7 @@ const rows = reps.flatMap((rep) =>
     repId: rep.id,
     beat: beat.id,
     type: beat.type,
-    clip: needsFootage(beat) ? clipId(rep, beat) : '',
+    clip: beatNeedsFootage(beat) ? clipId(rep, beat) : '',
     direction: beat.direction ?? '',
     seconds: estimateBeatSeconds(beat),
     words: narration(beat) ? narration(beat).split(' ').length : 0,
@@ -63,11 +65,13 @@ const rows = reps.flatMap((rep) =>
     // one-to-one onto the script.
     status: beat.videoUrl
       ? 'HAS FOOTAGE'
-      : needsFootage(beat)
+      : beatNeedsFootage(beat)
         ? 'to render'
         : beat.type === 'hold'
           ? 'not shown — edit direction only'
-          : 'no footage — native card',
+          : beat.type === 'reading'
+            ? 'no footage — reading card, by decision'
+            : 'no footage — native card',
   })),
 );
 

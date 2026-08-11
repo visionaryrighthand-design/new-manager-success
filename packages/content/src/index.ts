@@ -7,10 +7,17 @@ import type { Beat, CourseModule, Rep, ScriptDeviation } from './types.js';
 
 /** Words per minute used to estimate how long an avatar beat runs on screen. */
 const SPEAKING_WPM = 150;
+/**
+ * Silent reading runs faster than narration, but not as fast as leisure
+ * reading — this is instructional copy someone is meant to absorb, often on a
+ * phone between other things. 190 is the conservative end of the range.
+ */
+const READING_WPM = 190;
 /** Fixed on-screen time for non-narrated beats, in seconds. */
 const FIXED_BEAT_SECONDS: Record<Beat['type'], number> = {
   avatar: 0, // computed from word count
   overlay: 0, // computed from word count; overlays carry narration
+  reading: 0, // computed from word count, at reading speed rather than speech
   buildList: 8,
   moment: 3,
   hold: 2,
@@ -20,7 +27,8 @@ export function estimateBeatSeconds(beat: Beat): number {
   if (beat.estimatedSeconds != null) return beat.estimatedSeconds;
   if (beat.speech) {
     const words = beat.speech.trim().split(/\s+/).length;
-    return Math.max(3, Math.round((words / SPEAKING_WPM) * 60));
+    const wpm = beat.type === 'reading' ? READING_WPM : SPEAKING_WPM;
+    return Math.max(3, Math.round((words / wpm) * 60));
   }
   if (beat.items?.length) {
     return FIXED_BEAT_SECONDS.buildList + beat.items.length * 3;
@@ -132,6 +140,18 @@ export function splitMomentLines(text: string): string[] {
   return parts.map((p) => p.trim()).filter(Boolean);
 }
 
+/**
+ * Whether this beat needs avatar footage produced for it.
+ *
+ * Narration is the signal — except on a `reading` beat, where the same field
+ * holds body copy the learner reads. The shot list and the players both ask
+ * this rather than testing `speech` themselves, so a beat can be switched to
+ * reading in one place and drop out of production everywhere.
+ */
+export function beatNeedsFootage(beat: Beat): boolean {
+  return beat.type !== 'reading' && Boolean(beat.speech);
+}
+
 export function allReps(): Rep[] {
   return course.modules.flatMap((m) => m.reps);
 }
@@ -190,6 +210,9 @@ export function validateContent(): string[] {
       seenBeatIds.add(beat.id);
       if (beat.type === 'buildList' && !beat.items?.length) {
         problems.push(`${rep.number}/${beat.id}: buildList beat has no items`);
+      }
+      if (beat.type === 'reading' && !beat.speech) {
+        problems.push(`${rep.number}/${beat.id}: reading beat has no body copy`);
       }
       if (beat.type === 'moment' && !beat.text) {
         problems.push(`${rep.number}/${beat.id}: moment beat has no text`);

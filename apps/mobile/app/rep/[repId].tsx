@@ -15,7 +15,7 @@ import {
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import * as Haptics from 'expo-haptics';
-import { findRep, nextRep, splitListItem, splitMomentLines, type Beat, type Curveball, type CurveballVerdict, type QuizQuestion, type Rep } from '@nms/content';
+import { estimateBeatSeconds, findRep, nextRep, splitListItem, splitMomentLines, type Beat, type Curveball, type CurveballVerdict, type QuizQuestion, type Rep } from '@nms/content';
 import { colors, radius, space, type } from '../../src/theme';
 import { useProgress } from '../../src/progress-store';
 
@@ -280,6 +280,28 @@ function CardView(props: CardViewProps) {
 
   if (card.kind === 'beat') {
     const { beat } = card;
+
+    if (beat.type === 'reading') {
+      const paragraphs = beat.speech?.split('\n\n').filter(Boolean) ?? [];
+      // The closing paragraph is the payoff; it is set apart rather than being
+      // the fourth identical block of grey text. Mirrors the web player.
+      const body = paragraphs.length > 1 ? paragraphs.slice(0, -1) : [];
+      const kicker = paragraphs[paragraphs.length - 1];
+
+      return (
+        <View style={styles.card}>
+          <View style={styles.readingRule} />
+          {beat.text ? <Text style={styles.readingTitle}>{beat.text}</Text> : null}
+          <Text style={styles.readingMeta}>{estimateBeatSeconds(beat)} SEC READ</Text>
+          {body.map((para, i) => (
+            <Text key={i} style={styles.readingBody}>
+              {para}
+            </Text>
+          ))}
+          {kicker ? <Text style={styles.readingKicker}>{kicker}</Text> : null}
+        </View>
+      );
+    }
 
     if (beat.type === 'moment') {
       const lines = splitMomentLines(beat.text ?? '');
@@ -563,6 +585,19 @@ const styles = StyleSheet.create({
     borderLeftWidth: 3,
     borderLeftColor: colors.bright,
     paddingLeft: space[4],
+  },
+
+  readingRule: { width: 40, height: 2, borderRadius: 2, backgroundColor: colors.accent },
+  readingTitle: { ...type.h1, color: colors.fg },
+  readingMeta: { ...type.label, color: colors.fgSubtle },
+  readingBody: { ...type.body, lineHeight: 27, color: colors.fgMuted },
+  readingKicker: {
+    ...type.h3,
+    color: colors.fg,
+    borderLeftWidth: 2,
+    borderLeftColor: colors.accent,
+    paddingLeft: space[4],
+    marginTop: space[1],
   },
 
   momentWrap: { alignItems: 'center', justifyContent: 'center', gap: space[4] },

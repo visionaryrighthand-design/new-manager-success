@@ -23,6 +23,15 @@ export type BeatType =
   | 'avatar'
   /** Single concept/title appears while the avatar is visible. */
   | 'overlay'
+  /**
+   * A titled card the learner reads rather than watches. Same `text` and
+   * `speech` fields as an overlay — the copy is unchanged — but no footage is
+   * produced for it and none is expected. Deliberate pacing, not a shortfall:
+   * a feed of nothing but talking heads is a video library with swiping, and
+   * a card that has to be read slows the learner down at the point where the
+   * idea is supposed to land.
+   */
+  | 'reading'
   /** Avatar steps back; bullets build one by one on screen. */
   | 'buildList'
   /** Big punchy statement, full screen, 2–3 seconds. */
@@ -35,11 +44,12 @@ export interface Beat {
   id: string;
   type: BeatType;
   /**
-   * Spoken narration. Present on `avatar` beats, and on `overlay` beats where
-   * the avatar keeps talking underneath the overlay.
+   * Present on `avatar` beats, and on `overlay` beats where the avatar keeps
+   * talking underneath the overlay. On a `reading` beat this is the body copy
+   * — same words, set to be read instead of spoken.
    */
   speech?: string;
-  /** On-screen text. Present on `overlay` and `moment` beats. */
+  /** On-screen text. Present on `overlay`, `reading`, and `moment` beats. */
   text?: string;
   /** Bullets for a `buildList`. Rendered with a stagger. */
   items?: string[];

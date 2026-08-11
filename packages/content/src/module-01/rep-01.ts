@@ -32,8 +32,12 @@ export const rep01: Rep = {
         'https://rhteswkgmndgijpllvjt.supabase.co/storage/v1/object/public/videos/New%20Manager%20Success/The%20Untold%20Truth%20About%20Your%20New%20Promotion.mp4',
     },
     {
+      // A reading card by decision, not by omission — see the note on
+      // BeatType.reading. The copy is the locked script's, unchanged; only the
+      // mode of delivery differs, so this is a production choice rather than a
+      // ScriptDeviation. No footage is expected for it.
       id: 'b2',
-      type: 'overlay',
+      type: 'reading',
       text: 'The Invisible Promotion',
       speech:
         "Most promotions into management follow the same pattern. A talented employee does exceptional work. Leadership notices. They get promoted — usually because they're the best at what they do.\n\nAnd then they're handed a team, maybe a pay increase, and expected to figure out the rest. No roadmap. No instruction manual. No real preparation.\n\nThe title is visible. The new paycheck is visible. But the actual job description of “manager” — what it truly requires of you — that part is invisible. And you're expected to just... know.",

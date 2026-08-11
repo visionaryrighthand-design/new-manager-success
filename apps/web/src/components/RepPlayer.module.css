@@ -126,6 +126,78 @@
   padding-left: var(--nms-space-4);
 }
 
+/* ---- Reading card ------------------------------------------------------ */
+
+/*
+ * A card the learner reads rather than watches. It has to earn the swipe on
+ * typography alone, so it is built like an editorial page: rule, title, a
+ * reading-time marker that sets the expectation, body at a comfortable
+ * measure, and the closing paragraph set apart as the payoff.
+ */
+.reading {
+  width: 100%;
+  max-width: var(--nms-feed-max-width);
+  display: flex;
+  flex-direction: column;
+  animation: rise var(--nms-duration-base) var(--nms-ease-entrance) both;
+}
+
+.readingRule {
+  width: 2.5rem;
+  height: 2px;
+  border-radius: 2px;
+  background: var(--nms-color-accent);
+  margin-bottom: var(--nms-space-5);
+  transform-origin: left;
+  animation: drawRule var(--nms-duration-slow) var(--nms-ease-entrance) both;
+}
+
+.readingTitle {
+  font-family: var(--nms-font-display);
+  font-size: clamp(2rem, 1.4rem + 2.6vw, 2.6rem);
+  line-height: 1.02;
+  font-weight: 800;
+  letter-spacing: -0.04em;
+  text-wrap: balance;
+  margin: 0;
+}
+
+.readingMeta {
+  font-family: var(--nms-font-mono);
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--nms-color-fg-subtle);
+  margin: var(--nms-space-4) 0 var(--nms-space-5);
+}
+
+.readingBody {
+  font-size: 1.0625rem;
+  line-height: 1.68;
+  color: var(--nms-color-fg-muted);
+  margin: 0 0 var(--nms-space-4);
+  text-wrap: pretty;
+}
+
+/*
+ * The payoff. Larger, at full contrast, with the accent rule down its edge —
+ * the same device the build-list panels use, so a learner reads it as "this is
+ * the part that matters" without being told.
+ */
+.readingKicker {
+  font-family: var(--nms-font-display);
+  font-size: 1.25rem;
+  line-height: 1.42;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  color: var(--nms-color-fg);
+  border-inline-start: 2px solid var(--nms-color-accent);
+  padding-inline-start: var(--nms-space-4);
+  margin: var(--nms-space-2) 0 0;
+  text-wrap: pretty;
+}
+
 /* ---- Full-screen moment ------------------------------------------------ */
 
 /*

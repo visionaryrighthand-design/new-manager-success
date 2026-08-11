@@ -3,7 +3,7 @@
 import { useCallback, useEffect, useMemo, useRef, useState, type CSSProperties } from 'react';
 import Link from 'next/link';
 import type { Beat, Curveball, CurveballVerdict, QuizQuestion, Rep } from '@nms/content';
-import { splitListItem, splitMomentLines } from '@nms/content';
+import { estimateBeatSeconds, splitListItem, splitMomentLines } from '@nms/content';
 import styles from './RepPlayer.module.css';
 
 /**
@@ -263,6 +263,31 @@ function BeatCard({ beat }: { beat: Beat }) {
           ))}
         </details>
       </div>
+    );
+  }
+
+  if (beat.type === 'reading') {
+    const paragraphs = beat.speech?.split('\n\n').filter(Boolean) ?? [];
+    // The closing paragraph is the payoff in every reading card the scripts
+    // produce — the setup earns it, so it is set apart rather than being the
+    // fourth identical block of grey text.
+    const body = paragraphs.slice(0, -1);
+    const kicker = paragraphs.length > 1 ? paragraphs[paragraphs.length - 1] : undefined;
+    const solo = paragraphs.length === 1 ? paragraphs[0] : undefined;
+
+    return (
+      <article className={styles.reading}>
+        <span className={styles.readingRule} aria-hidden />
+        {beat.text ? <h2 className={styles.readingTitle}>{beat.text}</h2> : null}
+        <p className={styles.readingMeta}>{estimateBeatSeconds(beat)} sec read</p>
+        {solo ? <p className={styles.readingKicker}>{solo}</p> : null}
+        {body.map((para, i) => (
+          <p key={i} className={styles.readingBody}>
+            {para}
+          </p>
+        ))}
+        {kicker ? <p className={styles.readingKicker}>{kicker}</p> : null}
+      </article>
     );
   }
 
