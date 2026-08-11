@@ -16,3 +16,4 @@ npm-debug.log*
 .vercel
 data/*.sqlite
 data/*.db
+dist-test/

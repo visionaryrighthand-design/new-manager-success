@@ -1,6 +1,13 @@
 import { test, describe } from 'node:test';
 import assert from 'node:assert/strict';
-import { course, module01, validateContent, estimateRepTotalSeconds } from '@nms/content';
+import {
+  course,
+  module01,
+  validateContent,
+  estimateRepTotalSeconds,
+  splitListItem,
+  splitMomentLines,
+} from '@nms/content';
 
 /**
  * Content integrity. These live in core rather than in the content package so
@@ -109,5 +116,95 @@ describe('course shape', () => {
 
   test('Module 2 is marked in-production, matching "scripts drafted, not yet locked"', () => {
     assert.equal(course.roadmap.find((m) => m.number === 2)?.status, 'in-production');
+  });
+});
+
+/**
+ * Both players typeset build-list items and moments from these two parsers, so
+ * a wrong split shows up as a design bug on two platforms at once. The cases
+ * that matter are the ones where the punctuation looks like structure and is
+ * not — the scripts use em dashes as prose throughout.
+ */
+describe('build-list parsing', () => {
+  test('pulls the label out of a colon-prefixed item', () => {
+    const { label, body, quoted } = splitListItem(
+      'Myth #1: \u201cI\u2019ll just do what my old manager did.\u201d',
+    );
+    assert.equal(label, 'Myth #1');
+    assert.equal(body, 'I\u2019ll just do what my old manager did.');
+    assert.equal(quoted, true);
+  });
+
+  test('keeps a label\u2019s own em dash in the body', () => {
+    const { label, body } = splitListItem(
+      'Level 1: Unable and Unsure \u2014 new to the task. Needs clear direction.',
+    );
+    assert.equal(label, 'Level 1');
+    assert.equal(body, 'Unable and Unsure \u2014 new to the task. Needs clear direction.');
+  });
+
+  test('does not invent a label from an em dash', () => {
+    const { label, body } = splitListItem(
+      'In a small business \u2014 every single one of these hits harder.',
+    );
+    assert.equal(label, undefined);
+    assert.equal(body, 'In a small business \u2014 every single one of these hits harder.');
+  });
+
+  test('does not treat a sentence ending in a colon-less full stop as a label', () => {
+    assert.equal(splitListItem('Productivity drops. Conflict increases.').label, undefined);
+  });
+
+  test('leaves an item containing two quotations quoted in place', () => {
+    const { body, quoted } = splitListItem(
+      '\u201cFriendly\u201d is not \u201cfriendship\u201d',
+    );
+    assert.equal(quoted, false);
+    assert.ok(body.startsWith('\u201cFriendly\u201d'));
+  });
+
+  test('every Module 1 item survives a round trip', () => {
+    for (const rep of module01.reps) {
+      for (const beat of rep.beats) {
+        for (const item of beat.items ?? []) {
+          const { label, body } = splitListItem(item);
+          const rejoined = label ? `${label}: ${body}` : body;
+          // Quotes are stripped for the renderer to hang, so compare without them.
+          const stripped = item.replace(/[\u201c\u201d"]/g, '');
+          assert.equal(
+            rejoined.replace(/[\u201c\u201d"]/g, ''),
+            stripped,
+            `${rep.number}/${beat.id}: "${item}" did not round trip`,
+          );
+        }
+      }
+    }
+  });
+});
+
+describe('moment parsing', () => {
+  test('separates the payoff sentence from the setup', () => {
+    assert.deepEqual(
+      splitMomentLines('Employees don\u2019t quit companies. They quit managers.'),
+      ['Employees don\u2019t quit companies.', 'They quit managers.'],
+    );
+  });
+
+  test('leaves a single-sentence moment whole', () => {
+    const one = 'You can\u2019t manage others effectively until you can manage yourself first.';
+    assert.deepEqual(splitMomentLines(one), [one]);
+  });
+
+  test('no Module 1 moment loses a word to the split', () => {
+    for (const rep of module01.reps) {
+      for (const beat of rep.beats) {
+        if (beat.type !== 'moment' || !beat.text) continue;
+        assert.equal(
+          splitMomentLines(beat.text).join(' ').replace(/\s+/g, ' '),
+          beat.text.trim().replace(/\s+/g, ' '),
+          `${rep.number}/${beat.id} lost text`,
+        );
+      }
+    }
   });
 });

@@ -1,8 +1,9 @@
 'use client';
 
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState, type CSSProperties } from 'react';
 import Link from 'next/link';
 import type { Beat, Curveball, CurveballVerdict, QuizQuestion, Rep } from '@nms/content';
+import { splitListItem, splitMomentLines } from '@nms/content';
 import styles from './RepPlayer.module.css';
 
 /**
@@ -266,24 +267,57 @@ function BeatCard({ beat }: { beat: Beat }) {
   }
 
   if (beat.type === 'moment') {
+    const lines = splitMomentLines(beat.text ?? '');
     return (
       <div className={styles.moment}>
-        <p className={styles.momentText}>{beat.text}</p>
+        <span className={styles.momentRule} aria-hidden />
+        <p className={styles.momentText}>
+          {lines.map((line, i) => (
+            // The last sentence is the one the learner is meant to keep. It
+            // gets its own line, its own colour, and it arrives last.
+            <span
+              key={i}
+              className={styles.momentLine}
+              data-punchline={i === lines.length - 1}
+              style={{ '--d': `${0.12 + i * 0.5}s` } as CSSProperties}
+            >
+              {line}
+            </span>
+          ))}
+        </p>
       </div>
     );
   }
 
   if (beat.type === 'buildList') {
+    const items = beat.items ?? [];
     return (
       <div className={styles.card}>
-        <ul className={styles.buildList}>
-          {beat.items?.map((item, i) => (
-            <li key={i} style={{ animationDelay: `${i * 0.12}s` }}>
-              <span className={styles.bullet} aria-hidden />
-              <span>{item}</span>
-            </li>
-          ))}
-        </ul>
+        {/* Module 1's lists run from three items to seven. Past four they stop
+            fitting a phone at the airy size, so the whole card tightens rather
+            than letting the sticky controls sit on top of the last one. */}
+        <ol className={styles.buildList} data-density={items.length >= 5 ? 'dense' : 'airy'}>
+          {items.map((item, i) => {
+            const { label, body, quoted } = splitListItem(item);
+            return (
+              <li
+                key={i}
+                className={styles.buildItem}
+                style={{ '--d': `${i * 0.16}s` } as CSSProperties}
+              >
+                <span className={styles.buildOrdinal} aria-hidden>
+                  {String(i + 1).padStart(2, '0')}
+                </span>
+                <span className={styles.buildContent}>
+                  {label ? <span className={styles.buildLabel}>{label}</span> : null}
+                  <span className={styles.buildBody} data-quoted={quoted}>
+                    {body}
+                  </span>
+                </span>
+              </li>
+            );
+          })}
+        </ol>
       </div>
     );
   }

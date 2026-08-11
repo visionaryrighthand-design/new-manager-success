@@ -1,5 +1,8 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import {
+  AccessibilityInfo,
+  Animated,
+  Easing,
   FlatList,
   Pressable,
   StyleSheet,
@@ -12,7 +15,7 @@ import {
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import * as Haptics from 'expo-haptics';
-import { findRep, nextRep, type Beat, type Curveball, type CurveballVerdict, type QuizQuestion, type Rep } from '@nms/content';
+import { findRep, nextRep, splitListItem, splitMomentLines, type Beat, type Curveball, type CurveballVerdict, type QuizQuestion, type Rep } from '@nms/content';
 import { colors, radius, space, type } from '../../src/theme';
 import { useProgress } from '../../src/progress-store';
 
@@ -279,24 +282,28 @@ function CardView(props: CardViewProps) {
     const { beat } = card;
 
     if (beat.type === 'moment') {
+      const lines = splitMomentLines(beat.text ?? '');
       return (
         <View style={styles.momentWrap}>
-          <Text style={styles.moment}>{beat.text}</Text>
+          <View style={styles.momentRule} />
+          {lines.map((line, i) => (
+            <Text
+              key={i}
+              // The last sentence is the one the learner is meant to keep.
+              style={[
+                styles.moment,
+                i === lines.length - 1 ? styles.momentPunchline : styles.momentSetup,
+              ]}
+            >
+              {line}
+            </Text>
+          ))}
         </View>
       );
     }
 
     if (beat.type === 'buildList') {
-      return (
-        <View style={styles.card}>
-          {beat.items?.map((item, i) => (
-            <View key={i} style={styles.listItem}>
-              <View style={styles.bullet} />
-              <Text style={styles.listText}>{item}</Text>
-            </View>
-          ))}
-        </View>
-      );
+      return <BuildList items={beat.items ?? []} />;
     }
 
     return (
@@ -455,6 +462,92 @@ function CardView(props: CardViewProps) {
   );
 }
 
+/**
+ * The build-list card.
+ *
+ * The script direction is "items build on screen one by one", so they do —
+ * each on its own panel, numbered, on a stagger. The colon-prefixed label the
+ * scripts already use ("Myth #1:", "Level 2:") is pulled out and set as an
+ * eyebrow; see splitListItem in @nms/content, which the web player shares so
+ * the two cannot drift.
+ */
+function BuildList({ items }: { items: string[] }) {
+  // Module 1's lists run from three items to seven. A feed page cannot scroll,
+  // so past four the card tightens rather than running off the bottom.
+  const dense = items.length >= 5;
+  const [reduceMotion, setReduceMotion] = useState(false);
+  // One driver per item, so they can be staggered rather than fading as a block.
+  const anim = useRef(items.map(() => new Animated.Value(0))).current;
+
+  useEffect(() => {
+    let cancelled = false;
+    AccessibilityInfo.isReduceMotionEnabled().then((on) => {
+      if (cancelled) return;
+      if (on) {
+        setReduceMotion(true);
+        anim.forEach((v) => v.setValue(1));
+        return;
+      }
+      Animated.stagger(
+        160,
+        anim.map((v) =>
+          Animated.timing(v, {
+            toValue: 1,
+            duration: 320,
+            easing: Easing.out(Easing.cubic),
+            useNativeDriver: true,
+          }),
+        ),
+      ).start();
+    });
+    return () => {
+      cancelled = true;
+    };
+  }, [anim]);
+
+  return (
+    <View style={styles.card}>
+      {items.map((item, i) => {
+        const { label, body, quoted } = splitListItem(item);
+        return (
+          <Animated.View
+            key={i}
+            style={[
+              styles.listItem,
+              dense ? styles.listItemDense : null,
+              {
+                opacity: anim[i],
+                transform: reduceMotion
+                  ? []
+                  : [{ translateY: anim[i].interpolate({ inputRange: [0, 1], outputRange: [12, 0] }) }],
+              },
+            ]}
+          >
+            <View style={styles.listRule} />
+            <Text style={styles.listOrdinal}>{String(i + 1).padStart(2, '0')}</Text>
+            <View style={styles.listContent}>
+              {label ? <Text style={styles.listLabel}>{label.toUpperCase()}</Text> : null}
+              <Text
+                style={[
+                  styles.listText,
+                  dense ? styles.listTextDense : null,
+                  quoted ? styles.listTextQuoted : null,
+                ]}
+              >
+                {/* The quote marks live here rather than in the string, so the
+                    script text stays verbatim and they can take the accent. */}
+                {quoted ? <Text style={styles.listQuoteMark}>{'“'}</Text> : null}
+                {body}
+                {quoted ? <Text style={styles.listQuoteMark}>{'”'}</Text> : null}
+              </Text>
+            </View>
+          </Animated.View>
+        );
+      })}
+    </View>
+  );
+}
+
 const styles = StyleSheet.create({
   screen: { flex: 1, backgroundColor: colors.bg },
   missing: { flex: 1, backgroundColor: colors.bg, alignItems: 'center', justifyContent: 'center' },
@@ -472,12 +565,42 @@ const styles = StyleSheet.create({
     paddingLeft: space[4],
   },
 
-  momentWrap: { alignItems: 'center', justifyContent: 'center' },
+  momentWrap: { alignItems: 'center', justifyContent: 'center', gap: space[4] },
+  momentRule: {
+    width: 56,
+    height: 2,
+    borderRadius: 2,
+    backgroundColor: colors.accent,
+    marginBottom: space[2],
+  },
   moment: { ...type.moment, color: colors.fg, textAlign: 'center' },
+  /* Contrast rather than size: two type sizes in one thought reads as a mistake. */
+  momentSetup: { color: colors.fgMuted },
+  momentPunchline: { color: colors.fg },
 
-  listItem: { flexDirection: 'row', gap: space[3], alignItems: 'flex-start' },
-  bullet: { width: 8, height: 8, borderRadius: 4, backgroundColor: colors.bright, marginTop: 8 },
-  listText: { ...type.item, color: colors.fg, flex: 1 },
+  listItem: {
+    position: 'relative',
+    flexDirection: 'row',
+    gap: space[4],
+    alignItems: 'flex-start',
+    paddingVertical: space[4],
+    paddingRight: space[5],
+    paddingLeft: space[5],
+    borderRadius: radius.lg,
+    borderWidth: 1,
+    borderColor: colors.border,
+    backgroundColor: colors.surfaceRaised,
+    overflow: 'hidden',
+  },
+  listRule: { position: 'absolute', left: 0, top: 0, bottom: 0, width: 2, backgroundColor: colors.accent },
+  listOrdinal: { ...type.numeric, fontSize: 12, lineHeight: 16, color: colors.accent },
+  listContent: { flex: 1, gap: space[2] },
+  listLabel: { ...type.label, color: colors.bright },
+  listText: { ...type.item, fontSize: 17, lineHeight: 24, fontWeight: '600', color: colors.fg },
+  listItemDense: { paddingVertical: space[3] },
+  listTextDense: { fontSize: 15, lineHeight: 21 },
+  listTextQuoted: { fontStyle: 'italic' },
+  listQuoteMark: { color: colors.accent, fontStyle: 'normal', fontWeight: '800' },
 
   curveballLabel: { ...type.label, color: colors.alert },
   quizLabel: { ...type.label, color: colors.accent },

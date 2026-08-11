@@ -3,10 +3,17 @@
  * tokens.css. It is a cinema, not a page.
  */
 
+/*
+ * Fixed to the viewport, with the stage scrolling inside it. The page itself
+ * never scrolls: Module 1's longest build-list is seven items and does not fit
+ * a phone, and a sticky control bar over a scrolling page half-erases whatever
+ * line it lands on. Scrolling the stage instead keeps the controls clear of
+ * the content at every scroll position.
+ */
 .player {
   display: flex;
   flex-direction: column;
-  min-height: 100dvh;
+  height: 100dvh;
   background: var(--nms-color-bg);
   color: var(--nms-color-fg);
 }
@@ -75,11 +82,18 @@
 
 .stage {
   flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  overscroll-behavior: contain;
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 0 var(--nms-space-5);
+  padding: var(--nms-space-4) var(--nms-space-5);
 }
+
+/* Centred when it fits, top-aligned when it does not — otherwise a card taller
+   than the stage has its first item clipped above the scroll origin. */
+.stage > * { margin-block: auto; }
 
 .card {
   width: 100%;
@@ -114,18 +128,66 @@
 
 /* ---- Full-screen moment ------------------------------------------------ */
 
+/*
+ * A moment is one line the learner is meant to walk away with, so it gets the
+ * whole screen and nothing competes with it. The glow is the only decoration:
+ * it lifts the type off pure black without putting a box around it.
+ */
 .moment {
+  position: relative;
+  /* Keeps the glow's z-index: -1 inside this card rather than behind the page. */
+  isolation: isolate;
   width: 100%;
   max-width: var(--nms-feed-max-width);
   min-height: 46vh;
   display: flex;
+  flex-direction: column;
   align-items: center;
   justify-content: center;
+  gap: var(--nms-space-6);
   text-align: center;
   animation: rise var(--nms-duration-slow) var(--nms-ease-entrance) both;
 }
 
+.moment::before {
+  content: '';
+  position: absolute;
+  inset: -18% -12%;
+  z-index: -1;
+  pointer-events: none;
+  background: radial-gradient(
+    58% 46% at 50% 46%,
+    color-mix(in srgb, var(--nms-color-accent) 16%, transparent),
+    transparent 72%
+  );
+  animation: glow var(--nms-duration-slow) var(--nms-ease-entrance) both;
+  animation-delay: 0.2s;
+}
+
+@keyframes glow {
+  from { opacity: 0; transform: scale(0.9); }
+  to { opacity: 1; transform: none; }
+}
+
+/* Draws outward from the centre, so the line arrives before the words do. */
+.momentRule {
+  width: clamp(2.5rem, 12vw, 4.5rem);
+  height: 2px;
+  border-radius: 2px;
+  background: var(--nms-color-accent);
+  transform-origin: center;
+  animation: drawRule var(--nms-duration-slow) var(--nms-ease-entrance) both;
+}
+
+@keyframes drawRule {
+  from { transform: scaleX(0); opacity: 0; }
+  to { transform: none; opacity: 1; }
+}
+
 .momentText {
+  display: flex;
+  flex-direction: column;
+  gap: var(--nms-space-3);
   font-family: var(--nms-font-display);
   font-size: clamp(1.9rem, 1.2rem + 3.2vw, 2.6rem);
   line-height: 1.08;
@@ -134,38 +196,140 @@
   text-wrap: balance;
 }
 
+.momentLine {
+  color: color-mix(in srgb, var(--nms-color-fg) 58%, transparent);
+  animation: rise var(--nms-duration-slow) var(--nms-ease-entrance) both;
+  animation-delay: var(--d, 0s);
+}
+
+/*
+ * The payoff sentence, at full strength against a dimmed setup. Contrast
+ * rather than size — two type sizes in one thought reads as a mistake, two
+ * weights of the same colour reads as emphasis. A one-sentence moment is its
+ * own payoff and gets this too.
+ */
+.momentLine[data-punchline='true'] { color: var(--nms-color-fg); }
+
 /* ---- Build list -------------------------------------------------------- */
 
+/*
+ * The script direction is "items build on screen one by one", so they do —
+ * each one lands on its own panel, numbered, on a stagger. The colon-prefixed
+ * label the scripts already use ("Myth #1:", "Level 2:") is pulled out and set
+ * as an eyebrow; see splitListItem in @nms/content.
+ */
 .buildList {
   list-style: none;
   margin: 0;
   padding: 0;
   display: flex;
   flex-direction: column;
-  gap: var(--nms-space-4);
-}
-
-.buildList li {
-  display: flex;
   gap: var(--nms-space-3);
-  align-items: flex-start;
-  font-size: 1rem;
-  line-height: 1.5;
-  animation: slide var(--nms-duration-base) var(--nms-ease-entrance) both;
 }
 
-@keyframes slide {
-  from { opacity: 0; transform: translateX(-10px); }
+.buildList[data-density='dense'] {
+  --build-body-size: 1rem;
+  --build-pad-block: var(--nms-space-3);
+  gap: var(--nms-space-2);
+}
+
+.buildItem {
+  position: relative;
+  display: grid;
+  grid-template-columns: auto 1fr;
+  column-gap: var(--nms-space-4);
+  align-items: start;
+  padding: var(--build-pad-block, var(--nms-space-4)) var(--nms-space-5);
+  padding-inline-start: calc(var(--nms-space-5) - 2px);
+  border: 1px solid var(--nms-color-border);
+  border-radius: var(--nms-radius-lg);
+  background:
+    linear-gradient(
+      104deg,
+      color-mix(in srgb, var(--nms-color-accent) 9%, var(--nms-color-surface-raised)),
+      var(--nms-color-surface) 58%
+    );
+  overflow: hidden;
+  animation: buildIn var(--nms-duration-slow) var(--nms-ease-entrance) both;
+  animation-delay: var(--d, 0s);
+}
+
+/* The accent rule wipes down as the panel settles. */
+.buildItem::before {
+  content: '';
+  position: absolute;
+  inset-block: 0;
+  inset-inline-start: 0;
+  width: 2px;
+  background: var(--nms-color-accent);
+  transform-origin: top;
+  animation: wipeDown var(--nms-duration-slow) var(--nms-ease-entrance) both;
+  animation-delay: calc(var(--d, 0s) + 0.1s);
+}
+
+@keyframes buildIn {
+  from { opacity: 0; transform: translateY(12px) scale(0.985); }
   to { opacity: 1; transform: none; }
 }
 
-.bullet {
-  flex-shrink: 0;
-  width: 8px;
-  height: 8px;
-  margin-top: 8px;
-  border-radius: 50%;
-  background: var(--nms-color-bright);
+@keyframes wipeDown {
+  from { transform: scaleY(0); }
+  to { transform: none; }
+}
+
+/* Shares the eyebrow's line box so the two sit on one optical line. */
+.buildOrdinal {
+  font-family: var(--nms-font-mono);
+  font-size: 0.78rem;
+  line-height: var(--nms-font-label-line);
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  font-variant-numeric: tabular-nums;
+  color: var(--nms-color-accent);
+}
+
+.buildContent {
+  display: flex;
+  flex-direction: column;
+  gap: var(--nms-space-2);
+  min-width: 0;
+}
+
+.buildLabel {
+  font-family: var(--nms-font-mono);
+  font-size: var(--nms-font-label-size);
+  font-weight: var(--nms-font-label-weight);
+  line-height: var(--nms-font-label-line);
+  letter-spacing: var(--nms-font-label-tracking);
+  text-transform: uppercase;
+  color: var(--nms-color-bright);
+}
+
+.buildBody {
+  font-family: var(--nms-font-display);
+  font-size: var(--build-body-size, 1.1875rem);
+  line-height: 1.38;
+  font-weight: 600;
+  letter-spacing: -0.015em;
+  text-wrap: pretty;
+}
+
+/*
+ * Something the manager says to themselves — the myths, mostly. Set as speech
+ * rather than as a bullet, with the quotes hung in the accent colour. The
+ * marks live here rather than in the string so the content stays verbatim.
+ */
+.buildBody[data-quoted='true'] {
+  font-style: italic;
+  color: color-mix(in srgb, var(--nms-color-fg) 92%, transparent);
+}
+.buildBody[data-quoted='true']::before { content: '\201C'; }
+.buildBody[data-quoted='true']::after { content: '\201D'; }
+.buildBody[data-quoted='true']::before,
+.buildBody[data-quoted='true']::after {
+  color: var(--nms-color-accent);
+  font-style: normal;
+  font-weight: 800;
 }
 
 /* ---- Labels ------------------------------------------------------------ */
@@ -335,14 +499,14 @@
 /* ---- Controls ---------------------------------------------------------- */
 
 .controls {
-  position: sticky;
-  bottom: 0;
+  flex-shrink: 0;
   display: flex;
   align-items: center;
   gap: var(--nms-space-3);
   padding: var(--nms-space-5);
   padding-bottom: max(var(--nms-space-5), env(safe-area-inset-bottom));
-  background: linear-gradient(to top, var(--nms-color-bg) 62%, transparent);
+  background: var(--nms-color-bg);
+  border-top: 1px solid var(--nms-color-border);
 }
 
 .navBtn {

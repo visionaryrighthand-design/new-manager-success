@@ -57,6 +57,81 @@ export function estimateRepTotalSeconds(rep: Rep): number {
   );
 }
 
+/* ------------------------------------------------------------------------ *
+ * Presentation helpers
+ *
+ * Build-list items and full-screen moments are written as plain strings in
+ * the locked scripts, but they carry structure the scripts express with
+ * punctuation: a colon marks a label, quotation marks mark something someone
+ * says to themselves, a sentence break marks the punchline. Web and native
+ * both need that structure to typeset the card, so it is parsed here once
+ * rather than twice — the scripts stay verbatim and the renderers stay dumb.
+ * ------------------------------------------------------------------------ */
+
+export interface ListItemParts {
+  /** A short prefix the author marked with a colon — "Myth #1", "Level 2". */
+  label?: string;
+  /** Everything after the label, or the whole item when there is no label. */
+  body: string;
+  /** True when `body` was wrapped in quotation marks that have been removed. */
+  quoted: boolean;
+}
+
+/**
+ * Splits on a colon only. The scripts also use em dashes heavily, but as prose
+ * punctuation — "In a small business — every single one of these hits harder"
+ * has no label in it, and splitting there would invent one. A colon is the one
+ * mark the author only ever uses to introduce something.
+ */
+const LABELLED = /^([^:]{1,24}):\s+(\S[\s\S]*)$/;
+
+const QUOTE_PAIRS: ReadonlyArray<readonly [string, string]> = [
+  ['“', '”'], // “ ”
+  ['"', '"'],
+];
+
+/**
+ * Removes quotation marks wrapping the whole string, so the renderer can hang
+ * them in the accent colour instead of setting them as body text. Returns
+ * undefined when the string is not a single self-contained quotation.
+ */
+function stripOuterQuotes(text: string): string | undefined {
+  for (const [open, close] of QUOTE_PAIRS) {
+    if (text.length > 2 && text.startsWith(open) && text.endsWith(close)) {
+      const inner = text.slice(1, -1);
+      // Two quotations in one item are not one quotation. Leave them alone.
+      if (!inner.includes(open) && !inner.includes(close)) return inner;
+    }
+  }
+  return undefined;
+}
+
+export function splitListItem(item: string): ListItemParts {
+  const raw = item.trim();
+  const match = LABELLED.exec(raw);
+  const prefix = match?.[1]?.trim();
+  const remainder = match?.[2]?.trim();
+  // A prefix containing a full stop is a sentence, not a label.
+  const labelled = prefix !== undefined && remainder !== undefined && !prefix.includes('.');
+
+  const label = labelled ? prefix : undefined;
+  const rest = labelled ? remainder : raw;
+  const unquoted = stripOuterQuotes(rest);
+  return { label, body: unquoted ?? rest, quoted: unquoted !== undefined };
+}
+
+/**
+ * Splits a full-screen moment into its sentences. Every moment in Module 1 is
+ * written as a setup and a payoff — "Employees don't quit companies. They quit
+ * managers." — and the payoff lands harder arriving on its own. One-sentence
+ * moments come back as a single line and render unchanged.
+ */
+export function splitMomentLines(text: string): string[] {
+  const parts = text.trim().match(/[^.!?]+[.!?]+["'’”]?\s*/g);
+  if (!parts || parts.length < 2) return [text.trim()];
+  return parts.map((p) => p.trim()).filter(Boolean);
+}
+
 export function allReps(): Rep[] {
   return course.modules.flatMap((m) => m.reps);
 }

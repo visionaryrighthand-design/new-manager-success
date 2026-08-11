@@ -55,6 +55,9 @@ button, input, textarea, select {
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after {
     animation-duration: 0.01ms !important;
+    /* Staggered entrances hold content off-screen on a delay, not a duration.
+       Without this a build-list would still trickle in one item at a time. */
+    animation-delay: 0.01ms !important;
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
     scroll-behavior: auto !important;
