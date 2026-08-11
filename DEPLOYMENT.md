@@ -24,6 +24,26 @@ makes it confusing.
 Then **Deployments → ⋯ → Redeploy**, with **"Use existing Build Cache"
 unchecked** on the first run after a change.
 
+### Changing settings does not trigger a build
+
+This trips people repeatedly. **"Skip deployments when there are no changes to
+the root directory or its dependencies"** is Enabled by default. With Root
+Directory set to `apps/web`, a commit that only touches `README.md`,
+`DEPLOYMENT.md`, or a root-level config file is **skipped** — no new deployment
+is produced, and production keeps serving the old broken build no matter how
+many times you push.
+
+So after changing any project setting, you must **Redeploy explicitly from the
+dashboard**. Do not wait for a push to do it.
+
+### The "Configuration Settings … differ" warning
+
+That yellow banner means the live production deployment was built with
+different settings than the project now has — it is a record of the *old*
+build, not a description of the new one. It clears on the next successful
+deployment. Expand **Production Overrides** to see what the live build actually
+used; if it lists an `outputDirectory`, that deployment predates this fix.
+
 ---
 
 ## Why "Other" produces a 404
@@ -41,8 +61,15 @@ There is no `index.html`, so `/` returns `NOT_FOUND` — and the build log shows
 a clean success, because from Vercel's point of view nothing went wrong.
 
 Setting the preset to **Next.js** is the fix. `apps/web/vercel.json` also pins
-`"framework": "nextjs"`, which overrides the dashboard on the next deployment,
-but setting the dropdown removes any doubt.
+`"framework": "nextjs"` and the build command, which override the dashboard on
+the next deployment — but setting the dropdown makes Project Settings and the
+deployment agree, which clears the "Configuration Settings … differ" warning.
+
+There is deliberately **no `vercel.json` at the repository root**. One existed
+briefly and was removed: with Root Directory set to `apps/web`, Vercel reads
+`apps/web/vercel.json` and ignores the root one, so a root file can only ever
+be stale — and its `outputDirectory` was exactly the kind of override that
+gets baked into a deployment and then disagrees with Project Settings.
 
 ## Why the Root Directory matters
 

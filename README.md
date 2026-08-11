@@ -25,9 +25,10 @@ or a video library nobody opens twice. This is neither.
 ## Deploying
 
 The app is at `apps/web`, not the repo root — see **[DEPLOYMENT.md](DEPLOYMENT.md)**.
-A 404 on Vercel means the project's **Framework Preset** is not set to Next.js,
-or its **Root Directory** is not `apps/web`. Both must be right; either one
-wrong produces a 404 from a build that reports success.
+A 404 on Vercel means the project's **Framework Preset** is not Next.js, or its
+**Root Directory** is not `apps/web`. Both must be right — either one wrong
+produces a 404 from a build that reports success. Note also that changing a
+setting does not trigger a rebuild; you have to Redeploy explicitly.
 
 ## Quick start
 
