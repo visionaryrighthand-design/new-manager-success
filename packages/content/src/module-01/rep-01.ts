@@ -49,7 +49,7 @@ export const rep01: Rep = {
       speech:
         "Let's talk about what actually changed when you got promoted.\n\nBefore, your success depended almost entirely on you. Your effort, your skill, your output. You controlled it. If you worked harder or smarter, results improved. Simple equation.\n\nNow? Your success depends on a group of people — people with different strengths, different motivations, and different ideas about what a productive day looks like. You can't do the work for them. You have to lead them to do it well.\n\nThat's a fundamentally different challenge. And most new managers walk into it believing at least one of these three things.",
       videoUrl:
-        'https://rhteswkgmndgijpllvjt.supabase.co/storage/v1/object/public/videos/New%20Manager%20Success/From%20Solo%20Star%20to%20Team%20Leader_%20Navigating%20Your%20First%20Promotion.mp4',
+        'https://rhteswkgmndgijpllvjt.supabase.co/storage/v1/object/public/videos/New%20Manager%20Success/From%20Solo%20Star%20to%20Team%20Leader_%20Navigating%20Your%20First%20Promotion%20(1).mp4',
     },
     {
       id: 'b4',
