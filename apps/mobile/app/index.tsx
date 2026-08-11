@@ -118,7 +118,7 @@ const styles = StyleSheet.create({
   wordmark: { flex: 1 },
   wordmarkLine1: { ...type.h3, color: colors.fg, fontWeight: '800', letterSpacing: 0 },
   // Tracked out so the two lines optically align to the same width, as in the lockup.
-  wordmarkLine2: { ...type.caption, color: colors.accent, fontWeight: '800', letterSpacing: 4.4 },
+  wordmarkLine2: { ...type.caption, color: colors.accentText, fontWeight: '800', letterSpacing: 4.4 },
   streakPill: {
     paddingHorizontal: space[3],
     paddingVertical: space[1],

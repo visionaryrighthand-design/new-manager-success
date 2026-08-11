@@ -23,7 +23,7 @@ export default function CurriculumPage() {
       <p className={styles.lede}>
         The full arc runs from the mindset shift a new manager has to make in week one through to a
         90-day roadmap and certification. Module 1 is live today. The rest are scripted or outlined
-        and land through the pilot — which is the point of running one.
+        and land through the pilot, which is the point of running one.
       </p>
 
       <ol className={styles.modules}>

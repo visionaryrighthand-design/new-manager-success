@@ -12,6 +12,7 @@
   --nms-color-fg-subtle: #6B758C;
   --nms-color-on-accent: #FFFFFF;
   --nms-color-accent: #0B4FD1;
+  --nms-color-accent-text: #003CA5;
   --nms-color-accent-hover: #003CA5;
   --nms-color-accent-soft: #EDF3FF;
   --nms-color-bright: #0B4FD1;
@@ -114,6 +115,7 @@
   --nms-color-fg-subtle: #6B758C;
   --nms-color-on-accent: #FFFFFF;
   --nms-color-accent: #0163FA;
+  --nms-color-accent-text: #4287FF;
   --nms-color-accent-hover: #4287FF;
   --nms-color-accent-soft: rgba(1, 99, 250, 0.18);
   --nms-color-bright: #FFFFFF;
@@ -209,6 +211,7 @@
     --nms-color-fg-subtle: #6B758C;
     --nms-color-on-accent: #FFFFFF;
     --nms-color-accent: #0163FA;
+    --nms-color-accent-text: #4287FF;
     --nms-color-accent-hover: #4287FF;
     --nms-color-accent-soft: rgba(1, 99, 250, 0.18);
     --nms-color-bright: #FFFFFF;
@@ -304,6 +307,7 @@
   --nms-color-fg-subtle: #6B758C;
   --nms-color-on-accent: #FFFFFF;
   --nms-color-accent: #0163FA;
+  --nms-color-accent-text: #4287FF;
   --nms-color-accent-hover: #4287FF;
   --nms-color-accent-soft: rgba(1, 99, 250, 0.18);
   --nms-color-bright: #FFFFFF;

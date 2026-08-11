@@ -81,7 +81,7 @@
   font-weight: 800;
   letter-spacing: 0.1em;
   text-transform: uppercase;
-  color: var(--nms-color-accent);
+  color: var(--nms-color-accent-text);
 }
 .pilotCard:last-child .pilotLabel { color: var(--nms-color-fg-subtle); }
 

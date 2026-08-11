@@ -12,8 +12,16 @@
  * Both themes generate from the same ramps, so an app screenshot never looks
  * like a different company from the website.
  *
- * Accessibility contract: every `fg` token clears WCAG AA (4.5:1) against its
- * paired `bg` token in both themes. `accent` is never used for body text.
+ * Accessibility contract: every text token clears WCAG AA (4.5:1) against the
+ * surfaces it is used on, in both themes. This is asserted by a test, not
+ * asserted by this comment — the comment used to claim it while `accent` sat
+ * at 4.00:1 on the feed background and was being used for labels anyway.
+ *
+ * That is why `accent` and `accentText` are separate. The brand blue is a
+ * fill colour: it was sampled off artwork drawn for black, and it is correct
+ * behind white text, under a rule, or on a progress bar. Set as type on a
+ * near-black background it is legible rather than comfortable, and the feed
+ * asks people to read for seven minutes at a time.
  */
 
 /**
@@ -111,8 +119,18 @@ export interface ThemeColors {
   fgSubtle: string;
   /** Text/icon on top of `accent`. */
   onAccent: string;
-  /** Brand blue. Primary actions, focus, progress. */
+  /**
+   * Brand blue. Fills only: buttons, rules, progress, focus rings, the mark.
+   * Never type — see `accentText`.
+   */
   accent: string;
+  /**
+   * Blue for type. The same hue lifted far enough off the background to clear
+   * AA at body size. Use this for any blue word, at any size: a heading that
+   * only just passes at display size fails the moment somebody reuses the
+   * colour on a caption.
+   */
+  accentText: string;
   /** Hover/pressed state of `accent`. */
   accentHover: string;
   /** Tinted background derived from accent (badges, callouts). */
@@ -147,6 +165,8 @@ export const darkColors: ThemeColors = {
   fgSubtle: ramp.ink[400],
   onAccent: ramp.ink[0],
   accent: ramp.blue[500],
+  // 5.90:1 on bg. The brand blue itself is 4.00:1, which is below AA.
+  accentText: ramp.blue[400],
   accentHover: ramp.blue[400],
   accentSoft: 'rgba(1, 99, 250, 0.18)',
   bright: ramp.ink[0],
@@ -168,6 +188,8 @@ export const lightColors: ThemeColors = {
   fgSubtle: ramp.ink[400],
   onAccent: ramp.ink[0],
   accent: ramp.blue[600],
+  // On white, blue has the opposite problem: it must be darkened, not lifted.
+  accentText: ramp.blue[700],
   accentHover: ramp.blue[700],
   accentSoft: ramp.blue[50],
   bright: ramp.blue[600],

@@ -131,7 +131,7 @@ export function EnrollFlow() {
           />
         </div>
         <p className={styles.hint}>
-          Registering yourself with nobody following along is completely fine — that is the
+          Registering yourself with nobody following along is completely fine. That is the
           self-directed path, and nothing is shared with anyone.
         </p>
       </Frame>
@@ -382,7 +382,7 @@ export function EnrollFlow() {
 
         <p className={styles.hint}>
           Everyone listed gets an inactivity alert if the learner goes quiet for 7 business days,
-          whatever their level. That one is not optional — it is the safety net.
+          whatever their level. That one is not optional. It is the safety net.
         </p>
 
         <button className="nms-btn nms-btn--bright" disabled={problems.length > 0} onClick={submit}>
@@ -403,7 +403,7 @@ export function EnrollFlow() {
       </p>
       <p className={styles.hint}>
         This pilot build does not send email yet. The rules that decide who gets what, and when,
-        are implemented and tested in <code>@nms/core</code> — the transport is the part still
+        are implemented and tested in <code>@nms/core</code>, the transport is the part still
         to wire up. See <code>docs/product/MVP_SPEC.md</code>.
       </p>
       <a className="nms-btn nms-btn--bright" href="/learn/m1-r1">

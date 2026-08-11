@@ -18,7 +18,7 @@ import styles from './corner.module.css';
 export const metadata: Metadata = {
   title: 'What your Corner sees',
   description:
-    'Exactly what a boss, HR contact, or mentor receives at each update level — rendered from the real notification engine, not a mockup.',
+    'Exactly what a boss, HR contact, or mentor receives at each update level, rendered from the real notification engine, not a mockup.',
 };
 
 /**
@@ -140,21 +140,21 @@ export default function CornerPage() {
       </p>
 
       <section className={styles.section}>
-        <h2 className={styles.h2}>Level 1 — Basic</h2>
+        <h2 className={styles.h2}>Level 1: Basic</h2>
         <p className={styles.cadence}>{updateLevelSummary[1].cadence}</p>
         <p className={styles.body}>{updateLevelSummary[1].contents}</p>
         <MessageCard note={demo.level1} />
       </section>
 
       <section className={styles.section}>
-        <h2 className={styles.h2}>Level 2 — Intermediate</h2>
+        <h2 className={styles.h2}>Level 2: Intermediate</h2>
         <p className={styles.cadence}>{updateLevelSummary[2].cadence}</p>
         <p className={styles.body}>{updateLevelSummary[2].contents}</p>
         <MessageCard note={demo.level2} />
       </section>
 
       <section className={styles.section}>
-        <h2 className={styles.h2}>Level 3 — Advanced</h2>
+        <h2 className={styles.h2}>Level 3: Advanced</h2>
         <p className={styles.cadence}>{updateLevelSummary[3].cadence}</p>
         <p className={styles.body}>{updateLevelSummary[3].contents}</p>
         <MessageCard note={demo.level3} />
@@ -164,7 +164,7 @@ export default function CornerPage() {
           <p>
             Module 1 asks learners to write down which working relationship has soured and which
             standard they are failing to hold themselves to. If their boss can read that verbatim,
-            they will work out within one module that honest answers are career-limiting — and start
+            they will work out within one module that honest answers are career-limiting, and start
             writing for the audience.
           </p>
           <p>
@@ -176,7 +176,7 @@ export default function CornerPage() {
       </section>
 
       <section className={styles.section}>
-        <h2 className={styles.h2}>The safety net — every contact, every level</h2>
+        <h2 className={styles.h2}>The safety net: every contact, every level</h2>
         <p className={styles.body}>
           If a learner goes quiet for 7 business days, everyone in their Corner hears about it —
           including Level 2 and Level 3 contacts who would otherwise only get a weekly digest. It

@@ -24,7 +24,7 @@
   background:
     radial-gradient(120% 90% at 78% 8%, rgba(58, 99, 255, 0.28), transparent 62%),
     linear-gradient(180deg, #10131b, #06070b);
-  color: #f4f6fa;
+  color: var(--nms-color-fg);
   border-bottom: 1px solid rgba(255, 255, 255, 0.08);
 }
 
@@ -47,9 +47,12 @@
   max-width: 17ch;
 }
 
+/* The second line of the headline. Blue for type, not the fill blue: the
+   brand blue is 4.00:1 on this background and this is the sentence the whole
+   page turns on. */
 .heroAccent {
   display: block;
-  color: var(--nms-color-bright);
+  color: var(--nms-color-accent-text);
 }
 
 .heroBody {
@@ -192,7 +195,7 @@
 .repNum {
   font-family: var(--nms-font-mono);
   font-size: var(--nms-font-caption-size);
-  color: var(--nms-color-accent);
+  color: var(--nms-color-accent-text);
   font-weight: 600;
 }
 
@@ -241,7 +244,7 @@
   padding: 3px 8px;
   border-radius: var(--nms-radius-pill);
   background: var(--nms-color-accent-soft);
-  color: var(--nms-color-accent);
+  color: var(--nms-color-accent-text);
 }
 
 .levelName { font-weight: 700; font-family: var(--nms-font-display); font-size: 1.1rem; }

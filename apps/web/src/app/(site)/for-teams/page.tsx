@@ -16,7 +16,7 @@ const STEPS = [
   },
   {
     title: 'Set each person’s Corner',
-    body: 'Each learner can have their own contacts — typically their own supervisor, plus you. Every contact gets exactly one update level, and different contacts on the same learner can be on different levels.',
+    body: 'Each learner can have their own contacts, typically their own supervisor, plus you. Every contact gets exactly one update level, and different contacts on the same learner can be on different levels.',
   },
   {
     title: 'They start on their phone',
@@ -24,7 +24,7 @@ const STEPS = [
   },
   {
     title: 'You hear when it matters',
-    body: 'A weekly digest of what got done and how they scored — and an alert if anyone goes quiet for seven business days, whatever level you picked.',
+    body: 'A weekly digest of what got done and how they scored, and an alert if anyone goes quiet for seven business days, whatever level you picked.',
   },
 ];
 
@@ -71,7 +71,7 @@ export default function ForTeamsPage() {
           <div className={styles.pilotCard}>
             <p className={styles.pilotLabel}>Available now</p>
             <ul>
-              <li>Module 1 complete — 8 Reps, 26 questions, 10 Curveballs</li>
+              <li>Module 1 complete, 8 Reps, 26 questions, 10 Curveballs</li>
               <li>Full registration and Corner setup</li>
               <li>Progress, streaks, and scoring</li>
               <li>Web and mobile</li>
@@ -89,7 +89,7 @@ export default function ForTeamsPage() {
         </div>
         <p className={styles.honest}>
           Being straight about it: this is a pilot build. The notification rules are implemented and
-          tested, but nothing is being emailed yet — that is deliberate, because we would rather get
+          tested, but nothing is being emailed yet. That is deliberate, because we would rather get
           the rules right with you than send the wrong digest to your CFO.
         </p>
       </section>

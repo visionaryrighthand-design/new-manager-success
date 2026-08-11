@@ -20,6 +20,7 @@
   ],
   "scripts": {
     "build": "tsc -p tsconfig.json && node scripts/gen-tokens.mjs && node scripts/check-tokens.mjs",
+    "test": "node --test --test-reporter=spec 'dist/**/*.test.js'",
     "typecheck": "tsc -p tsconfig.json --noEmit",
     "check:tokens": "node scripts/check-tokens.mjs"
   },

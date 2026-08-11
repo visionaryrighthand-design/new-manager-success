@@ -70,7 +70,7 @@
   font-family: var(--nms-font-mono);
   font-weight: 700;
   font-size: 0.85rem;
-  color: var(--nms-color-accent);
+  color: var(--nms-color-accent-text);
   padding-top: 3px;
 }
 
@@ -127,7 +127,7 @@
   letter-spacing: 0.08em;
   color: var(--nms-color-fg-subtle);
 }
-.roadmap li[data-status='in-production'] .roadStatus { color: var(--nms-color-accent); }
+.roadmap li[data-status='in-production'] .roadStatus { color: var(--nms-color-accent-text); }
 
 .roadNote {
   margin-top: var(--nms-space-5);

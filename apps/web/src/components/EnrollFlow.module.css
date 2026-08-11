@@ -19,7 +19,7 @@
   padding: 4px 10px;
   border-radius: var(--nms-radius-pill);
   background: var(--nms-color-accent-soft);
-  color: var(--nms-color-accent);
+  color: var(--nms-color-accent-text);
 }
 
 .title {

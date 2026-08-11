@@ -43,7 +43,7 @@
   font-weight: 700;
   color: var(--nms-color-fg-subtle);
 }
-.module[data-status='live'] .moduleNum { color: var(--nms-color-accent); }
+.module[data-status='live'] .moduleNum { color: var(--nms-color-accent-text); }
 
 .moduleTitle { font-size: 1.25rem; letter-spacing: -0.02em; }
 
@@ -57,7 +57,7 @@
   white-space: nowrap;
 }
 .module[data-status='live'] .status { color: var(--nms-color-bright); }
-.module[data-status='in-production'] .status { color: var(--nms-color-accent); }
+.module[data-status='in-production'] .status { color: var(--nms-color-accent-text); }
 
 .moduleBody {
   margin-top: var(--nms-space-4);
@@ -82,7 +82,7 @@
 .repNum {
   font-family: var(--nms-font-mono);
   font-size: 0.78rem;
-  color: var(--nms-color-accent);
+  color: var(--nms-color-accent-text);
   margin-inline-end: var(--nms-space-2);
 }
 

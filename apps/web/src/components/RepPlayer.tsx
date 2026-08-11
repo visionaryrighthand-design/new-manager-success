@@ -204,7 +204,7 @@ export function RepPlayer({ rep, nextRepId }: RepPlayerProps) {
       </div>
 
       {/* The affordance the Next button used to be. Hidden on the last card,
-          and while a gate is holding the feed — there is nothing below yet. */}
+          and while a gate is holding the feed. There is nothing below yet. */}
       <button
         type="button"
         className={styles.scrollCue}
@@ -679,7 +679,7 @@ function QuizCard({
 
       {chosenOption ? (
         <div className={styles.response} data-verdict={chosenOption.correct ? 'best' : 'costly'}>
-          <p className={styles.verdict}>{chosenOption.correct ? 'Locked in.' : 'Not yet — worth another look.'}</p>
+          <p className={styles.verdict}>{chosenOption.correct ? 'Locked in.' : 'Not yet, worth another look.'}</p>
           <p>{chosenOption.feedback}</p>
         </div>
       ) : null}
@@ -717,11 +717,11 @@ function FieldNoteCard({
 
       <p className={styles.fieldNoteHint}>
         {short
-          ? 'A bit more would help — but you can move on whenever you like.'
+          ? 'A bit more would help, but you can move on whenever you like.'
           : 'No wrong answers here. This one is for you.'}
       </p>
       <p className={styles.privacy}>
-        If someone in your Corner is on Level 3, they get a question to ask you — never your actual
+        If someone in your Corner is on Level 3, they get a question to ask you, never your actual
         words.
       </p>
     </div>

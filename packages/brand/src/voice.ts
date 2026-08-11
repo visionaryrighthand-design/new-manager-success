@@ -20,7 +20,7 @@ export const brand = {
   taglineAlt: 'Be the manager you wished you had.',
   /** One-sentence positioning. */
   positioning:
-    'New Manager Success is social-style management training for newly promoted managers — seven-minute lessons, built for the phone, in any profession.',
+    'New Manager Success is social-style management training for newly promoted managers: seven-minute lessons, built for the phone, in any profession.',
   /** Elevator description for app stores and press. */
   description:
     'You got promoted because you were great at your job. Nobody handed you a manual for the new one. New Manager Success is a phone-first management course built the way you actually learn now: short lessons, real scenarios, and a streak that keeps you honest.',
@@ -68,12 +68,12 @@ export const boilerplate = {
   streakBrokenTitle: 'Pick it back up.',
   streakBrokenBody: 'Streaks are a habit tool, not a grade. Do one Rep and you are back.',
   quizPassTitle: 'Locked in.',
-  quizFailTitle: 'Not yet — worth another look.',
+  quizFailTitle: 'Not yet. Worth another look.',
   fieldNotePrompt: 'No wrong answers here. This one is for you.',
   // Must stay accurate to the Level 3 spec: contacts receive *generated
   // conversation prompts*, never the raw Field Note text.
   fieldNotePrivacy:
-    'If someone in your Corner is on Level 3, they get a question to ask you — never your actual words.',
+    'If someone in your Corner is on Level 3, they get a question to ask you, never your actual words.',
   curveballIntro: 'Curveball.',
-  certificationName: 'Certified New Manager — Foundations',
+  certificationName: 'Certified New Manager: Foundations',
 } as const;

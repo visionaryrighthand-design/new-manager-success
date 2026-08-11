@@ -78,7 +78,7 @@ button, input, textarea, select {
   font-weight: var(--nms-font-label-weight);
   letter-spacing: var(--nms-font-label-tracking);
   text-transform: uppercase;
-  color: var(--nms-color-accent);
+  color: var(--nms-color-accent-text);
 }
 
 .nms-btn {

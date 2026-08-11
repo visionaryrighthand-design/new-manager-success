@@ -27,7 +27,7 @@
   font-size: 0.75rem;
   text-transform: uppercase;
   letter-spacing: 0.08em;
-  color: var(--nms-color-accent);
+  color: var(--nms-color-accent-text);
   font-weight: 700;
 }
 
@@ -69,7 +69,7 @@
   padding: 3px 9px;
   border-radius: var(--nms-radius-pill);
   background: var(--nms-color-accent-soft);
-  color: var(--nms-color-accent);
+  color: var(--nms-color-accent-text);
   white-space: nowrap;
 }
 .message[data-kind='inactivity-alert'] .kind {

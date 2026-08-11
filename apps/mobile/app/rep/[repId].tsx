@@ -829,7 +829,7 @@ const styles = StyleSheet.create({
     overflow: 'hidden',
   },
   listRule: { position: 'absolute', left: 0, top: 0, bottom: 0, width: 2, backgroundColor: colors.accent },
-  listOrdinal: { ...type.numeric, fontSize: 12, lineHeight: 16, color: colors.accent },
+  listOrdinal: { ...type.numeric, fontSize: 12, lineHeight: 16, color: colors.accentText },
   listContent: { flex: 1, gap: space[2] },
   listLabel: { ...type.label, color: colors.bright },
   listText: { ...type.item, fontSize: 17, lineHeight: 24, fontWeight: '600', color: colors.fg },
@@ -837,7 +837,7 @@ const styles = StyleSheet.create({
   listItemDense: { paddingVertical: space[3] },
   listTextDense: { fontSize: 15, lineHeight: 21 },
   listTextQuoted: { fontStyle: 'italic' },
-  listQuoteMark: { color: colors.accent, fontStyle: 'normal', fontWeight: '800' },
+  listQuoteMark: { color: colors.accentText, fontStyle: 'normal', fontWeight: '800' },
 
   voiceover: { flexDirection: 'row', alignItems: 'center', gap: space[3], marginVertical: space[2] },
   voiceoverBtn: {
@@ -854,7 +854,7 @@ const styles = StyleSheet.create({
   voiceoverTime: { ...type.numeric, fontSize: 11, color: colors.fgSubtle },
 
   curveballLabel: { ...type.label, color: colors.alert },
-  quizLabel: { ...type.label, color: colors.accent },
+  quizLabel: { ...type.label, color: colors.accentText },
   fieldNoteLabel: { ...type.label, color: colors.bright },
 
   scenario: { ...type.item, color: colors.fgMuted },
