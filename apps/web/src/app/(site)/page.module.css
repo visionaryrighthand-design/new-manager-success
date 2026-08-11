@@ -1,5 +1,18 @@
+/*
+ * One rhythm between sections, not two.
+ *
+ * This was 80px top and bottom, so two adjacent sections stacked 160px of
+ * empty space between them — identical on a 430px phone and a 1280px desktop,
+ * and on the phone that is more than a third of a screen of nothing between
+ * one idea and the next.
+ *
+ * Symmetric padding is kept rather than collapsing one side with an
+ * adjacent-sibling rule: these sections are a mix of <section> and <div>, some
+ * nested, so `.section + .section` would silently miss half of them and the
+ * page would space unevenly.
+ */
 .section {
-  padding-block: var(--nms-space-11);
+  padding-block: clamp(var(--nms-space-7), 5vw, var(--nms-space-9));
 }
 
 .h2 {
@@ -31,7 +44,9 @@
 .heroInner {
   display: grid;
   gap: var(--nms-space-10);
-  padding-block: var(--nms-space-11) var(--nms-space-12);
+  /* Slightly more than the gap between sections, because the hero is a
+     different surface and the transition out of it should read as one. */
+  padding-block: clamp(var(--nms-space-8), 5vw, var(--nms-space-10));
 }
 
 .heroCopy { max-width: 40rem; }

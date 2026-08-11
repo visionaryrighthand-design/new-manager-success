@@ -88,7 +88,7 @@ export default function HomePage() {
           </div>
           <div className={styles.gapBody}>
             <p>
-              A talented person does exceptional work. Leadership notices. They get promoted —
+              A talented person does exceptional work. Leadership notices. They get promoted,
               usually because they’re the best at what they do. Then they’re handed a team and
               expected to figure out the rest.
             </p>
