@@ -42,7 +42,8 @@ Each entry gives you a clip id, the stage direction, any on-screen text, and
 **the exact narration to paste in** — already flattened to a single paragraph,
 because the line breaks in the source are for reading, not for speaking.
 
-Rep 1.1 is **7 clips, ~3 minutes, 425 words.** That is the whole demo.
+Rep 1.1 is **7 clips, ~3 minutes, 425 words** in full. For a demo you only need
+the first three — see *Demo order* below.
 
 ---
 
@@ -90,17 +91,42 @@ the sound off, and a video-only lesson excludes them entirely.
 
 ## Demo order, if you are short on time
 
-1. **`m1-r1-b1`** — the opener. *"Congratulations on your promotion… nobody
-   actually trained you for it."* 50 words, ~20 seconds. On its own this shows
-   the format.
-2. **`m1-r1-b2`** — the overlay beat, so you can show avatar plus on-screen
-   title working together.
-3. Leave the rest as text cards and **swipe straight into the Curveball.** The
-   contrast between a talking head and a decision you have to make is the
-   pitch. Showing all seven clips actually weakens it.
+Render the first three clips and stop. That gets you to the Curveball, which
+is the moment worth showing.
 
-A three-clip demo is stronger than a seven-clip one, and costs about a minute
-of render.
+| # | Card | Render? |
+|---|---|---|
+| 1 | `m1-r1-b1` — the opener, *"Congratulations on your promotion…"* | ~20s |
+| 2 | `m1-r1-b2` — overlay beat: avatar plus on-screen title, *The Invisible Promotion* | ~35s |
+| 3 | `m1-r1-b3` — *"Let's talk about what actually changed…"* | ~40s |
+| 4 | the three myths | **no** — native build-list |
+| 5 | ★ **Curveball** — *Separating your old job from your new one* | **no** — native |
+
+**Do not stop after b2.** Beat 3 ends on *"most new managers walk into it
+believing at least one of these three things"* — it is the sentence that sets
+up the myths card. Without it the myths arrive from nowhere and the Curveball
+lands on nothing.
+
+**The myths card is not a missing clip.** It is a build-list: the items animate
+in one at a time, natively. It reads better as type, costs no credits, and is
+the beat most likely to get reworded after this demo — which is exactly why it
+should not be baked into an MP4.
+
+### The point to make while Tom is watching
+
+The Curveball is *"your old workload has not been reassigned yet, and your
+calendar now also has four one-on-ones."*
+
+That is **Myth #3 — "I can still do my old job and manage at the same time"** —
+from the card immediately before it. The learner reads the myth, nods at it,
+swipes, and is handed a calendar that disproves it. Ninety seconds apart, and
+the costly answer's feedback says *"This is Myth #3 in action"* out loud.
+
+That pairing is the pitch. Not "a talking head, and separately a quiz" — a
+claim, then an immediate test of whether they actually believed it. Rendering
+all seven clips buries it.
+
+Three clips, ~95 seconds of render.
 
 ---
 
