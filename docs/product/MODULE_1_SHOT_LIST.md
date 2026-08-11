@@ -4,7 +4,7 @@
 
 # Avatar shot list — New Manager Success, Module 1
 
-**57 clips · ~24 minutes of footage · 3531 words**
+**56 clips · ~23 minutes of footage · 3432 words**
 
 Render **one clip per beat**, not one video per Rep. The app plays a card
 per beat and a Curveball interrupts between them — a single long video in a
@@ -18,7 +18,7 @@ Narration is flattened to one paragraph and ready to paste. Do not re-wrap it.
 
 ## Rep 1.1 — The Invisible Promotion
 
-6 clips · 150s · 375 words
+5 clips · 110s · 276 words
 
 
 ### `m1-r1-b1`  ·  ~20s  ·  50 words
