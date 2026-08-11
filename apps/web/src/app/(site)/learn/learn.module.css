@@ -1,0 +1,137 @@
+.wrap { padding-block: var(--pr-space-10) var(--pr-space-11); }
+
+.title {
+  margin-top: var(--pr-space-3);
+  font-size: clamp(2rem, 1.4rem + 2.6vw, 3rem);
+  line-height: 1.05;
+  letter-spacing: -0.035em;
+}
+
+.sub {
+  display: block;
+  font-size: 0.52em;
+  font-weight: 600;
+  color: var(--pr-color-fg-muted);
+  letter-spacing: -0.02em;
+  margin-top: var(--pr-space-2);
+}
+
+.lede {
+  margin-top: var(--pr-space-5);
+  max-width: 62ch;
+  color: var(--pr-color-fg-muted);
+  font-size: 1.0625rem;
+}
+
+.meta {
+  margin-top: var(--pr-space-6);
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--pr-space-2);
+}
+.meta span {
+  font-size: var(--pr-font-caption-size);
+  padding: 5px 12px;
+  border-radius: var(--pr-radius-pill);
+  background: var(--pr-color-surface);
+  border: 1px solid var(--pr-color-border);
+  color: var(--pr-color-fg-muted);
+}
+
+.reps {
+  list-style: none;
+  margin: var(--pr-space-9) 0 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--pr-space-3);
+}
+
+.rep {
+  display: grid;
+  grid-template-columns: 2.75rem 1fr auto;
+  gap: var(--pr-space-4);
+  align-items: start;
+  padding: var(--pr-space-5);
+  border: 1px solid var(--pr-color-border);
+  border-radius: var(--pr-radius-lg);
+  background: var(--pr-color-surface);
+  text-decoration: none;
+  transition:
+    border-color var(--pr-duration-quick) var(--pr-ease-standard),
+    transform var(--pr-duration-quick) var(--pr-ease-standard);
+}
+.rep:hover {
+  border-color: var(--pr-color-accent);
+  transform: translateY(-1px);
+}
+
+.repNum {
+  font-family: var(--pr-font-mono);
+  font-weight: 700;
+  font-size: 0.85rem;
+  color: var(--pr-color-accent);
+  padding-top: 3px;
+}
+
+.repBody { display: flex; flex-direction: column; gap: 5px; min-width: 0; }
+.repTitle { font-weight: 650; font-size: 1.0625rem; letter-spacing: -0.01em; }
+.repSubtitle { font-size: var(--pr-font-caption-size); color: var(--pr-color-fg-subtle); }
+.repHook { color: var(--pr-color-fg-muted); font-size: 0.95rem; }
+
+.repTags {
+  margin-top: var(--pr-space-2);
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--pr-space-3);
+  font-size: 0.78rem;
+  color: var(--pr-color-fg-subtle);
+}
+
+.chevron { color: var(--pr-color-fg-subtle); padding-top: 2px; }
+
+/* ---- Roadmap ----------------------------------------------------------- */
+
+.next { margin-top: var(--pr-space-11); }
+
+.nextTitle {
+  font-size: 1.5rem;
+  letter-spacing: -0.025em;
+}
+
+.roadmap {
+  list-style: none;
+  margin: var(--pr-space-5) 0 0;
+  padding: 0;
+  border-top: 1px solid var(--pr-color-border);
+}
+.roadmap li {
+  display: grid;
+  grid-template-columns: 2.5rem 1fr auto;
+  gap: var(--pr-space-4);
+  align-items: center;
+  padding: var(--pr-space-4) var(--pr-space-1);
+  border-bottom: 1px solid var(--pr-color-border);
+  color: var(--pr-color-fg-muted);
+}
+
+.roadNum {
+  font-family: var(--pr-font-mono);
+  font-size: 0.8rem;
+  color: var(--pr-color-fg-subtle);
+}
+
+.roadStatus {
+  font-size: 0.72rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--pr-color-fg-subtle);
+}
+.roadmap li[data-status='in-production'] .roadStatus { color: var(--pr-color-accent); }
+
+.roadNote {
+  margin-top: var(--pr-space-5);
+  max-width: 60ch;
+  font-size: var(--pr-font-caption-size);
+  color: var(--pr-color-fg-subtle);
+}

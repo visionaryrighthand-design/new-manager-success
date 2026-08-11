@@ -1,0 +1,130 @@
+/*
+ * Global styles. Everything visual resolves to a --pr-* token from
+ * @promoted/brand — no raw hex values below this import, so a brand change is
+ * a one-file change.
+ */
+@import '@promoted/brand/tokens.css';
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  margin: 0;
+  /* Explicit, not inherited: a transparent body borrows the host's ground. */
+  background: var(--pr-color-bg);
+  color: var(--pr-color-fg);
+  font-family: var(--pr-font-text);
+  font-size: var(--pr-font-body-size);
+  line-height: var(--pr-font-body-line);
+  -webkit-font-smoothing: antialiased;
+}
+
+h1, h2, h3, h4 {
+  font-family: var(--pr-font-display);
+  margin: 0;
+  text-wrap: balance;
+}
+
+p { margin: 0; text-wrap: pretty; }
+img, svg { max-width: 100%; }
+
+a {
+  color: inherit;
+  text-decoration-color: color-mix(in srgb, currentColor 40%, transparent);
+  text-underline-offset: 3px;
+}
+
+button, input, textarea, select {
+  font: inherit;
+  color: inherit;
+}
+
+:focus-visible {
+  outline: 2px solid var(--pr-color-accent);
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* ---- Shared primitives ------------------------------------------------- */
+
+.pr-shell {
+  width: 100%;
+  max-width: 1140px;
+  margin-inline: auto;
+  padding-inline: var(--pr-space-6);
+}
+
+.pr-eyebrow {
+  font-size: var(--pr-font-label-size);
+  font-weight: var(--pr-font-label-weight);
+  letter-spacing: var(--pr-font-label-tracking);
+  text-transform: uppercase;
+  color: var(--pr-color-accent);
+}
+
+.pr-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--pr-space-2);
+  padding: var(--pr-space-3) var(--pr-space-6);
+  border: 1px solid transparent;
+  border-radius: var(--pr-radius-pill);
+  background: var(--pr-color-accent);
+  color: var(--pr-color-on-accent);
+  font-weight: 600;
+  text-decoration: none;
+  cursor: pointer;
+  transition: background var(--pr-duration-quick) var(--pr-ease-standard),
+    transform var(--pr-duration-instant) var(--pr-ease-standard);
+}
+.pr-btn:hover { background: var(--pr-color-accent-hover); }
+.pr-btn:active { transform: translateY(1px); }
+.pr-btn[disabled] { opacity: 0.45; cursor: not-allowed; }
+
+.pr-btn--ghost {
+  background: transparent;
+  color: var(--pr-color-fg);
+  border-color: var(--pr-color-border-strong);
+}
+.pr-btn--ghost:hover { background: var(--pr-color-surface); }
+
+.pr-btn--volt {
+  background: var(--pr-color-volt);
+  color: var(--pr-color-on-volt);
+}
+.pr-btn--volt:hover { background: var(--pr-color-volt); filter: brightness(1.06); }
+
+.pr-card {
+  background: var(--pr-color-surface);
+  border: 1px solid var(--pr-color-border);
+  border-radius: var(--pr-radius-lg);
+  padding: var(--pr-space-6);
+}
+
+.pr-visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}

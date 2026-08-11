@@ -1,0 +1,104 @@
+.wrap { padding-block: var(--pr-space-10) var(--pr-space-11); max-width: 54rem; }
+
+.title {
+  margin-top: var(--pr-space-3);
+  font-size: clamp(2rem, 1.4rem + 2.6vw, 3rem);
+  line-height: 1.05;
+  letter-spacing: -0.035em;
+  max-width: 20ch;
+}
+
+.lede {
+  margin-top: var(--pr-space-5);
+  max-width: 62ch;
+  color: var(--pr-color-fg-muted);
+  font-size: 1.0625rem;
+}
+
+.steps {
+  list-style: none;
+  margin: var(--pr-space-10) 0 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--pr-space-6);
+}
+.steps li { display: flex; gap: var(--pr-space-5); align-items: flex-start; }
+
+.stepNum {
+  flex-shrink: 0;
+  width: 2rem;
+  height: 2rem;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  background: var(--pr-color-accent);
+  color: var(--pr-color-on-accent);
+  font-family: var(--pr-font-mono);
+  font-weight: 700;
+  font-size: 0.85rem;
+}
+
+.stepTitle { font-size: 1.15rem; letter-spacing: -0.02em; }
+.stepBody { margin-top: var(--pr-space-2); color: var(--pr-color-fg-muted); max-width: 60ch; }
+
+.section {
+  margin-top: var(--pr-space-11);
+  padding-top: var(--pr-space-7);
+  border-top: 1px solid var(--pr-color-border);
+}
+
+.h2 { font-size: 1.55rem; letter-spacing: -0.025em; }
+
+.categories { margin-top: var(--pr-space-6); display: grid; gap: var(--pr-space-4); }
+
+.category {
+  padding: var(--pr-space-5);
+  border-radius: var(--pr-radius-lg);
+  border: 1px solid var(--pr-color-border);
+  background: var(--pr-color-surface);
+}
+.category h3 { font-size: 1.05rem; letter-spacing: -0.015em; }
+.category p { margin-top: var(--pr-space-2); font-size: 0.92rem; color: var(--pr-color-fg-muted); line-height: 1.55; }
+
+@media (min-width: 780px) {
+  .categories { grid-template-columns: repeat(3, 1fr); }
+}
+
+.pilotGrid { margin-top: var(--pr-space-6); display: grid; gap: var(--pr-space-4); }
+
+.pilotCard {
+  padding: var(--pr-space-5);
+  border-radius: var(--pr-radius-lg);
+  border: 1px solid var(--pr-color-border);
+  background: var(--pr-color-surface);
+}
+.pilotCard ul { margin: var(--pr-space-3) 0 0; padding-inline-start: 1.15em; }
+.pilotCard li { color: var(--pr-color-fg-muted); font-size: 0.92rem; line-height: 1.7; }
+
+.pilotLabel {
+  font-size: 0.7rem;
+  font-weight: 800;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--pr-color-accent);
+}
+.pilotCard:last-child .pilotLabel { color: var(--pr-color-fg-subtle); }
+
+@media (min-width: 700px) {
+  .pilotGrid { grid-template-columns: 1fr 1fr; }
+}
+
+.honest {
+  margin-top: var(--pr-space-6);
+  padding: var(--pr-space-4);
+  border-left: 3px solid var(--pr-color-volt);
+  background: var(--pr-color-surface);
+  border-radius: var(--pr-radius-sm);
+  font-size: 0.92rem;
+  line-height: 1.6;
+  color: var(--pr-color-fg-muted);
+  max-width: 66ch;
+}
+
+.cta { margin-top: var(--pr-space-10); display: flex; flex-wrap: wrap; gap: var(--pr-space-3); }
