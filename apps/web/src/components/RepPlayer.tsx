@@ -166,7 +166,15 @@ export function RepPlayer({ rep, nextRepId }: RepPlayerProps) {
   const gated = cards.length < allCards.length && active === cards.length - 1;
 
   return (
-    <div className={styles.player} data-surface="feed">
+    <div
+      className={styles.player}
+      data-surface="feed"
+      // The wash belongs to the whole screen, not to the card. Scoped to the
+      // card it left a seam at the header, and half the effect is the chrome
+      // changing colour with the content.
+      data-card={cards[active]?.kind ?? 'beat'}
+      data-moment={cards[active]?.kind === 'beat' && cards[active]?.beat.type === 'moment'}
+    >
       <header className={styles.header}>
         <Link href="/learn" className={styles.back} aria-label="Back to Module 1">
           ←

@@ -16,6 +16,90 @@
   color: var(--nms-color-fg);
 }
 
+/*
+ * The light in the room, keyed to the card the learner is on.
+ *
+ * A large soft gradient behind everything, including the header, so the whole
+ * screen changes temperature as they scroll rather than just the middle of it.
+ * Position and tint move per card kind; the change lands as they arrive, which
+ * is the point — you feel a Curveball coming before you read the label.
+ *
+ * Deliberately near-invisible in isolation. Screenshot one card and it is
+ * barely there; scroll six and the feed breathes. Anything strong enough to
+ * notice on a single card is a pattern by the fourth.
+ */
+.player::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  background:
+    radial-gradient(
+      var(--wash-size, 84% 46%) at var(--wash-at, 18% 24%),
+      var(--wash, color-mix(in srgb, var(--nms-color-accent) 14%, transparent)),
+      transparent 72%
+    );
+}
+
+/* Everything above the wash. */
+.player > * { position: relative; z-index: 1; }
+
+/* Prose and reading cards: a cool lift from the top left. The quietest. */
+.player[data-card='beat'] { --wash-at: 18% 24%; }
+
+/* A Gut Check is a beat of white light. It reads as a pause, not a test. */
+.player[data-card='gutCheck'] {
+  --wash: color-mix(in srgb, var(--nms-color-bright) 8%, transparent);
+  --wash-at: 80% 28%;
+}
+
+/* A Curveball runs warm, and the temperature changes before a word is read. */
+.player[data-card='curveball'] {
+  --wash: color-mix(in srgb, var(--nms-color-alert) 16%, transparent);
+  --wash-at: 50% 8%;
+  --wash-size: 104% 54%;
+}
+
+/* The quiz is cool and low: a desk lamp rather than a spotlight. */
+.player[data-card='quiz'] {
+  --wash: color-mix(in srgb, var(--nms-color-accent) 12%, transparent);
+  --wash-at: 24% 84%;
+}
+
+/* The Field Note is the most personal card in a Rep. Soft, wide, centred. */
+.player[data-card='fieldNote'] {
+  --wash: color-mix(in srgb, var(--nms-color-bright) 6%, transparent);
+  --wash-at: 50% 48%;
+  --wash-size: 116% 64%;
+}
+
+/* The end. The only card allowed to feel like an arrival. */
+.player[data-card='summary'] {
+  --wash: color-mix(in srgb, var(--nms-color-accent) 22%, transparent);
+  --wash-at: 50% 92%;
+  --wash-size: 128% 72%;
+}
+
+/* A moment paints its own glow, keyed to the payoff line. Two would fight. */
+.player[data-moment='true']::before { opacity: 0; }
+
+/*
+ * Film grain. Two jobs: large soft gradients band visibly on 8-bit phone
+ * panels and noise hides it, and a flat black rectangle reads as "unfinished"
+ * where a black rectangle with texture reads as a surface.
+ */
+.player::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: 3;
+  pointer-events: none;
+  opacity: 0.035;
+  mix-blend-mode: overlay;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3'/%3E%3C/filter%3E%3Crect width='140' height='140' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
 .header {
   display: flex;
   align-items: center;
@@ -141,7 +225,22 @@
  * larger than the snapport, which the browser lets you scroll through freely
  * rather than fighting. That is why `mandatory` is safe here.
  */
+/*
+ * The light in the room changes with the card.
+ *
+ * The feed used to be twelve identical flat-black screens in a row, which is
+ * why scrolling did not feel like moving: in a real feed every swipe replaces
+ * the whole image. Each card kind now carries its own wash — a large, soft
+ * gradient placed differently and tinted differently per kind — so the
+ * background shifts underneath the learner before they have read a word.
+ *
+ * Deliberately near-invisible in isolation. Screenshot any single card and the
+ * wash is barely there; scroll through six and the feed breathes. Anything
+ * strong enough to notice on one card is a pattern by the fourth.
+ */
 .page {
+  position: relative;
+  isolation: isolate;
   scroll-snap-align: start;
   scroll-snap-stop: always;
   min-height: 100%;
@@ -150,6 +249,8 @@
   justify-content: center;
   padding: var(--nms-space-5) var(--nms-space-5) var(--nms-space-10);
 }
+
+
 
 /*
  * Cards compose themselves as they arrive, not all at once on mount.
