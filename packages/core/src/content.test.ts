@@ -208,3 +208,33 @@ describe('moment parsing', () => {
     }
   });
 });
+
+describe('avatar footage', () => {
+  test('no two beats point at the same video file', () => {
+    const owners = new Map<string, string>();
+    const clashes: string[] = [];
+    for (const rep of module01.reps) {
+      for (const beat of rep.beats) {
+        if (!beat.videoUrl) continue;
+        const here = `${rep.number}/${beat.id}`;
+        const first = owners.get(beat.videoUrl);
+        if (first) clashes.push(`${here} duplicates ${first}`);
+        else owners.set(beat.videoUrl, here);
+      }
+    }
+    assert.deepEqual(clashes, []);
+  });
+
+  test('every wired clip is a direct file URL, not a share page', () => {
+    for (const rep of module01.reps) {
+      for (const beat of rep.beats) {
+        if (!beat.videoUrl) continue;
+        assert.match(
+          beat.videoUrl,
+          /^https:\/\/\S+\.(mp4|m3u8)$/,
+          `${rep.number}/${beat.id}: not a direct MP4 or HLS URL`,
+        );
+      }
+    }
+  });
+});
