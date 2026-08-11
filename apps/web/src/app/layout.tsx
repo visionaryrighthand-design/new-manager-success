@@ -21,6 +21,13 @@ export const metadata: Metadata = {
     title: `${brand.name} — ${brand.tagline}`,
     description: brand.description,
     type: 'website',
+    images: [{ url: '/og-image.png', width: 1200, height: 630, alt: brand.tagline }],
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: `${brand.name} — ${brand.tagline}`,
+    description: brand.description,
+    images: ['/og-image.png'],
   },
   icons: { icon: '/favicon.svg' },
 };
