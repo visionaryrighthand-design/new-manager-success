@@ -62,7 +62,16 @@ npm run narration -w @nms/content -- m1-r1      # one Rep
 npm run narration -w @nms/content                # all of Module 1
 npm run narration -w @nms/content -- --md        # to hand to a VO artist
 npm run narration -w @nms/content -- --csv       # for a production tracker
+npm run narration -w @nms/content -- --index     # every take id, for naming files
 ```
+
+Three generated documents are committed and kept current:
+
+| File | What it is for |
+|---|---|
+| `MODULE_1_TAKE_INDEX.md` | One row per take. Keep it open while exporting audio and name each file as it lands |
+| `MODULE_1_NARRATION_LIST.md` | Every line in full, ready to read |
+| `MODULE_1_NARRATION_LIST.csv` | The same, for a production tracker |
 
 Each entry gives a take id, the delivery note, any on-screen text, and **the
 exact line to read** — already flattened to a single paragraph, because the

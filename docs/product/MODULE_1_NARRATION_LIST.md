@@ -1,7 +1,3 @@
-
-> @nms/content@0.1.0 narration
-> node --experimental-strip-types scripts/narration-list.ts --md
-
 # Voiceover list — New Manager Success, Module 1
 
 **57 takes · ~23 min of audio · 3493 words**

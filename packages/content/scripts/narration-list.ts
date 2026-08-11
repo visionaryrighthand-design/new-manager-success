@@ -5,6 +5,7 @@
  *   npm run narration -w @nms/content -- m1-r1     # one Rep
  *   npm run narration -w @nms/content -- --csv     # CSV for a production tracker
  *   npm run narration -w @nms/content -- --md      # markdown, to hand to a VO artist
+ *   npm run narration -w @nms/content -- --index   # one line per take, for naming files
  *
  * Emits one row per beat that needs a voiceover, with the exact line to read.
  * Beats that need no recording are listed too, and marked — build-lists,
@@ -27,6 +28,7 @@ import {
 const args = process.argv.slice(2);
 const asCsv = args.includes('--csv');
 const asMarkdown = args.includes('--md');
+const asIndex = args.includes('--index');
 const repArg = args.find((a) => !a.startsWith('--'));
 
 const reps: Rep[] = repArg
@@ -82,7 +84,35 @@ const rows = reps.flatMap((rep) =>
   })),
 );
 
-if (asMarkdown) {
+if (asIndex) {
+  /*
+   * The filename index. One row per take, so the person exporting audio can
+   * keep it open and name each file as it lands. The opening words are there
+   * to identify the take by ear — a production tool names its exports after
+   * the session, not after the beat, and matching them up afterwards by
+   * listening is the step this is meant to remove.
+   */
+  const takes = rows.filter((r) => r.take);
+  console.log('# Take index — New Manager Success, Module 1\n');
+  console.log(`${takes.length} takes. **The take id is the filename.** Save each recording as`);
+  console.log('`<take>.mp3` — the app looks these ids up, and every other document in this');
+  console.log('repo refers to a beat by the same id.\n');
+  console.log('Full lines are in `MODULE_1_NARRATION_LIST.md`.\n');
+
+  let currentRep = '';
+  for (const r of takes) {
+    if (r.rep !== currentRep) {
+      currentRep = r.rep;
+      const rep = reps.find((x) => x.number === r.rep)!;
+      console.log(`\n## Rep ${rep.number} — ${rep.title}\n`);
+      console.log('| File | Length | Words | Opens on |');
+      console.log('|---|---|---|---|');
+    }
+    const opening = r.narration.split(' ').slice(0, 9).join(' ');
+    console.log(`| \`${r.take}.mp3\` | ${r.seconds}s | ${r.words} | ${opening}… |`);
+  }
+  console.log('');
+} else if (asMarkdown) {
   const toRecord = rows.filter((r) => r.status === 'to record');
   const totalSeconds = toRecord.reduce((n, r) => n + r.seconds, 0);
   const totalWords = toRecord.reduce((n, r) => n + r.words, 0);

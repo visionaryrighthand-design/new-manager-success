@@ -1,7 +1,3 @@
-
-> @nms/content@0.1.0 narration
-> node --experimental-strip-types scripts/narration-list.ts --csv
-
 rep,take,type,direction,seconds,words,status,narration
 "1.1","m1-r1-b1","avatar","full screen, direct to camera","20","50","to record","Congratulations on your promotion. You've worked hard for this. You've been performing at a high level, and someone noticed. That's real, and it matters. But here's what most people don't tell you when they hand you that new title: The job you just accepted? Nobody actually trained you for it."
 "1.1","","reading","","28","88","no audio — reading card, by decision","Most promotions into management follow the same pattern. A talented employee does exceptional work. Leadership notices. They get promoted — usually because they're the best at what they do. And then they're handed a team, maybe a pay increase, and expected to figure out the rest. No roadmap. No instruction manual. No real preparation. The title is visible. The new paycheck is visible. But the actual job description of “manager” — what it truly requires of you — that part is invisible. And you're expected to just... know."

@@ -92,6 +92,7 @@ edit cost a re-render, and half the real usage has the sound off.
 npm run report:content -w @nms/content   # per-Rep timing + validation
 npm run report:ip -w @nms/content        # every change from a locked script
 npm run narration -w @nms/content -- m1-r1  # voiceover list for one Rep
+npm run narration -w @nms/content -- --index # every take id, for naming audio files
 ```
 
 ## Two things to read before shipping
