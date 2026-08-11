@@ -243,9 +243,48 @@ export const rep05: Rep = {
       'What is your trigger? Name the specific situation at work that most reliably spikes your frustration.',
     placeholder: 'Be specific. “When people are late” is more useful than “disrespect”.',
     suggestedMinChars: 50,
+    followUps: [
+      {
+        curveballId: 'm1-r5-cb1',
+        choiceId: 'a',
+        prompt:
+          'Earlier you defended the process on the spot. Replay the ten seconds before you spoke. What were you actually protecting, the process or yourself?',
+        placeholder: 'Nobody reads this. The honest answer is the useful one.',
+      },
+      {
+        curveballId: 'm1-r5-cb1',
+        choiceId: 'b',
+        prompt:
+          'Earlier you asked them to walk you through where it breaks down. That took self-regulation you already have. Where does that same calm disappear? Name the situation.',
+        placeholder: 'You managed it once. What is different in the other case?',
+      },
+      {
+        curveballId: 'm1-r5-cb1',
+        choiceId: 'c',
+        prompt:
+          'Earlier you took it offline. Be honest about the intent: were you protecting the meeting, or buying yourself time to cool down? What happened to the point they raised?',
+        placeholder: 'Both can be true. Say which was bigger.',
+      },
+      {
+        curveballId: 'm1-r5-cb1',
+        choiceId: 'd',
+        prompt:
+          'Earlier you said nothing and raised the tone privately afterwards. What did the rest of the room learn in that silence about whether it is safe to push back?',
+        placeholder: 'Answer as one of them, not as you.',
+      },
+    ],
   },
 
   contentAdditions: [
+    {
+      ref: 'A6',
+      kind: 'field-note',
+      where: 'Field Note, conditional on the Curveball answer',
+      what: 'Four alternative prompts, one per Curveball choice, replacing the default prompt for anyone who answered.',
+      reason:
+        'Same as A5 in Rep 1.1. In this Rep the pairing is tighter: the Curveball is about the gap between stimulus and response, and the follow-up asks the learner to examine the gap they just demonstrated.',
+      status: 'proposed',
+    },
     {
       ref: 'A3',
       kind: 'gut-check',

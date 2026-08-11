@@ -150,12 +150,35 @@ export interface Curveball {
  */
 export interface FieldNote {
   id: string;
+  /** Asked when the learner skipped every Curveball, or none has a follow-up. */
   prompt: string;
   placeholder: string;
   /** Below this, the UI nudges for more. Never blocks submission. */
   suggestedMinChars: number;
   /** Topic tag consumed by the 1:1 question generator. */
   topic: string;
+  /**
+   * Prompts that depend on what the learner actually chose earlier.
+   *
+   * This is the only place in a Rep where a decision has a consequence. A
+   * Curveball currently costs nothing: you pick, you read why, you scroll on.
+   * Here the choice comes back and asks the learner to live with it — "you
+   * said you would absorb the extra work; it is Friday, what slipped?" — which
+   * is the difference between a quiz about management and a rehearsal of it.
+   *
+   * First match in declaration order wins, so the author controls priority
+   * when a Rep has more than one Curveball.
+   */
+  followUps?: FieldNoteFollowUp[];
+}
+
+export interface FieldNoteFollowUp {
+  curveballId: string;
+  choiceId: string;
+  /** Replaces `FieldNote.prompt` entirely when this choice was made. */
+  prompt: string;
+  /** Replaces `FieldNote.placeholder`, where the follow-up wants a different shape of answer. */
+  placeholder?: string;
 }
 
 /**

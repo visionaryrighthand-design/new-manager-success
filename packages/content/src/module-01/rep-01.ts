@@ -218,9 +218,48 @@ export const rep01: Rep = {
       'What is one thing about your new role that nobody actually explained to you?',
     placeholder: 'Two or three sentences is plenty.',
     suggestedMinChars: 60,
+    followUps: [
+      {
+        curveballId: 'm1-r1-cb1',
+        choiceId: 'a',
+        prompt:
+          'Earlier you said you would absorb the extra work and start managing properly once it was done. It is Friday. What actually slipped this week, and who noticed?',
+        placeholder: 'Be specific. The vague version is the one that repeats.',
+      },
+      {
+        curveballId: 'm1-r1-cb1',
+        choiceId: 'b',
+        prompt:
+          'Earlier you said you would take the list to your boss. Write the list. What are the three things you most need off your plate, and what happens to each one if nobody moves it?',
+        placeholder: 'Three lines is enough. You are going to need them.',
+      },
+      {
+        curveballId: 'm1-r1-cb1',
+        choiceId: 'c',
+        prompt:
+          'Earlier you said you would push the one-on-ones to clear the decks. Picture your newest team member three weeks from now. What have they worked out about where they rank?',
+        placeholder: 'Answer as them, not as you.',
+      },
+      {
+        curveballId: 'm1-r1-cb1',
+        choiceId: 'd',
+        prompt:
+          'Earlier you said you would hand the old work to your team. Pick one piece of it. What does that person need to know that is currently only in your head?',
+        placeholder: 'If the list is long, that is the finding.',
+      },
+    ],
   },
 
   contentAdditions: [
+    {
+      ref: 'A5',
+      kind: 'field-note',
+      where: 'Field Note, conditional on the Curveball answer',
+      what: 'Four alternative prompts, one per Curveball choice, replacing the default prompt for anyone who answered.',
+      reason:
+        'The Curveball cost nothing: you picked, you read why, you scrolled on. Bringing the choice back at the end is the only place in a Rep where a decision has a consequence, and it is the difference between a quiz about management and a rehearsal of it.',
+      status: 'proposed',
+    },
     {
       ref: 'A1',
       kind: 'gut-check',

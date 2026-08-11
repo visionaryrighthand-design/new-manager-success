@@ -18,7 +18,14 @@ import type {
   QuizQuestion,
   Rep,
 } from '@nms/content';
-import { estimateBeatSeconds, feedCards, splitListItem, splitMomentLines } from '@nms/content';
+import {
+  estimateBeatSeconds,
+  feedCards,
+  fieldNotePrompt,
+  splitListItem,
+  splitMomentLines,
+} from '@nms/content';
+import { XP } from '@nms/core';
 import styles from './RepPlayer.module.css';
 
 /**
@@ -57,6 +64,19 @@ export function RepPlayer({ rep, nextRepId }: RepPlayerProps) {
   const [curveballChoices, setCurveballChoices] = useState<Record<string, string>>({});
   const [fieldNote, setFieldNote] = useState('');
   const [active, setActive] = useState(0);
+  // Scoring is real — the rules live in @nms/core and the Corner digests use
+  // them. It was simply never shown in the feed, which threw away the half of
+  // the DNA that makes a lesson feel like progress rather than reading.
+  const [xp, setXp] = useState(0);
+  const [award, setAward] = useState<{ amount: number; key: number } | null>(null);
+  const awardKey = useRef(0);
+
+  const earn = useCallback((amount: number) => {
+    if (amount <= 0) return;
+    setXp((n) => n + amount);
+    awardKey.current += 1;
+    setAward({ amount, key: awardKey.current });
+  }, []);
   // Browsers block audio until a gesture, so sound stays off until the learner
   // starts a card themselves. After that it follows them down the feed.
   const [soundOn, setSoundOn] = useState(false);
@@ -130,6 +150,14 @@ export function RepPlayer({ rep, nextRepId }: RepPlayerProps) {
     }
   }, [active, allCards.length]);
 
+  // Finishing the Rep is worth more than any single card in it.
+  const scored = useRef(false);
+  useEffect(() => {
+    if (cards[active]?.kind !== 'summary' || scored.current) return;
+    scored.current = true;
+    earn(XP.repCompleted);
+  }, [active, cards, earn]);
+
   const correctCount = rep.quiz.filter((q) => {
     const chosen = q.options.find((o) => o.id === answers[q.id]);
     return chosen?.correct;
@@ -152,13 +180,17 @@ export function RepPlayer({ rep, nextRepId }: RepPlayerProps) {
             type="button"
             className={styles.soundBtn}
             aria-pressed={soundOn}
+            aria-label={soundOn ? 'Turn sound off' : 'Turn sound on'}
             onClick={() => setSoundOn((on) => !on)}
           >
-            {soundOn ? 'Sound on' : 'Sound off'}
+            <SpeakerIcon on={soundOn} />
           </button>
         ) : null}
-        <span className={styles.counter}>
-          {active + 1}/{allCards.length}
+        {/* No card counter: the progress bar directly below already says where
+            the learner is, and on a 430px header something had to go. */}
+        <span className={styles.xpCounter} aria-label={`${xp} XP earned`}>
+          {xp}
+          <span aria-hidden> XP</span>
         </span>
       </header>
 
@@ -189,19 +221,48 @@ export function RepPlayer({ rep, nextRepId }: RepPlayerProps) {
               soundOn={soundOn}
               onSoundOn={() => setSoundOn(true)}
               answers={answers}
-              onAnswer={(qid, oid) => setAnswers((a) => (a[qid] ? a : { ...a, [qid]: oid }))}
+              onAnswer={(qid, oid) => {
+                if (answers[qid]) return;
+                setAnswers((a) => ({ ...a, [qid]: oid }));
+                const correct = rep.quiz
+                  .find((q) => q.id === qid)
+                  ?.options.find((o) => o.id === oid)?.correct;
+                if (correct) earn(XP.quizQuestionCorrect);
+              }}
               curveballChoices={curveballChoices}
-              onCurveball={(cid, choiceId) =>
-                setCurveballChoices((c) => (c[cid] ? c : { ...c, [cid]: choiceId }))
-              }
+              onCurveball={(cid, choiceId) => {
+                if (curveballChoices[cid]) return;
+                setCurveballChoices((c) => ({ ...c, [cid]: choiceId }));
+                // A costly call still scores. Getting a hard one wrong in an
+                // app and reading why is the behaviour we want; charging for
+                // it teaches people to avoid the hard ones. See XP in core.
+                const verdict = rep.curveballs
+                  .find((c) => c.id === cid)
+                  ?.choices.find((ch) => ch.id === choiceId)?.verdict;
+                if (verdict) earn(XP.curveball[verdict]);
+              }}
               fieldNote={fieldNote}
               onFieldNote={setFieldNote}
+              onFieldNoteSaved={() => earn(XP.fieldNoteSaved)}
               correctCount={correctCount}
               nextRepId={nextRepId}
             />
           </section>
         ))}
       </div>
+
+      {/* Rises off the counter and fades. Keyed so a second award restarts the
+          animation rather than joining the first one already in flight. */}
+      {award ? (
+        <span
+          key={award.key}
+          className={styles.award}
+          role="status"
+          onAnimationEnd={() => setAward(null)}
+        >
+          +{award.amount} XP
+        </span>
+      ) : null}
 
       {/* The affordance the Next button used to be. Hidden on the last card,
           and while a gate is holding the feed. There is nothing below yet. */}
@@ -253,6 +314,7 @@ interface CardViewProps {
   onCurveball: (id: string, choiceId: string) => void;
   fieldNote: string;
   onFieldNote: (value: string) => void;
+  onFieldNoteSaved: () => void;
   correctCount: number;
   nextRepId?: string;
 }
@@ -288,7 +350,13 @@ function CardView(props: CardViewProps) {
       );
     case 'fieldNote':
       return (
-        <FieldNoteCard rep={props.rep} value={props.fieldNote} onChange={props.onFieldNote} />
+        <FieldNoteCard
+          rep={props.rep}
+          value={props.fieldNote}
+          onChange={props.onFieldNote}
+          curveballChoices={props.curveballChoices}
+          onSaved={props.onFieldNoteSaved}
+        />
       );
     case 'quiz':
       return (
@@ -499,6 +567,33 @@ function Voiceover({ beat, isActive, soundOn, onSoundOn }: BeatCardProps) {
   );
 }
 
+function SpeakerIcon({ on }: { on: boolean }) {
+  return (
+    <svg viewBox="0 0 16 16" width="15" height="15" fill="none" aria-hidden focusable="false">
+      <path
+        d="M3 6h2.2L8.5 3.3v9.4L5.2 10H3z"
+        fill="currentColor"
+        stroke="currentColor"
+        strokeWidth="1.1"
+        strokeLinejoin="round"
+      />
+      {on ? (
+        <>
+          <path d="M11 5.6a3.2 3.2 0 0 1 0 4.8" stroke="currentColor" strokeWidth="1.3" strokeLinecap="round" />
+          <path d="M12.8 3.8a5.8 5.8 0 0 1 0 8.4" stroke="currentColor" strokeWidth="1.3" strokeLinecap="round" />
+        </>
+      ) : (
+        <path d="M11 6.2l3.4 3.6M14.4 6.2L11 9.8" stroke="currentColor" strokeWidth="1.3" strokeLinecap="round" />
+      )}
+    </svg>
+  );
+}
+
+/** Trimmed length, so whitespace does not earn anything. */
+function e_len(value: string): number {
+  return value.trim().length;
+}
+
 function formatTime(seconds: number): string {
   const whole = Math.max(0, Math.round(seconds));
   return `${Math.floor(whole / 60)}:${String(whole % 60).padStart(2, '0')}`;
@@ -691,28 +786,46 @@ function FieldNoteCard({
   rep,
   value,
   onChange,
+  curveballChoices,
+  onSaved,
 }: {
   rep: Rep;
   value: string;
   onChange: (v: string) => void;
+  curveballChoices: Record<string, string>;
+  onSaved: () => void;
 }) {
+  const scored = useRef(false);
   const short = value.trim().length > 0 && value.trim().length < rep.fieldNote.suggestedMinChars;
+  // The Curveball answer comes back here. It is the only place in a Rep where
+  // a decision has a consequence, so the card says so rather than quietly
+  // swapping the question.
+  const { prompt, placeholder, followedUp } = fieldNotePrompt(rep, curveballChoices);
 
   return (
     <div className={styles.card}>
-      <p className={styles.fieldNoteLabel}>Field Note · {rep.fieldNote.topic}</p>
-      <p className={styles.prompt}>{rep.fieldNote.prompt}</p>
+      <p className={styles.fieldNoteLabel}>
+        Field Note · {followedUp ? 'your call, revisited' : rep.fieldNote.topic}
+      </p>
+      <p className={styles.prompt}>{prompt}</p>
 
       <label htmlFor="field-note" className="nms-visually-hidden">
-        {rep.fieldNote.prompt}
+        {prompt}
       </label>
       <textarea
         id="field-note"
         className={styles.textarea}
         rows={6}
         value={value}
-        placeholder={rep.fieldNote.placeholder}
+        placeholder={placeholder}
         onChange={(e) => onChange(e.target.value)}
+        onBlur={() => {
+          // Scored once, on leaving the field with something written. Scoring
+          // per keystroke would make the counter meaningless.
+          if (scored.current || e_len(value) < rep.fieldNote.suggestedMinChars) return;
+          scored.current = true;
+          onSaved();
+        }}
       />
 
       <p className={styles.fieldNoteHint}>

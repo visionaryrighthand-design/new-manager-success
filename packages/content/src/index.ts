@@ -166,6 +166,33 @@ export function beatNeedsVoiceover(beat: Beat): boolean {
   return beat.type !== 'reading' && Boolean(beat.speech);
 }
 
+/**
+ * The Field Note prompt to show, given what the learner chose.
+ *
+ * `choices` maps a Curveball id to the choice id the learner picked. Falls
+ * back to the Rep's default prompt when they skipped, or when no follow-up
+ * was written for what they picked.
+ */
+export function fieldNotePrompt(
+  rep: Rep,
+  choices: Record<string, string>,
+): { prompt: string; placeholder: string; followedUp: boolean } {
+  for (const followUp of rep.fieldNote.followUps ?? []) {
+    if (choices[followUp.curveballId] === followUp.choiceId) {
+      return {
+        prompt: followUp.prompt,
+        placeholder: followUp.placeholder ?? rep.fieldNote.placeholder,
+        followedUp: true,
+      };
+    }
+  }
+  return {
+    prompt: rep.fieldNote.prompt,
+    placeholder: rep.fieldNote.placeholder,
+    followedUp: false,
+  };
+}
+
 export function allReps(): Rep[] {
   return course.modules.flatMap((m) => m.reps);
 }
@@ -416,6 +443,20 @@ export function validateContent(): string[] {
         problems.push(
           `${rep.number}/${cb.id}: triggerAfterBeat "${cb.triggerAfterBeat}" is not a beat in this Rep`,
         );
+      }
+      const followUps = (rep.fieldNote.followUps ?? []).filter((f) => f.curveballId === cb.id);
+      if (followUps.length > 0 && followUps.length !== cb.choices.length) {
+        // A partial set is the bad case: the learner who picked the covered
+        // option gets a consequence, the one who picked the other gets a
+        // generic prompt, and the difference reads as a bug.
+        problems.push(
+          `${rep.number}/${cb.id}: ${followUps.length} Field Note follow-ups for ${cb.choices.length} choices — cover all or none`,
+        );
+      }
+      for (const f of followUps) {
+        if (!cb.choices.some((c) => c.id === f.choiceId)) {
+          problems.push(`${rep.number}/${cb.id}: follow-up points at missing choice "${f.choiceId}"`);
+        }
       }
       if (!cb.choices.some((c) => c.verdict === 'best')) {
         problems.push(`${rep.number}/${cb.id}: no choice marked "best"`);

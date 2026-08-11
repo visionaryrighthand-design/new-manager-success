@@ -51,6 +51,48 @@
   text-overflow: ellipsis;
 }
 
+/* ---- Score ------------------------------------------------------------- */
+
+.xpCounter {
+  flex-shrink: 0;
+  white-space: nowrap;
+  font-family: var(--nms-font-mono);
+  font-size: 0.78rem;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0.04em;
+  color: var(--nms-color-bright);
+}
+.xpCounter span { color: var(--nms-color-fg-subtle); font-weight: 400; }
+
+/*
+ * The award. Rises off the counter and fades, then unmounts itself. Small on
+ * purpose: this is a receipt for something the learner already did, not a
+ * celebration, and a confetti burst after "which relationship has soured"
+ * would be tonally wrong.
+ */
+.award {
+  position: absolute;
+  /* Below the progress bar, so it never crosses it on the way up. */
+  top: 5.75rem;
+  inset-inline-end: var(--nms-space-5);
+  z-index: 2;
+  pointer-events: none;
+  font-family: var(--nms-font-mono);
+  font-size: 0.85rem;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  color: var(--nms-color-bright);
+  animation: awardRise 1.35s var(--nms-ease-exit) both;
+}
+
+@keyframes awardRise {
+  0% { opacity: 0; transform: translateY(6px) scale(0.9); }
+  18% { opacity: 1; transform: none; }
+  70% { opacity: 1; transform: translateY(-10px); }
+  100% { opacity: 0; transform: translateY(-22px); }
+}
+
 .counter {
   font-family: var(--nms-font-mono);
   font-size: 0.75rem;
@@ -276,13 +318,15 @@
     color-mix(in srgb, var(--nms-color-accent) 16%, transparent),
     transparent 72%
   );
-  animation: glow var(--nms-duration-slow) var(--nms-ease-entrance) both;
-  animation-delay: 0.2s;
+  /* Timed to the payoff, not to the card. The room brightens on the line. */
+  animation: glow var(--nms-duration-base) var(--nms-ease-exit) both;
+  animation-delay: 0.62s;
 }
 
 @keyframes glow {
-  from { opacity: 0; transform: scale(0.9); }
-  to { opacity: 1; transform: none; }
+  0% { opacity: 0; transform: scale(0.86); }
+  55% { opacity: 1; transform: scale(1.04); }
+  100% { opacity: 0.82; transform: none; }
 }
 
 /* Draws outward from the centre, so the line arrives before the words do. */
@@ -316,6 +360,34 @@
   color: color-mix(in srgb, var(--nms-color-fg) 58%, transparent);
   animation: rise var(--nms-duration-slow) var(--nms-ease-entrance) both;
   animation-delay: var(--d, 0s);
+}
+
+/*
+ * The payoff arrives as a cut, not a fade.
+ *
+ * One card per Rep gets this and no more. The restraint is the effect: if
+ * every card moved like this the feed would read as a screensaver, and the
+ * line that is supposed to be the one they remember would be indistinguishable
+ * from the twelve around it.
+ *
+ * A clip wipe rather than an opacity fade, because a fade reads as "loading"
+ * and a wipe reads as "arriving".
+ */
+.momentLine[data-punchline='true'] {
+  animation:
+    punchIn var(--nms-duration-quick) var(--nms-ease-spring) both,
+    punchWipe var(--nms-duration-base) var(--nms-ease-exit) both;
+  animation-delay: var(--d, 0s);
+}
+
+@keyframes punchIn {
+  from { opacity: 0; transform: scale(1.06); }
+  to { opacity: 1; transform: none; }
+}
+
+@keyframes punchWipe {
+  from { clip-path: inset(0 100% 0 0); }
+  to { clip-path: inset(0 0 0 0); }
 }
 
 /*
@@ -694,15 +766,14 @@
 
 /* The global sound switch. Audio follows the learner down the feed once on. */
 .soundBtn {
-  margin-inline-start: auto;
-  padding: var(--nms-space-1) var(--nms-space-3);
-  border-radius: var(--nms-radius-pill);
+  flex-shrink: 0;
+  width: 2rem;
+  height: 2rem;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
   border: 1px solid var(--nms-color-border);
   background: transparent;
-  font-family: var(--nms-font-mono);
-  font-size: 0.68rem;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
   color: var(--nms-color-fg-subtle);
   cursor: pointer;
 }

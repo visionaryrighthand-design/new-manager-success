@@ -21,6 +21,7 @@ import {
   feedCards,
   findRep,
   nextRep,
+  fieldNotePrompt,
   splitListItem,
   splitMomentLines,
   type Beat,
@@ -449,23 +450,25 @@ function CardView(props: CardViewProps) {
   }
 
   if (card.kind === 'fieldNote') {
+    // The Curveball answer comes back here. See fieldNotePrompt in @nms/content.
+    const { prompt, placeholder, followedUp } = fieldNotePrompt(rep, props.choices);
     return (
       <View style={styles.card}>
         <Text style={styles.fieldNoteLabel}>
-          FIELD NOTE · {rep.fieldNote.topic.toUpperCase()}
+          FIELD NOTE · {followedUp ? 'YOUR CALL, REVISITED' : rep.fieldNote.topic.toUpperCase()}
         </Text>
-        <Text style={styles.prompt}>{rep.fieldNote.prompt}</Text>
+        <Text style={styles.prompt}>{prompt}</Text>
         <TextInput
           style={styles.input}
           multiline
           value={props.fieldNote}
           onChangeText={props.setFieldNote}
           onBlur={props.onBlurFieldNote}
-          placeholder={rep.fieldNote.placeholder}
+          placeholder={placeholder}
           placeholderTextColor={colors.fgSubtle}
         />
         <Text style={styles.privacy}>
-          If someone in your Corner is on Level 3, they get a question to ask you — never your
+          If someone in your Corner is on Level 3, they get a question to ask you, never your
           actual words.
         </Text>
       </View>

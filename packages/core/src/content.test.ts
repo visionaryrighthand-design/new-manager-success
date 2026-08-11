@@ -6,6 +6,7 @@ import {
   isInteractive,
   repCadence,
   contentAdditions,
+  fieldNotePrompt,
   module01,
   validateContent,
   estimateRepTotalSeconds,
@@ -390,6 +391,71 @@ describe('provenance', () => {
             `${gc.id}/${choice.id}: reads as grading an answer that cannot be wrong`,
           );
         }
+      }
+    }
+  });
+});
+
+describe('Field Note follow-ups', () => {
+  /*
+   * The point of a Curveball is that it is a decision, and a decision that
+   * costs nothing is a quiz with better copy. The follow-up is where the
+   * choice comes back, so these guard the property that makes it work: every
+   * answer leads somewhere, and the somewhere is different per answer.
+   */
+  const withFollowUps = module01.reps.filter((r) => r.fieldNote.followUps?.length);
+
+  test('every Curveball choice has its own follow-up, not just the best one', () => {
+    for (const rep of withFollowUps) {
+      for (const curveball of rep.curveballs) {
+        const covered = (rep.fieldNote.followUps ?? [])
+          .filter((f) => f.curveballId === curveball.id)
+          .map((f) => f.choiceId)
+          .sort();
+        if (covered.length === 0) continue;
+        assert.deepEqual(
+          covered,
+          curveball.choices.map((c) => c.id).sort(),
+          `${rep.number}/${curveball.id}: partial coverage reads as a bug to whoever picked the uncovered option`,
+        );
+      }
+    }
+  });
+
+  test('no two choices lead to the same prompt', () => {
+    for (const rep of withFollowUps) {
+      const prompts = (rep.fieldNote.followUps ?? []).map((f) => f.prompt);
+      assert.equal(new Set(prompts).size, prompts.length, `${rep.number}: duplicate follow-up prompt`);
+    }
+  });
+
+  test('a learner who answered gets their own prompt; one who skipped gets the default', () => {
+    const rep = module01.reps.find((r) => r.number === '1.1')!;
+    const answered = fieldNotePrompt(rep, { 'm1-r1-cb1': 'a' });
+    const skipped = fieldNotePrompt(rep, {});
+
+    assert.equal(answered.followedUp, true);
+    assert.match(answered.prompt, /absorb the extra work/i);
+    assert.equal(skipped.followedUp, false);
+    assert.equal(skipped.prompt, rep.fieldNote.prompt);
+  });
+
+  test('an unrecognised choice falls back rather than throwing', () => {
+    const rep = module01.reps.find((r) => r.number === '1.1')!;
+    const result = fieldNotePrompt(rep, { 'm1-r1-cb1': 'zzz' });
+    assert.equal(result.followedUp, false);
+    assert.equal(result.prompt, rep.fieldNote.prompt);
+  });
+
+  test('a follow-up refers back to the decision rather than restating the lesson', () => {
+    // The whole effect depends on the learner recognising their own answer.
+    for (const rep of withFollowUps) {
+      for (const followUp of rep.fieldNote.followUps ?? []) {
+        assert.match(
+          followUp.prompt,
+          /^Earlier you/,
+          `${rep.number}/${followUp.choiceId}: does not open by naming what they chose`,
+        );
       }
     }
   });
