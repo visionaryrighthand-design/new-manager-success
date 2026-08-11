@@ -3,7 +3,17 @@ export { course, exams } from './course.js';
 export { module01 } from './module-01/index.js';
 
 import { course } from './course.js';
-import type { Beat, CourseModule, Rep, ScriptDeviation } from './types.js';
+import type {
+  Beat,
+  ContentAddition,
+  CourseModule,
+  Curveball,
+  FieldNote,
+  GutCheck,
+  QuizQuestion,
+  Rep,
+  ScriptDeviation,
+} from './types.js';
 
 /** Words per minute used to estimate how long an avatar beat runs on screen. */
 const SPEAKING_WPM = 150;
@@ -45,6 +55,8 @@ export function estimateRepSeconds(rep: Rep): number {
 const INTERACTION_SECONDS = {
   /** Read the scenario, weigh four choices, read the response. */
   curveball: 45,
+  /** Read one line, tap, read one line back. */
+  gutCheck: 8,
   /** Read the prompt and type two or three sentences. */
   fieldNote: 60,
   /** Per multiple-choice question, including reading the feedback. */
@@ -60,6 +72,7 @@ export function estimateRepTotalSeconds(rep: Rep): number {
   return (
     estimateRepSeconds(rep) +
     rep.curveballs.length * INTERACTION_SECONDS.curveball +
+    (rep.gutChecks?.length ?? 0) * INTERACTION_SECONDS.gutCheck +
     (rep.fieldNote ? INTERACTION_SECONDS.fieldNote : 0) +
     rep.quiz.length * INTERACTION_SECONDS.quizQuestion
   );
@@ -172,6 +185,127 @@ export function nextRep(repId: string): Rep | undefined {
   return i >= 0 ? reps[i + 1] : undefined;
 }
 
+/** Everything in the product that the approved scripts do not contain. */
+export function contentAdditions(): Array<ContentAddition & { repId: string; repNumber: string }> {
+  return allReps().flatMap((rep) =>
+    (rep.contentAdditions ?? []).map((a) => ({ ...a, repId: rep.id, repNumber: rep.number })),
+  );
+}
+
+/**
+ * The cards a learner moves through, in order.
+ *
+ * Both players render this directly, and the cadence report measures it. One
+ * definition — a feed order that lives in three places drifts, and the symptom
+ * is a report that says the product is fine while the product is not.
+ */
+export type FeedCard =
+  | { kind: 'beat'; key: string; beat: Beat; seconds: number }
+  | { kind: 'curveball'; key: string; curveball: Curveball; seconds: number }
+  | { kind: 'gutCheck'; key: string; gutCheck: GutCheck; seconds: number }
+  | { kind: 'fieldNote'; key: string; fieldNote: FieldNote; seconds: number }
+  | { kind: 'quiz'; key: string; question: QuizQuestion; index: number; total: number; seconds: number }
+  | { kind: 'summary'; key: string; seconds: number };
+
+/** A card the learner must act on. These are what break up a passive run. */
+export function isInteractive(card: FeedCard): boolean {
+  return card.kind === 'curveball' || card.kind === 'gutCheck' || card.kind === 'quiz' || card.kind === 'fieldNote';
+}
+
+export function feedCards(rep: Rep): FeedCard[] {
+  const cards: FeedCard[] = [];
+  for (const beat of rep.beats) {
+    // A `hold` is a direction for an edit. The feed already holds indefinitely.
+    if (beat.type !== 'hold') {
+      cards.push({ kind: 'beat', key: `b-${beat.id}`, beat, seconds: estimateBeatSeconds(beat) });
+    }
+    // A Gut Check comes before a Curveball on the same beat: it is the cheap
+    // interruption, and stacking the expensive one first would bury it.
+    for (const gutCheck of rep.gutChecks ?? []) {
+      if (gutCheck.triggerAfterBeat === beat.id) {
+        cards.push({
+          kind: 'gutCheck',
+          key: `g-${gutCheck.id}`,
+          gutCheck,
+          seconds: INTERACTION_SECONDS.gutCheck,
+        });
+      }
+    }
+    for (const curveball of rep.curveballs) {
+      if (curveball.triggerAfterBeat === beat.id) {
+        cards.push({
+          kind: 'curveball',
+          key: `c-${curveball.id}`,
+          curveball,
+          seconds: INTERACTION_SECONDS.curveball,
+        });
+      }
+    }
+  }
+  cards.push({
+    kind: 'fieldNote',
+    key: `f-${rep.fieldNote.id}`,
+    fieldNote: rep.fieldNote,
+    seconds: INTERACTION_SECONDS.fieldNote,
+  });
+  rep.quiz.forEach((question, i) =>
+    cards.push({
+      kind: 'quiz',
+      key: `q-${question.id}`,
+      question,
+      index: i,
+      total: rep.quiz.length,
+      seconds: INTERACTION_SECONDS.quizQuestion,
+    }),
+  );
+  cards.push({ kind: 'summary', key: 'summary', seconds: 0 });
+  return cards;
+}
+
+export interface Cadence {
+  cards: number;
+  interactions: number;
+  /** Most cards in a row with nothing for the learner to do. */
+  longestPassiveRun: number;
+  /** How long that run takes, in seconds. The number that actually matters. */
+  longestPassiveSeconds: number;
+}
+
+/**
+ * How often a Rep asks the learner to do something.
+ *
+ * The product is benchmarked against Duolingo, which rarely leaves anyone more
+ * than about twenty seconds without an input. A Rep that runs two and a half
+ * minutes of scrolling between interactions has stopped being a lesson and
+ * become a document, however well the cards are set.
+ */
+export function repCadence(rep: Rep): Cadence {
+  const cards = feedCards(rep);
+  let run = 0;
+  let runSeconds = 0;
+  let longest = 0;
+  let longestSeconds = 0;
+  for (const card of cards) {
+    if (isInteractive(card)) {
+      run = 0;
+      runSeconds = 0;
+      continue;
+    }
+    run += 1;
+    runSeconds += card.seconds;
+    if (run > longest) {
+      longest = run;
+      longestSeconds = runSeconds;
+    }
+  }
+  return {
+    cards: cards.length,
+    interactions: cards.filter(isInteractive).length,
+    longestPassiveRun: longest,
+    longestPassiveSeconds: longestSeconds,
+  };
+}
+
 /** Every recorded difference between the approved scripts and what ships. */
 export function scriptDeviations(): Array<ScriptDeviation & { repId: string; repNumber: string }> {
   return allReps().flatMap((rep) =>
@@ -253,6 +387,27 @@ export function validateContent(): string[] {
       }
       for (const o of q.options) {
         if (!o.feedback) problems.push(`${rep.number}/${q.id}/${o.id}: option has no feedback`);
+      }
+    }
+
+    for (const gc of rep.gutChecks ?? []) {
+      if (!beatIds.has(gc.triggerAfterBeat)) {
+        problems.push(
+          `${rep.number}/${gc.id}: triggerAfterBeat "${gc.triggerAfterBeat}" is not a beat in this Rep`,
+        );
+      }
+      if (gc.choices.length < 2) {
+        problems.push(`${rep.number}/${gc.id}: a Gut Check needs at least 2 options`);
+      }
+      for (const c of gc.choices) {
+        if (!c.reaction) problems.push(`${rep.number}/${gc.id}/${c.id}: option has no reaction`);
+      }
+      // Nothing reaches a learner without being in the deviation list or the
+      // additions list. A Gut Check is not in the approved script, so it has
+      // to be declared.
+      const declared = (rep.contentAdditions ?? []).some((a) => a.kind === 'gut-check');
+      if (!declared) {
+        problems.push(`${rep.number}: has Gut Checks but no contentAdditions entry declaring them`);
       }
     }
 

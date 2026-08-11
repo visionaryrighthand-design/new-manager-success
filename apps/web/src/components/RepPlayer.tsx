@@ -9,8 +9,16 @@ import {
   type CSSProperties,
 } from 'react';
 import Link from 'next/link';
-import type { Beat, Curveball, CurveballVerdict, QuizQuestion, Rep } from '@nms/content';
-import { estimateBeatSeconds, splitListItem, splitMomentLines } from '@nms/content';
+import type {
+  Beat,
+  Curveball,
+  CurveballVerdict,
+  FeedCard,
+  GutCheck,
+  QuizQuestion,
+  Rep,
+} from '@nms/content';
+import { estimateBeatSeconds, feedCards, splitListItem, splitMomentLines } from '@nms/content';
 import styles from './RepPlayer.module.css';
 
 /**
@@ -36,12 +44,7 @@ import styles from './RepPlayer.module.css';
  * them.
  */
 
-type Card =
-  | { kind: 'beat'; beat: Beat }
-  | { kind: 'curveball'; curveball: Curveball }
-  | { kind: 'fieldNote' }
-  | { kind: 'quiz'; question: QuizQuestion; index: number; total: number }
-  | { kind: 'summary' };
+type Card = FeedCard;
 
 export interface RepPlayerProps {
   rep: Rep;
@@ -49,7 +52,7 @@ export interface RepPlayerProps {
 }
 
 export function RepPlayer({ rep, nextRepId }: RepPlayerProps) {
-  const allCards = useMemo(() => buildCards(rep), [rep]);
+  const allCards = useMemo(() => feedCards(rep), [rep]);
   const [answers, setAnswers] = useState<Record<string, string>>({});
   const [curveballChoices, setCurveballChoices] = useState<Record<string, string>>({});
   const [fieldNote, setFieldNote] = useState('');
@@ -174,7 +177,7 @@ export function RepPlayer({ rep, nextRepId }: RepPlayerProps) {
       <div className={styles.feed} ref={feedRef}>
         {cards.map((card, i) => (
           <section
-            key={cardKey(card, i)}
+            key={card.key}
             className={styles.page}
             data-index={i}
             data-visible={i === active}
@@ -215,19 +218,6 @@ export function RepPlayer({ rep, nextRepId }: RepPlayerProps) {
   );
 }
 
-function cardKey(card: Card, i: number): string {
-  switch (card.kind) {
-    case 'beat':
-      return `b-${card.beat.id}`;
-    case 'curveball':
-      return `c-${card.curveball.id}`;
-    case 'quiz':
-      return `q-${card.question.id}`;
-    default:
-      return `${card.kind}-${i}`;
-  }
-}
-
 /**
  * How much of the feed is reachable right now.
  *
@@ -244,26 +234,9 @@ function revealedCount(
     const card = cards[i]!;
     if (card.kind === 'quiz' && !answers[card.question.id]) return i + 1;
     if (card.kind === 'curveball' && !curveballs[card.curveball.id]) return i + 1;
+    if (card.kind === 'gutCheck' && !curveballs[card.gutCheck.id]) return i + 1;
   }
   return cards.length;
-}
-
-function buildCards(rep: Rep): Card[] {
-  const cards: Card[] = [];
-  for (const beat of rep.beats) {
-    // A `hold` is a production direction for an edit — the feed already holds
-    // indefinitely, because the learner controls the advance.
-    if (beat.type !== 'hold') cards.push({ kind: 'beat', beat });
-    for (const curveball of rep.curveballs) {
-      if (curveball.triggerAfterBeat === beat.id) cards.push({ kind: 'curveball', curveball });
-    }
-  }
-  cards.push({ kind: 'fieldNote' });
-  rep.quiz.forEach((question, i) =>
-    cards.push({ kind: 'quiz', question, index: i, total: rep.quiz.length }),
-  );
-  cards.push({ kind: 'summary' });
-  return cards;
 }
 
 // ---------------------------------------------------------------------------
@@ -277,7 +250,7 @@ interface CardViewProps {
   answers: Record<string, string>;
   onAnswer: (questionId: string, optionId: string) => void;
   curveballChoices: Record<string, string>;
-  onCurveball: (curveballId: string, choiceId: string) => void;
+  onCurveball: (id: string, choiceId: string) => void;
   fieldNote: string;
   onFieldNote: (value: string) => void;
   correctCount: number;
@@ -295,6 +268,14 @@ function CardView(props: CardViewProps) {
           isActive={props.isActive}
           soundOn={props.soundOn}
           onSoundOn={props.onSoundOn}
+        />
+      );
+    case 'gutCheck':
+      return (
+        <GutCheckCard
+          gutCheck={card.gutCheck}
+          chosen={props.curveballChoices[card.gutCheck.id]}
+          onChoose={(choiceId) => props.onCurveball(card.gutCheck.id, choiceId)}
         />
       );
     case 'curveball':
@@ -521,6 +502,62 @@ function Voiceover({ beat, isActive, soundOn, onSoundOn }: BeatCardProps) {
 function formatTime(seconds: number): string {
   const whole = Math.max(0, Math.round(seconds));
   return `${Math.floor(whole / 60)}:${String(whole % 60).padStart(2, '0')}`;
+}
+
+
+/**
+ * A Gut Check.
+ *
+ * Deliberately small: one line, a few options, one line back. It has to read
+ * as five seconds of work — if it looked like a Curveball, the learner would
+ * brace for one, and the point is to interrupt a run of reading without
+ * costing them anything.
+ *
+ * No verdict colours. There is no right answer to a question about the
+ * learner's own experience, and grading one would be a lie.
+ */
+function GutCheckCard({
+  gutCheck,
+  chosen,
+  onChoose,
+}: {
+  gutCheck: GutCheck;
+  chosen?: string;
+  onChoose: (choiceId: string) => void;
+}) {
+  const chosenChoice = gutCheck.choices.find((c) => c.id === chosen);
+
+  return (
+    <div className={styles.card}>
+      <p className={styles.gutCheckLabel}>Gut check</p>
+      <p className={styles.gutCheckPrompt}>{gutCheck.prompt}</p>
+
+      <ul className={styles.options} role="radiogroup" aria-label={gutCheck.prompt}>
+        {gutCheck.choices.map((choice) => {
+          const isChosen = choice.id === chosen;
+          return (
+            <li key={choice.id}>
+              <button
+                type="button"
+                role="radio"
+                aria-checked={isChosen}
+                disabled={Boolean(chosen) && !isChosen}
+                className={`${styles.option} ${styles.gutCheckOption}`}
+                data-state={!chosen ? 'idle' : isChosen ? 'chosen-gut' : 'dimmed'}
+                onClick={() => onChoose(choice.id)}
+              >
+                <span>{choice.text}</span>
+              </button>
+            </li>
+          );
+        })}
+      </ul>
+
+      {chosenChoice ? (
+        <p className={styles.gutCheckReaction}>{chosenChoice.reaction}</p>
+      ) : null}
+    </div>
+  );
 }
 
 const VERDICT_LABEL: Record<CurveballVerdict, string> = {

@@ -135,3 +135,31 @@ framework diagram or proprietary assessment reproduced. Ships as written.
 npm run report:ip -w @nms/content        # every deviation, with sign-off owner
 npm test --workspace=@nms/core           # asserts flagged terms are absent
 ```
+
+
+---
+
+## Content additions
+
+The counterpart to the deviations above: copy that is **in the product but not
+in the approved April script**. Nothing reaches a learner that is not in one
+list or the other.
+
+All of these ship as `proposed`. A test asserts that — approving one should be
+a deliberate edit, not a default.
+
+| Ref | Rep | Where | What | Why |
+|---|---|---|---|---|
+| A1 | 1.1 | after b2 | Gut Check: *"How much management training did you get before your first day?"* | Four passive cards before the first input. Also makes the learner state the Rep's premise before the script argues it |
+| A2 | 1.1 | after b9 | Gut Check: *"Think of a manager you left, or nearly left. What tipped it?"* | Six passive cards in the back half. Turns "employees quit managers" into the learner's own memory rather than an assertion |
+| A3 | 1.5 | after b3 | Gut Check: *"How long between feeling frustration and showing it?"* | Nine passive cards and 2m25 before the Curveball — the worst stretch in Module 1 |
+| A4 | 1.5 | after b6 | Gut Check: *"Which of the four is hardest for you right now?"* | Makes b7 land as an answer: the script says focus on self-regulation, and this is where the learner has just said whether they agree |
+
+```bash
+npm run report:cadence -w @nms/content   # what these are fixing, measured
+```
+
+**Still to do.** Reps 1.2, 1.3, 1.4, 1.6 and 1.7 each still run over ninety
+seconds with no input; 1.3 is the worst at 2m36. That list is pinned in the
+test suite, so a Rep cannot quietly join it and fixing one forces the list to
+be updated.

@@ -16,7 +16,21 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import * as Haptics from 'expo-haptics';
 import { Audio } from 'expo-av';
-import { estimateBeatSeconds, findRep, nextRep, splitListItem, splitMomentLines, type Beat, type Curveball, type CurveballVerdict, type QuizQuestion, type Rep } from '@nms/content';
+import {
+  estimateBeatSeconds,
+  feedCards,
+  findRep,
+  nextRep,
+  splitListItem,
+  splitMomentLines,
+  type Beat,
+  type Curveball,
+  type CurveballVerdict,
+  type FeedCard,
+  type GutCheck,
+  type QuizQuestion,
+  type Rep,
+} from '@nms/content';
 import { colors, radius, space, type } from '../../src/theme';
 import { useProgress } from '../../src/progress-store';
 
@@ -34,12 +48,7 @@ import { useProgress } from '../../src/progress-store';
  * timer while a manager is thinking about their own team has failed.
  */
 
-type Card =
-  | { key: string; kind: 'beat'; beat: Beat }
-  | { key: string; kind: 'curveball'; curveball: Curveball }
-  | { key: string; kind: 'fieldNote' }
-  | { key: string; kind: 'quiz'; question: QuizQuestion; index: number; total: number }
-  | { key: string; kind: 'summary' };
+type Card = FeedCard;
 
 export default function RepScreen() {
   const { repId } = useLocalSearchParams<{ repId: string }>();
@@ -61,7 +70,7 @@ function RepFeed({ rep }: { rep: Rep }) {
   const { height } = useWindowDimensions();
   const { progress, track, submitQuiz } = useProgress();
 
-  const cards = useMemo(() => buildCards(rep), [rep]);
+  const cards = useMemo(() => feedCards(rep), [rep]);
   const [index, setIndex] = useState(0);
   const [answers, setAnswers] = useState<Record<string, string>>({});
   const [choices, setChoices] = useState<Record<string, string>>({});
@@ -124,6 +133,17 @@ function RepFeed({ rep }: { rep: Rep }) {
     [answers, rep.id, track],
   );
 
+  // A Gut Check is not scored and nothing depends on the answer, so it shares
+  // the Curveball's choice map and records no progress event. It exists to
+  // break up a run of reading, not to assess anything.
+  const onChooseGutCheck = useCallback(
+    (gutCheck: GutCheck, choiceId: string) => {
+      setChoices((c) => (c[gutCheck.id] ? c : { ...c, [gutCheck.id]: choiceId }));
+      void Haptics.selectionAsync();
+    },
+    [],
+  );
+
   const saveFieldNote = useCallback(() => {
     if (!fieldNote.trim()) return;
     track({ type: 'field-note-saved', repId: rep.id, targetId: rep.fieldNote.id });
@@ -170,6 +190,7 @@ function RepFeed({ rep }: { rep: Rep }) {
               setFieldNote={setFieldNote}
               onBlurFieldNote={saveFieldNote}
               onChooseCurveball={onChooseCurveball}
+              onChooseGutCheck={onChooseGutCheck}
               onChooseQuiz={onChooseQuiz}
               progressXp={progress.xp}
               onFinish={() => router.replace(followUp ? `/rep/${followUp.id}` : '/')}
@@ -191,6 +212,7 @@ function RepFeed({ rep }: { rep: Rep }) {
               style={[
                 styles.segment,
                 card.kind === 'curveball' && styles.segmentCurveball,
+                card.kind === 'gutCheck' && styles.segmentGutCheck,
                 i < index && styles.segmentDone,
                 i === index && styles.segmentNow,
               ]}
@@ -217,26 +239,6 @@ function RepFeed({ rep }: { rep: Rep }) {
 
 // ---------------------------------------------------------------------------
 
-function buildCards(rep: Rep): Card[] {
-  const cards: Card[] = [];
-  for (const beat of rep.beats) {
-    // A `hold` is a direction for the video edit. The feed already holds
-    // indefinitely, because the learner controls the advance.
-    if (beat.type !== 'hold') cards.push({ key: `b-${beat.id}`, kind: 'beat', beat });
-    for (const curveball of rep.curveballs) {
-      if (curveball.triggerAfterBeat === beat.id) {
-        cards.push({ key: `c-${curveball.id}`, kind: 'curveball', curveball });
-      }
-    }
-  }
-  cards.push({ key: 'field-note', kind: 'fieldNote' });
-  rep.quiz.forEach((question, i) =>
-    cards.push({ key: `q-${question.id}`, kind: 'quiz', question, index: i, total: rep.quiz.length }),
-  );
-  cards.push({ key: 'summary', kind: 'summary' });
-  return cards;
-}
-
 function canAdvance(
   card: Card | undefined,
   answers: Record<string, string>,
@@ -245,14 +247,66 @@ function canAdvance(
   if (!card) return false;
   if (card.kind === 'quiz') return Boolean(answers[card.question.id]);
   if (card.kind === 'curveball') return Boolean(choices[card.curveball.id]);
+  if (card.kind === 'gutCheck') return Boolean(choices[card.gutCheck.id]);
   return true;
 }
 
 function nextLabel(card: Card | undefined): string {
   if (card?.kind === 'fieldNote') return 'Save and continue';
   if (card?.kind === 'quiz') return 'Next';
-  if (card?.kind === 'curveball') return 'Continue';
+  if (card?.kind === 'curveball' || card?.kind === 'gutCheck') return 'Continue';
   return 'Next';
+}
+
+
+/**
+ * A Gut Check.
+ *
+ * Deliberately small: one line, a few options, one line back. If it wore a
+ * Curveball's weight the learner would brace for one every time it appeared,
+ * and the point is to interrupt a run of reading without costing anything.
+ *
+ * No verdict colours — there is no wrong answer to a question about the
+ * learner's own experience.
+ */
+function GutCheckCard({
+  gutCheck,
+  chosen,
+  onChoose,
+}: {
+  gutCheck: GutCheck;
+  chosen?: string;
+  onChoose: (choiceId: string) => void;
+}) {
+  const chosenChoice = gutCheck.choices.find((c) => c.id === chosen);
+
+  return (
+    <View style={styles.card}>
+      <Text style={styles.gutCheckLabel}>GUT CHECK</Text>
+      <Text style={styles.gutCheckPrompt}>{gutCheck.prompt}</Text>
+
+      {gutCheck.choices.map((choice) => {
+        const isChosen = choice.id === chosen;
+        return (
+          <Pressable
+            key={choice.id}
+            style={[
+              styles.option,
+              styles.gutCheckOption,
+              isChosen && styles.gutCheckOptionChosen,
+              Boolean(chosen) && !isChosen && styles.optionDimmed,
+            ]}
+            disabled={Boolean(chosen)}
+            onPress={() => onChoose(choice.id)}
+          >
+            <Text style={styles.optionText}>{choice.text}</Text>
+          </Pressable>
+        );
+      })}
+
+      {chosenChoice ? <Text style={styles.gutCheckReaction}>{chosenChoice.reaction}</Text> : null}
+    </View>
+  );
 }
 
 const VERDICT_LABEL: Record<CurveballVerdict, string> = {
@@ -276,6 +330,7 @@ interface CardViewProps {
   setFieldNote: (v: string) => void;
   onBlurFieldNote: () => void;
   onChooseCurveball: (curveball: Curveball, choiceId: string) => void;
+  onChooseGutCheck: (gutCheck: GutCheck, choiceId: string) => void;
   onChooseQuiz: (question: QuizQuestion, optionId: string) => void;
   progressXp: number;
   onFinish: () => void;
@@ -340,6 +395,16 @@ function CardView(props: CardViewProps) {
           </Text>
         ))}
       </View>
+    );
+  }
+
+  if (card.kind === 'gutCheck') {
+    return (
+      <GutCheckCard
+        gutCheck={card.gutCheck}
+        chosen={props.choices[card.gutCheck.id]}
+        onChoose={(choiceId) => props.onChooseGutCheck(card.gutCheck, choiceId)}
+      />
     );
   }
 
@@ -806,6 +871,20 @@ const styles = StyleSheet.create({
     backgroundColor: colors.surface,
   },
   optionDimmed: { opacity: 0.4 },
+
+  gutCheckLabel: { ...type.label, color: colors.bright },
+  gutCheckPrompt: { ...type.h3, color: colors.fg, fontWeight: '700' },
+  gutCheckOption: { borderRadius: radius.pill, paddingVertical: space[3] },
+  /* No verdict colour: there is no wrong answer to a question about your own
+     experience, and grading one would be a lie. */
+  gutCheckOptionChosen: { borderColor: colors.bright },
+  gutCheckReaction: {
+    ...type.item,
+    color: colors.fgMuted,
+    borderLeftWidth: 2,
+    borderLeftColor: colors.bright,
+    paddingLeft: space[4],
+  },
   optionKey: { ...type.numeric, color: colors.fgSubtle, fontSize: 12 },
   optionText: { ...type.caption, color: colors.fg, flex: 1, fontSize: 15, lineHeight: 21 },
 
@@ -863,6 +942,7 @@ const styles = StyleSheet.create({
 
   segments: { flex: 1, flexDirection: 'row', gap: 3 },
   segment: { flex: 1, height: 3, borderRadius: 2, backgroundColor: colors.border },
+  segmentGutCheck: { backgroundColor: colors.bright, opacity: 0.35 },
   segmentCurveball: { backgroundColor: colors.alert, opacity: 0.35 },
   segmentDone: { backgroundColor: colors.bright, opacity: 1 },
   segmentNow: { backgroundColor: colors.accent, opacity: 1 },

@@ -168,6 +168,65 @@ export const rep05: Rep = {
     },
   ],
 
+  gutChecks: [
+    {
+      id: 'm1-r5-gc1',
+      triggerAfterBeat: 'b3',
+      prompt:
+        'Last time you were properly frustrated at work — how long between feeling it and showing it?',
+      choices: [
+        {
+          id: 'a',
+          text: 'No gap at all.',
+          reaction:
+            'Honest, and more common than people admit. That gap is the entire skill, and it is trainable — which is what the rest of this section is about.',
+        },
+        {
+          id: 'b',
+          text: 'A few seconds.',
+          reaction:
+            'A few seconds is more than most people have. That is not a small thing; it is the difference between a reaction and a decision.',
+        },
+        {
+          id: 'c',
+          text: 'Nobody could tell.',
+          reaction:
+            'Useful — as long as it is regulated and not just swallowed. There is a real difference between the two, and a team can feel which one it is.',
+        },
+      ],
+    },
+    {
+      id: 'm1-r5-gc2',
+      triggerAfterBeat: 'b6',
+      prompt: 'Which of those four is hardest for you right now?',
+      choices: [
+        {
+          id: 'a',
+          text: 'Self-Awareness',
+          reaction: 'Then start there. The other three are built on top of it.',
+        },
+        {
+          id: 'b',
+          text: 'Self-Regulation',
+          reaction:
+            'The most common answer from new managers — and the one the next card is about.',
+        },
+        {
+          id: 'c',
+          text: 'Empathy',
+          reaction:
+            'Worth knowing before you write yourself off: empathy is a skill, not a personality trait.',
+        },
+        {
+          id: 'd',
+          text: 'Social Skills',
+          reaction:
+            'The most visible of the four, and the one that improves fastest once the first three do.',
+        },
+      ],
+    },
+  ],
+
   fieldNote: {
     id: 'm1-r5-fn1',
     topic: 'Self-regulation and triggers',
@@ -176,6 +235,27 @@ export const rep05: Rep = {
     placeholder: 'Be specific. “When people are late” is more useful than “disrespect”.',
     suggestedMinChars: 50,
   },
+
+  contentAdditions: [
+    {
+      ref: 'A3',
+      kind: 'gut-check',
+      where: 'after b3',
+      what: '"How long between feeling frustration and showing it?" — three options, no scoring.',
+      reason:
+        'This Rep ran nine consecutive passive cards and 2m25 before its Curveball, the worst stretch in Module 1. Asking this before the four components are named gives the learner a personal reading to hold them against.',
+      status: 'proposed',
+    },
+    {
+      ref: 'A4',
+      kind: 'gut-check',
+      where: 'after b6',
+      what: '"Which of the four is hardest for you right now?" — one option per component.',
+      reason:
+        'Breaks the same run again, and makes b7 land as an answer rather than an assertion: the script says focus on self-regulation first, and this is the card where the learner has just said whether they agree.',
+      status: 'proposed',
+    },
+  ],
 
   quiz: [
     {

@@ -20,6 +20,7 @@
     "typecheck": "tsc -p tsconfig.json --noEmit",
     "report:ip": "node --experimental-strip-types scripts/ip-report.ts",
     "report:content": "node --experimental-strip-types scripts/content-report.ts",
+    "report:cadence": "node --experimental-strip-types scripts/cadence.ts",
     "narration": "node --experimental-strip-types scripts/narration-list.ts"
   },
   "devDependencies": {

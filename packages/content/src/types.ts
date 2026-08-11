@@ -158,6 +158,42 @@ export interface FieldNote {
   topic: string;
 }
 
+/**
+ * A Gut Check.
+ *
+ * A five-second tap that interrupts a run of cards the learner would otherwise
+ * only read. Not a quiz and not a Curveball: there is no correct answer and
+ * nothing is scored. Every option is a real answer somebody would give, and
+ * each one gets a single line back that reframes it or names what is common.
+ *
+ * It exists because of cadence. Rep 1.5 ran nine cards and two and a half
+ * minutes with nothing for the learner to do, which is how a lesson stops
+ * being a lesson and becomes a document. The measurement is in
+ * `npm run report:cadence`.
+ *
+ * Gut Checks are NOT in the approved April 2026 scripts. Each one is recorded
+ * in `Rep.contentAdditions` so it can be approved or cut without hunting.
+ */
+export interface GutCheck {
+  id: string;
+  /** Beat id this lands after, matching the Curveball convention. */
+  triggerAfterBeat: string;
+  /** One line. If it needs a scenario paragraph, it is a Curveball. */
+  prompt: string;
+  choices: GutCheckChoice[];
+}
+
+export interface GutCheckChoice {
+  id: string;
+  text: string;
+  /**
+   * One line back. Never "correct" or "incorrect" — this is a question about
+   * the learner's own experience, and there is no version of it they can get
+   * wrong.
+   */
+  reaction: string;
+}
+
 // ---------------------------------------------------------------------------
 // Provenance
 // ---------------------------------------------------------------------------
@@ -177,6 +213,28 @@ export interface ScriptDeviation {
   severity: 'legal' | 'editorial' | 'production';
   /** Who needs to sign this off before launch. */
   needsSignoffFrom: string;
+}
+
+/**
+ * Content that is in the product but not in the approved script.
+ *
+ * The counterpart to ScriptDeviation: that records copy that was *changed*,
+ * this records copy that was *added*. Both exist so that "the April script is
+ * locked" survives contact with a product that needed things the script did
+ * not contain. Nothing appears in front of a learner that is not in one list
+ * or the other.
+ */
+export interface ContentAddition {
+  /** Reference for the review list, e.g. 'A1'. */
+  ref: string;
+  kind: 'gut-check' | 'curveball' | 'quiz' | 'field-note' | 'copy';
+  /** Where it lands, e.g. 'after b9'. */
+  where: string;
+  /** What it is, in one line. */
+  what: string;
+  /** Why the product needed it. */
+  reason: string;
+  status: 'proposed' | 'approved';
 }
 
 // ---------------------------------------------------------------------------
@@ -210,10 +268,14 @@ export interface Rep {
   topics: string[];
   beats: Beat[];
   curveballs: Curveball[];
+  /** Five-second taps that break up long passive runs. Not in the scripts. */
+  gutChecks?: GutCheck[];
   fieldNote: FieldNote;
   /** Rep-level check. The module-level exam lives on the Module. */
   quiz: QuizQuestion[];
   scriptDeviations?: ScriptDeviation[];
+  /** Everything in this Rep that the approved script does not contain. */
+  contentAdditions?: ContentAddition[];
 }
 
 export interface CourseModule {

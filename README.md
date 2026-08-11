@@ -69,12 +69,13 @@ streaks, and colour have exactly one definition each.
 |---|---|
 | **Rep** | One ~7-minute lesson |
 | **Curveball** | A scenario that interrupts the feed. Four plausible moves, graded best/workable/costly — never right/wrong |
+| **Gut Check** | A five-second tap that interrupts a run of reading. No score, no wrong answer |
 | **Field Note** | The open-ended written reflection at the end of each Rep |
 | **Your Corner** | The people who receive your progress updates, at a level you choose |
 
 ## Module 1 — the MVP
 
-8 Reps · 26 quiz questions · 10 Curveballs · 8 Field Notes · ~59 minutes.
+8 Reps · 26 quiz questions · 10 Curveballs · 4 Gut Checks · 8 Field Notes · ~59 minutes.
 
 All eight sections come from the approved and locked April 2026 script. The
 script's own `[AVATAR]` / `[BUILD LIST]` / `[FULL SCREEN MOMENT]` markup is
@@ -91,6 +92,7 @@ edit cost a re-render, and half the real usage has the sound off.
 ```bash
 npm run report:content -w @nms/content   # per-Rep timing + validation
 npm run report:ip -w @nms/content        # every change from a locked script
+npm run report:cadence -w @nms/content   # how long a learner goes with nothing to do
 npm run narration -w @nms/content -- m1-r1  # voiceover list for one Rep
 npm run narration -w @nms/content -- --index # every take id, for naming audio files
 ```

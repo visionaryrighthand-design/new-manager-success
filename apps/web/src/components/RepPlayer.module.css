@@ -73,6 +73,9 @@
 .segDone { background: var(--nms-color-bright); }
 .segNow { background: var(--nms-color-accent); }
 
+.seg[data-kind='gutCheck'], .segNow[data-kind='gutCheck'] { background: var(--nms-color-bright); }
+.seg[data-kind='gutCheck'] { opacity: 0.35; }
+
 /* Curveball segments read hot so the learner can see one coming. */
 .seg[data-kind='curveball'], .segNow[data-kind='curveball'] { background: var(--nms-color-alert); }
 .seg[data-kind='curveball'] { opacity: 0.35; }
@@ -443,6 +446,52 @@
   color: var(--nms-color-accent);
   font-style: normal;
   font-weight: 800;
+}
+
+/* ---- Gut check --------------------------------------------------------- */
+
+/*
+ * Sized down on purpose. A Curveball is a decision and looks like one; this is
+ * five seconds, and if it wore the same weight the learner would brace for the
+ * bigger thing every time one appeared.
+ */
+.gutCheckLabel {
+  font-family: var(--nms-font-mono);
+  font-size: 0.72rem;
+  font-weight: 800;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--nms-color-bright);
+}
+
+.gutCheckPrompt {
+  font-family: var(--nms-font-display);
+  font-size: 1.35rem;
+  line-height: 1.28;
+  font-weight: 700;
+  letter-spacing: -0.025em;
+  text-wrap: balance;
+}
+
+.gutCheckOption {
+  padding: var(--nms-space-3) var(--nms-space-4);
+  border-radius: var(--nms-radius-pill);
+}
+
+/* No verdict colour: there is no wrong answer to a question about your own
+   experience, and grading one would be a lie. */
+.gutCheckOption[data-state='chosen-gut'] {
+  border-color: var(--nms-color-bright);
+  background: color-mix(in srgb, var(--nms-color-bright) 12%, transparent);
+}
+
+.gutCheckReaction {
+  font-size: 1rem;
+  line-height: 1.55;
+  color: var(--nms-color-fg-muted);
+  border-inline-start: 2px solid var(--nms-color-bright);
+  padding-inline-start: var(--nms-space-4);
+  animation: rise var(--nms-duration-quick) var(--nms-ease-entrance) both;
 }
 
 /* ---- Labels ------------------------------------------------------------ */

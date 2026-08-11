@@ -143,6 +143,59 @@ export const rep01: Rep = {
     },
   ],
 
+  gutChecks: [
+    {
+      id: 'm1-r1-gc1',
+      triggerAfterBeat: 'b2',
+      prompt: 'Be honest — how much management training did you get before your first day in the role?',
+      choices: [
+        {
+          id: 'a',
+          text: 'None at all.',
+          reaction:
+            'You are in the majority. That is not a comment on your company — it is how nearly every promotion works.',
+        },
+        {
+          id: 'b',
+          text: 'A conversation and a system login.',
+          reaction:
+            'The most common answer we get. It is also the reason this program exists.',
+        },
+        {
+          id: 'c',
+          text: 'A day or two of onboarding.',
+          reaction:
+            'More than most people get, and still nothing about the actual job. Onboarding covers systems. Almost nobody covers people.',
+        },
+      ],
+    },
+    {
+      id: 'm1-r1-gc2',
+      triggerAfterBeat: 'b9',
+      prompt: 'Think of a manager you left, or nearly left. What actually tipped it?',
+      choices: [
+        {
+          id: 'a',
+          text: 'How they made me feel day to day.',
+          reaction:
+            'Almost nobody says "their strategy." It is the daily texture of working for someone — which is entirely inside your control.',
+        },
+        {
+          id: 'b',
+          text: 'How they made decisions.',
+          reaction:
+            'Fair. And notice it is usually not the decision itself — it is never being told why it was made.',
+        },
+        {
+          id: 'c',
+          text: 'One specific moment.',
+          reaction:
+            'A single moment can define a manager for years. Worth remembering the next time you are standing in one.',
+        },
+      ],
+    },
+  ],
+
   fieldNote: {
     id: 'm1-r1-fn1',
     topic: 'The invisible promotion',
@@ -151,6 +204,27 @@ export const rep01: Rep = {
     placeholder: 'Two or three sentences is plenty.',
     suggestedMinChars: 60,
   },
+
+  contentAdditions: [
+    {
+      ref: 'A1',
+      kind: 'gut-check',
+      where: 'after b2',
+      what: '"How much management training did you get before your first day?" — three options, no scoring.',
+      reason:
+        'Cards b1-b4 were four consecutive passive cards before the first Curveball. This also makes the learner state the premise of the Rep in their own terms before the script argues it.',
+      status: 'proposed',
+    },
+    {
+      ref: 'A2',
+      kind: 'gut-check',
+      where: 'after b9',
+      what: '"Think of a manager you left, or nearly left. What tipped it?" — three options, no scoring.',
+      reason:
+        'The back half ran six passive cards. Landing this immediately after "Employees do not quit companies, they quit managers" turns the claim into the learner\u2019s own memory rather than an assertion.',
+      status: 'proposed',
+    },
+  ],
 
   quiz: [
     {

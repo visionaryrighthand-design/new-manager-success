@@ -2,6 +2,10 @@ import { test, describe } from 'node:test';
 import assert from 'node:assert/strict';
 import {
   course,
+  feedCards,
+  isInteractive,
+  repCadence,
+  contentAdditions,
   module01,
   validateContent,
   estimateRepTotalSeconds,
@@ -261,5 +265,110 @@ describe('media wiring', () => {
       rep.beats.filter((b) => b.videoUrl).map((b) => `${rep.number}/${b.id}`),
     );
     assert.deepEqual(withVideo, []);
+  });
+});
+
+describe('cadence', () => {
+  /*
+   * Why this is a test and not just a report: the whole reason Gut Checks
+   * exist is that Rep 1.5 ran nine cards and 2m25 with no input, and nobody
+   * noticed until it was measured. A regression here is content drifting back
+   * to a document, which nothing else in the suite would catch.
+   */
+  /** Above this, a run of cards reads as homework. */
+  const COMFORTABLE_SECONDS = 90;
+
+  test('a Rep with Gut Checks holds under 90 seconds of unbroken reading', () => {
+    for (const rep of module01.reps) {
+      if (!rep.gutChecks?.length) continue;
+      const { longestPassiveSeconds } = repCadence(rep);
+      assert.ok(
+        longestPassiveSeconds <= COMFORTABLE_SECONDS,
+        `${rep.number}: longest passive run is ${longestPassiveSeconds}s`,
+      );
+    }
+  });
+
+  test('a Rep with Gut Checks opens within four cards of its first input', () => {
+    for (const rep of module01.reps) {
+      if (!rep.gutChecks?.length) continue;
+      const first = feedCards(rep).findIndex(isInteractive);
+      assert.ok(
+        first >= 0 && first <= 4,
+        `${rep.number}: ${first} cards before the learner does anything`,
+      );
+    }
+  });
+
+  /*
+   * A ratchet, not a pass mark.
+   *
+   * Five Reps still run over 90 seconds of unbroken reading; only 1.1 and 1.5
+   * have been reworked so far. Pinning the exact list means a Rep cannot
+   * quietly regress into it, and fixing one forces this line to be edited —
+   * so the backlog lives in the suite rather than in somebody's memory.
+   *
+   * When this list is empty, replace this test with the unconditional bar.
+   */
+  test('the Reps still over the comfortable bar are exactly the ones we know about', () => {
+    const over = module01.reps
+      .filter((rep) => repCadence(rep).longestPassiveSeconds > COMFORTABLE_SECONDS)
+      .map((rep) => rep.number);
+    assert.deepEqual(over, ['1.2', '1.3', '1.4', '1.6', '1.7']);
+  });
+
+  test('a Gut Check lands before a Curveball triggered on the same beat', () => {
+    // The cheap interruption first — stacking the expensive one ahead of it
+    // buries it behind a decision the learner is still thinking about.
+    for (const rep of module01.reps) {
+      const cards = feedCards(rep);
+      for (let i = 0; i < cards.length - 1; i++) {
+        if (cards[i]!.kind === 'curveball' && cards[i + 1]!.kind === 'gutCheck') {
+          assert.fail(`${rep.number}: Gut Check follows a Curveball on the same beat`);
+        }
+      }
+    }
+  });
+});
+
+describe('provenance', () => {
+  test('every Gut Check is declared as a content addition', () => {
+    for (const rep of module01.reps) {
+      if (!rep.gutChecks?.length) continue;
+      const declared = (rep.contentAdditions ?? []).filter((a) => a.kind === 'gut-check');
+      assert.equal(
+        declared.length,
+        rep.gutChecks.length,
+        `${rep.number}: ${rep.gutChecks.length} Gut Checks but ${declared.length} declared`,
+      );
+    }
+  });
+
+  test('nothing added to a locked script is marked approved yet', () => {
+    // Additions ship as `proposed` until the author signs them off. If this
+    // starts failing, someone approved them — which is fine, but should be a
+    // deliberate edit rather than a default.
+    for (const addition of contentAdditions()) {
+      assert.equal(
+        addition.status,
+        'proposed',
+        `${addition.ref}: marked ${addition.status} without a recorded sign-off`,
+      );
+    }
+  });
+
+  test('a Gut Check never grades the learner', () => {
+    for (const rep of module01.reps) {
+      for (const gc of rep.gutChecks ?? []) {
+        for (const choice of gc.choices) {
+          assert.ok(choice.reaction.length > 0, `${gc.id}/${choice.id}: no reaction`);
+          assert.doesNotMatch(
+            choice.reaction,
+            /\b(correct|incorrect|wrong answer|that's wrong)\b/i,
+            `${gc.id}/${choice.id}: reads as grading an answer that cannot be wrong`,
+          );
+        }
+      }
+    }
   });
 });
