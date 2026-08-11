@@ -24,9 +24,12 @@
  * Position and tint move per card kind; the change lands as they arrive, which
  * is the point — you feel a Curveball coming before you read the label.
  *
- * Deliberately near-invisible in isolation. Screenshot one card and it is
- * barely there; scroll six and the feed breathes. Anything strong enough to
- * notice on a single card is a pattern by the fourth.
+ * Calibrated to be seen. The first pass aimed for near-invisible-in-isolation
+ * and the answer from the person who has to demo it was that nothing looked
+ * different, which is the only test that counts: an effect nobody perceives is
+ * not restraint, it is a decoration that failed. Roughly doubled, and the
+ * top band was added because it tints the header and the progress bar rather
+ * than only the space behind the type, which is what makes it register.
  */
 .player::before {
   content: '';
@@ -35,50 +38,71 @@
   z-index: 0;
   pointer-events: none;
   background:
+    /* A band down from the top edge. This is the layer you actually notice,
+       because it colours the header and the progress bar, not just the space
+       behind the type. */
+    linear-gradient(
+      180deg,
+      var(--wash-top, color-mix(in srgb, var(--nms-color-accent) 20%, transparent)),
+      transparent 42%
+    ),
+    /* The pool of light behind the card. */
     radial-gradient(
-      var(--wash-size, 84% 46%) at var(--wash-at, 18% 24%),
-      var(--wash, color-mix(in srgb, var(--nms-color-accent) 14%, transparent)),
-      transparent 72%
-    );
+      var(--wash-size, 92% 54%) at var(--wash-at, 18% 24%),
+      var(--wash, color-mix(in srgb, var(--nms-color-accent) 26%, transparent)),
+      transparent 74%
+    ),
+    /* A vignette, so the edges fall away and the middle reads as lit. */
+    radial-gradient(120% 80% at 50% 50%, transparent 40%, rgba(0, 0, 0, 0.55));
 }
 
 /* Everything above the wash. */
 .player > * { position: relative; z-index: 1; }
 
 /* Prose and reading cards: a cool lift from the top left. The quietest. */
-.player[data-card='beat'] { --wash-at: 18% 24%; }
+.player[data-card='beat'] {
+  --wash: color-mix(in srgb, var(--nms-color-accent) 24%, transparent);
+  --wash-top: color-mix(in srgb, var(--nms-color-accent) 16%, transparent);
+  --wash-at: 18% 24%;
+}
 
 /* A Gut Check is a beat of white light. It reads as a pause, not a test. */
 .player[data-card='gutCheck'] {
-  --wash: color-mix(in srgb, var(--nms-color-bright) 8%, transparent);
+  --wash: color-mix(in srgb, var(--nms-color-bright) 15%, transparent);
+  --wash-top: color-mix(in srgb, var(--nms-color-bright) 10%, transparent);
   --wash-at: 80% 28%;
 }
 
 /* A Curveball runs warm, and the temperature changes before a word is read. */
 .player[data-card='curveball'] {
-  --wash: color-mix(in srgb, var(--nms-color-alert) 16%, transparent);
-  --wash-at: 50% 8%;
-  --wash-size: 104% 54%;
+  --wash: color-mix(in srgb, var(--nms-color-alert) 34%, transparent);
+  --wash-top: color-mix(in srgb, var(--nms-color-alert) 30%, transparent);
+  --wash-at: 50% 6%;
+  --wash-size: 116% 62%;
 }
 
 /* The quiz is cool and low: a desk lamp rather than a spotlight. */
 .player[data-card='quiz'] {
-  --wash: color-mix(in srgb, var(--nms-color-accent) 12%, transparent);
-  --wash-at: 24% 84%;
+  --wash: color-mix(in srgb, var(--nms-color-accent) 26%, transparent);
+  --wash-top: color-mix(in srgb, var(--nms-color-accent) 10%, transparent);
+  --wash-at: 24% 86%;
+  --wash-size: 104% 58%;
 }
 
 /* The Field Note is the most personal card in a Rep. Soft, wide, centred. */
 .player[data-card='fieldNote'] {
-  --wash: color-mix(in srgb, var(--nms-color-bright) 6%, transparent);
+  --wash: color-mix(in srgb, var(--nms-color-bright) 12%, transparent);
+  --wash-top: color-mix(in srgb, var(--nms-color-bright) 8%, transparent);
   --wash-at: 50% 48%;
-  --wash-size: 116% 64%;
+  --wash-size: 124% 70%;
 }
 
 /* The end. The only card allowed to feel like an arrival. */
 .player[data-card='summary'] {
-  --wash: color-mix(in srgb, var(--nms-color-accent) 22%, transparent);
+  --wash: color-mix(in srgb, var(--nms-color-accent) 40%, transparent);
+  --wash-top: color-mix(in srgb, var(--nms-color-accent) 14%, transparent);
   --wash-at: 50% 92%;
-  --wash-size: 128% 72%;
+  --wash-size: 136% 80%;
 }
 
 /* A moment paints its own glow, keyed to the payoff line. Two would fight. */
