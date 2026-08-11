@@ -30,7 +30,7 @@ export const rep05: Rep = {
       type: 'avatar',
       direction: 'full screen, direct to camera',
       speech:
-        "There is one skill that research consistently identifies as the strongest predictor of management effectiveness. It's not IQ. It's not technical expertise. It's not years of experience.\n\nIt's Emotional Intelligence.\n\nAnd before you dismiss that as corporate buzzword territory — stay with me. Because this one is going to change how you think about leadership.",
+        "There is one skill that research consistently identifies as the strongest predictor of management effectiveness. It's not IQ. It's not technical expertise. It's not years of experience.\n\nIt's Emotional Intelligence.\n\nAnd before you dismiss that as corporate buzzword territory, stay with me. Because this one is going to change how you think about leadership.",
     },
     { id: 'b2', type: 'overlay', text: 'Emotional Intelligence (EI)' },
     {
@@ -38,7 +38,7 @@ export const rep05: Rep = {
       type: 'avatar',
       direction: 'full screen',
       speech:
-        'Emotional Intelligence is the ability to recognize, understand, and manage your own emotions — and to recognize and influence the emotions of the people around you.\n\nFor an individual contributor, this is a useful skill. For a manager, it is the skill. Because everything you do as a leader — giving feedback, building trust, handling conflict, motivating your team — runs through your ability to understand and navigate emotions. Yours and theirs.',
+        'Emotional Intelligence is the ability to recognize, understand, and manage your own emotions, and to recognize and influence the emotions of the people around you.\n\nFor an individual contributor, this is a useful skill. For a manager, it is the skill. Because everything you do as a leader (giving feedback, building trust, handling conflict, motivating your team) runs through your ability to understand and navigate emotions. Yours and theirs.',
     },
     {
       id: 'b4',
@@ -51,10 +51,10 @@ export const rep05: Rep = {
       type: 'buildList',
       direction: 'avatar steps back, items build on screen',
       items: [
-        'Self-Awareness — knowing what you’re feeling and why, and how it affects your behavior.',
-        'Self-Regulation — managing your emotions rather than letting them manage you.',
-        'Empathy — understanding what others are feeling and seeing situations from their perspective.',
-        'Social Skills — using emotional awareness to communicate, influence, and lead effectively.',
+        'Self-Awareness, knowing what you’re feeling and why, and how it affects your behavior.',
+        'Self-Regulation, managing your emotions rather than letting them manage you.',
+        'Empathy, understanding what others are feeling and seeing situations from their perspective.',
+        'Social Skills, using emotional awareness to communicate, influence, and lead effectively.',
       ],
     },
     { id: 'b6', type: 'hold', text: 'All four visible' },
@@ -63,7 +63,7 @@ export const rep05: Rep = {
       type: 'avatar',
       direction: 'full screen',
       speech:
-        "All four of these matter. But if you're a new manager, the one to focus on first is self-regulation — because it directly affects everything else.\n\nSelf-regulation is the ability to pause before you react. To respond thoughtfully rather than impulsively. To stay calm and intentional when the situation around you is not.\n\nThink about the moments that test this most as a manager. An employee makes a costly mistake. Someone pushes back on a decision in front of the team. You get a last-minute curveball from your boss right before an important meeting.\n\nIn every one of those moments, you have a choice. React or respond.",
+        "All four of these matter. But if you're a new manager, the one to focus on first is self-regulation, because it directly affects everything else.\n\nSelf-regulation is the ability to pause before you react. To respond thoughtfully rather than impulsively. To stay calm and intentional when the situation around you is not.\n\nThink about the moments that test this most as a manager. An employee makes a costly mistake. Someone pushes back on a decision in front of the team. You get a last-minute curveball from your boss right before an important meeting.\n\nIn every one of those moments, you have a choice. React or respond.",
     },
     {
       id: 'b8',
@@ -81,10 +81,10 @@ export const rep05: Rep = {
       type: 'buildList',
       direction: 'avatar steps back, items build on screen',
       items: [
-        'Create space between stimulus and response — even a few seconds changes everything.',
-        'Recognize your triggers — know what situations tend to spike your frustration or anxiety.',
+        'Create space between stimulus and response, even a few seconds changes everything.',
+        'Recognize your triggers, know what situations tend to spike your frustration or anxiety.',
         'Name the emotion internally before reacting to it. Naming it gives you power over it.',
-        'Choose your response based on what the situation needs — not what you feel in the moment.',
+        'Choose your response based on what the situation needs, not what you feel in the moment.',
       ],
     },
     { id: 'b11', type: 'hold', text: 'All four visible' },
@@ -93,14 +93,14 @@ export const rep05: Rep = {
       type: 'avatar',
       direction: 'full screen',
       speech:
-        "Now let's talk about empathy — because this one surprises a lot of new managers.\n\nEmpathy is not about agreeing with everyone or avoiding hard decisions to spare people's feelings. Empathy is about understanding where someone is coming from before you respond to them.\n\nWhen a team member is resistant to feedback, a manager without empathy gets frustrated. A manager with empathy gets curious. They ask — what's driving this reaction? What might this person be dealing with that I'm not seeing?\n\nThat curiosity doesn't change the feedback. But it changes the conversation. And it changes the outcome.",
+        "Now let's talk about empathy, because this one surprises a lot of new managers.\n\nEmpathy is not about agreeing with everyone or avoiding hard decisions to spare people's feelings. Empathy is about understanding where someone is coming from before you respond to them.\n\nWhen a team member is resistant to feedback, a manager without empathy gets frustrated. A manager with empathy gets curious. They ask, what's driving this reaction? What might this person be dealing with that I'm not seeing?\n\nThat curiosity doesn't change the feedback. But it changes the conversation. And it changes the outcome.",
     },
     {
       id: 'b13',
       type: 'avatar',
       direction: 'full screen',
       speech:
-        "Here's what's important to understand about Emotional Intelligence.\n\nYou are not born with a fixed level of it. EI can be developed. It responds to practice, feedback, and intentional effort — just like any other skill.\n\nEvery difficult conversation you navigate thoughtfully. Every moment you choose to pause rather than react. Every time you try to understand before being understood. That's your EI growing.",
+        "Here's what's important to understand about Emotional Intelligence.\n\nYou are not born with a fixed level of it. EI can be developed. It responds to practice, feedback, and intentional effort, just like any other skill.\n\nEvery difficult conversation you navigate thoughtfully. Every moment you choose to pause rather than react. Every time you try to understand before being understood. That's your EI growing.",
     },
     { id: 'b14', type: 'overlay', text: 'EI grows with every intentional choice you make.' },
     {
@@ -108,19 +108,28 @@ export const rep05: Rep = {
       type: 'avatar',
       direction: 'full screen, direct close',
       speech:
-        'In our next section, we’re going to introduce one of the most practical leadership frameworks you’ll use throughout your career — the idea that great managers don’t have one style. They have the right style for each person in each moment.',
+        'In our next section, we’re going to introduce one of the most practical leadership frameworks you’ll use throughout your career, the idea that great managers don’t have one style. They have the right style for each person in each moment.',
       // See scriptDeviations D6 below.
     },
   ],
 
   scriptDeviations: [
     {
+      ref: 'D7',
+      original: 'Em dashes throughout the approved script, e.g. "your old manager\u2019s style was built for their context \u2014 not yours."',
+      shipped: 'The same words with the dash replaced by a comma, colon, or full stop as the sentence requires.',
+      reason:
+        'The em dash now reads as a marker of machine-written copy, and this product is sold on a human having done the job. Punctuation only: not one word changed, so the recorded voiceover still matches every card.',
+      severity: 'editorial',
+      needsSignoffFrom: 'Course author',
+    },
+    {
       ref: 'D6',
       severity: 'legal',
       original:
-        'In our next section, we’re going to introduce one of the most practical leadership frameworks you’ll use throughout your career — Situational Leadership. The idea that great managers don’t have one style. They have the right style for each person in each moment.',
+        'In our next section, we’re going to introduce one of the most practical leadership frameworks you’ll use throughout your career, Situational Leadership. The idea that great managers don’t have one style. They have the right style for each person in each moment.',
       shipped:
-        'In our next section, we’re going to introduce one of the most practical leadership frameworks you’ll use throughout your career — the idea that great managers don’t have one style. They have the right style for each person in each moment.',
+        'In our next section, we’re going to introduce one of the most practical leadership frameworks you’ll use throughout your career, the idea that great managers don’t have one style. They have the right style for each person in each moment.',
       reason:
         'Removes the forward-reference to “Situational Leadership”, a registered trademark of the Center for Leadership Studies. Same punch-list category as D4 (Radical Candor®) and D5 (SBI). The substance of the sentence is unchanged. The Aug 2026 Expanded Module Outline already retitles 1.6 to “Managing in the Moment”, so this aligns the locked script with the newer approved outline.',
       needsSignoffFrom: 'Course owner + IP counsel',
@@ -141,7 +150,7 @@ export const rep05: Rep = {
           text: 'Defend the process on the spot. Letting it stand unchallenged undermines you.',
           verdict: 'costly',
           response:
-            'This is reacting, not responding. You will win the exchange and lose the room — and you will never hear the actual objection, which might have been useful.',
+            'This is reacting, not responding. You will win the exchange and lose the room, and you will never hear the actual objection, which might have been useful.',
         },
         {
           id: 'b',
@@ -173,13 +182,13 @@ export const rep05: Rep = {
       id: 'm1-r5-gc1',
       triggerAfterBeat: 'b3',
       prompt:
-        'Last time you were properly frustrated at work — how long between feeling it and showing it?',
+        'Last time you were properly frustrated at work, how long between feeling it and showing it?',
       choices: [
         {
           id: 'a',
           text: 'No gap at all.',
           reaction:
-            'Honest, and more common than people admit. That gap is the entire skill, and it is trainable — which is what the rest of this section is about.',
+            'Honest, and more common than people admit. That gap is the entire skill, and it is trainable, which is what the rest of this section is about.',
         },
         {
           id: 'b',
@@ -191,7 +200,7 @@ export const rep05: Rep = {
           id: 'c',
           text: 'Nobody could tell.',
           reaction:
-            'Useful — as long as it is regulated and not just swallowed. There is a real difference between the two, and a team can feel which one it is.',
+            'Useful, as long as it is regulated and not just swallowed. There is a real difference between the two, and a team can feel which one it is.',
         },
       ],
     },
@@ -209,7 +218,7 @@ export const rep05: Rep = {
           id: 'b',
           text: 'Self-Regulation',
           reaction:
-            'The most common answer from new managers — and the one the next card is about.',
+            'The most common answer from new managers, and the one the next card is about.',
         },
         {
           id: 'c',
@@ -241,7 +250,7 @@ export const rep05: Rep = {
       ref: 'A3',
       kind: 'gut-check',
       where: 'after b3',
-      what: '"How long between feeling frustration and showing it?" — three options, no scoring.',
+      what: '"How long between feeling frustration and showing it?" Three options, no scoring.',
       reason:
         'This Rep ran nine consecutive passive cards and 2m25 before its Curveball, the worst stretch in Module 1. Asking this before the four components are named gives the learner a personal reading to hold them against.',
       status: 'proposed',
@@ -250,7 +259,7 @@ export const rep05: Rep = {
       ref: 'A4',
       kind: 'gut-check',
       where: 'after b6',
-      what: '"Which of the four is hardest for you right now?" — one option per component.',
+      what: '"Which of the four is hardest for you right now?", one option per component.',
       reason:
         'Breaks the same run again, and makes b7 land as an answer rather than an assertion: the script says focus on self-regulation first, and this is the card where the learner has just said whether they agree.',
       status: 'proposed',
@@ -287,7 +296,7 @@ export const rep05: Rep = {
           text: 'Self-awareness, because you cannot change what you cannot see.',
           correct: false,
           feedback:
-            'A close and defensible answer — but the section names self-regulation specifically as the one to focus on first.',
+            'A close and defensible answer, but the section names self-regulation specifically as the one to focus on first.',
         },
       ],
     },
@@ -314,7 +323,7 @@ export const rep05: Rep = {
           text: 'Understanding where someone is coming from before you respond to them.',
           correct: true,
           feedback:
-            'It does not change the feedback. It changes the conversation — and the outcome.',
+            'It does not change the feedback. It changes the conversation, and the outcome.',
         },
         {
           id: 'd',

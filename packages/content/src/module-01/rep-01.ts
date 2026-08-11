@@ -40,14 +40,14 @@ export const rep01: Rep = {
       type: 'reading',
       text: 'The Invisible Promotion',
       speech:
-        "Most promotions into management follow the same pattern. A talented employee does exceptional work. Leadership notices. They get promoted — usually because they're the best at what they do.\n\nAnd then they're handed a team, maybe a pay increase, and expected to figure out the rest. No roadmap. No instruction manual. No real preparation.\n\nThe title is visible. The new paycheck is visible. But the actual job description of “manager” — what it truly requires of you — that part is invisible. And you're expected to just... know.",
+        "Most promotions into management follow the same pattern. A talented employee does exceptional work. Leadership notices. They get promoted, usually because they're the best at what they do.\n\nAnd then they're handed a team, maybe a pay increase, and expected to figure out the rest. No roadmap. No instruction manual. No real preparation.\n\nThe title is visible. The new paycheck is visible. But the actual job description of “manager” (what it truly requires of you): that part is invisible. And you're expected to just... know.",
     },
     {
       id: 'b3',
       type: 'avatar',
       direction: 'full screen',
       speech:
-        "Let's talk about what actually changed when you got promoted.\n\nBefore, your success depended almost entirely on you. Your effort, your skill, your output. You controlled it. If you worked harder or smarter, results improved. Simple equation.\n\nNow? Your success depends on a group of people — people with different strengths, different motivations, and different ideas about what a productive day looks like. You can't do the work for them. You have to lead them to do it well.\n\nThat's a fundamentally different challenge. And most new managers walk into it believing at least one of these three things.",
+        "Let's talk about what actually changed when you got promoted.\n\nBefore, your success depended almost entirely on you. Your effort, your skill, your output. You controlled it. If you worked harder or smarter, results improved. Simple equation.\n\nNow? Your success depends on a group of people: people with different strengths, different motivations, and different ideas about what a productive day looks like. You can't do the work for them. You have to lead them to do it well.\n\nThat's a fundamentally different challenge. And most new managers walk into it believing at least one of these three things.",
       audioUrl:
         'https://rhteswkgmndgijpllvjt.supabase.co/storage/v1/object/sign/Audio/New%20Manager%20Success%20Module%201/m1-r1-b3.mp3?token=eyJraWQiOiJzdG9yYWdlLXVybC1zaWduaW5nLWtleV8wZTE3ZmRiMi02ZjYzLTQyOGUtODIxMS0wNjRiNTNhNzlkZDYiLCJhbGciOiJIUzI1NiJ9.eyJ1cmwiOiJBdWRpby9OZXcgTWFuYWdlciBTdWNjZXNzIE1vZHVsZSAxL20xLXIxLWIzLm1wMyIsInNjb3BlIjoiZG93bmxvYWQiLCJpYXQiOjE3ODY0NzIwMzYsImV4cCI6MjEwMTgzMjAzNn0.Yu46sSwH1S25fqulTPCGygOJpkchf8qDZRvYyzVcZFA',
     },
@@ -67,7 +67,7 @@ export const rep01: Rep = {
       type: 'avatar',
       direction: 'full screen',
       speech:
-        "All three of those will get you in trouble.\n\nYour old manager's style was built for their context — not yours. Your track record impresses leadership, not necessarily your team. And trying to do both jobs at once usually means doing neither one well.\n\nHere's what happens when a manager steps in without the right preparation.",
+        "All three of those will get you in trouble.\n\nYour old manager's style was built for their context, not yours. Your track record impresses leadership, not necessarily your team. And trying to do both jobs at once usually means doing neither one well.\n\nHere's what happens when a manager steps in without the right preparation.",
       audioUrl:
         'https://rhteswkgmndgijpllvjt.supabase.co/storage/v1/object/sign/Audio/New%20Manager%20Success%20Module%201/m1-r1-b6.mp3?token=eyJraWQiOiJzdG9yYWdlLXVybC1zaWduaW5nLWtleV8wZTE3ZmRiMi02ZjYzLTQyOGUtODIxMS0wNjRiNTNhNzlkZDYiLCJhbGciOiJIUzI1NiJ9.eyJ1cmwiOiJBdWRpby9OZXcgTWFuYWdlciBTdWNjZXNzIE1vZHVsZSAxL20xLXIxLWI2Lm1wMyIsInNjb3BlIjoiZG93bmxvYWQiLCJpYXQiOjE3ODY0NzIwNDksImV4cCI6MjEwMTgzMjA0OX0.GkexBiIs__7Qo2JptK0ngaoUvsmmrD0Eddu-e25rz0M',
     },
@@ -79,7 +79,7 @@ export const rep01: Rep = {
         'Teams disengage.',
         'High performers start looking for the door.',
         'Productivity drops. Conflict increases.',
-        'In a small business — every single one of these hits harder.',
+        'In a small business, every single one of these hits harder.',
       ],
     },
     { id: 'b8', type: 'hold', text: 'All four visible' },
@@ -93,7 +93,7 @@ export const rep01: Rep = {
       type: 'avatar',
       direction: 'full screen',
       speech:
-        "That's a significant responsibility. But it's also a significant opportunity — because when you get this right, you can build something remarkable.\n\nHere's the reframe this entire program is built on.\n\nYou were promoted because you were great at your job. That's your starting point — not your finish line. The skills that made you an exceptional doer are different from the skills that will make you an exceptional manager.",
+        "That's a significant responsibility. But it's also a significant opportunity, because when you get this right, you can build something remarkable.\n\nHere's the reframe this entire program is built on.\n\nYou were promoted because you were great at your job. That's your starting point, not your finish line. The skills that made you an exceptional doer are different from the skills that will make you an exceptional manager.",
       audioUrl:
         'https://rhteswkgmndgijpllvjt.supabase.co/storage/v1/object/sign/Audio/New%20Manager%20Success%20Module%201/m1-r1-b10.mp3?token=eyJraWQiOiJzdG9yYWdlLXVybC1zaWduaW5nLWtleV8wZTE3ZmRiMi02ZjYzLTQyOGUtODIxMS0wNjRiNTNhNzlkZDYiLCJhbGciOiJIUzI1NiJ9.eyJ1cmwiOiJBdWRpby9OZXcgTWFuYWdlciBTdWNjZXNzIE1vZHVsZSAxL20xLXIxLWIxMC5tcDMiLCJzY29wZSI6ImRvd25sb2FkIiwiaWF0IjoxNzg2NDcxOTc1LCJleHAiOjIxMDE4MzE5NzV9.zji5bXZ8j2S4vYPx4-PF4MBFcljm6IOD8WAaWb8URro',
     },
@@ -102,7 +102,7 @@ export const rep01: Rep = {
       type: 'overlay',
       text: 'Those skills can be learned. That’s what this program is for.',
       speech:
-        "You're not behind. You're not failing. You're at the beginning of a new game — and now you know the rules are different.",
+        "You're not behind. You're not failing. You're at the beginning of a new game, and now you know the rules are different.",
       audioUrl:
         'https://rhteswkgmndgijpllvjt.supabase.co/storage/v1/object/sign/Audio/New%20Manager%20Success%20Module%201/m1-r1-b11.mp3?token=eyJraWQiOiJzdG9yYWdlLXVybC1zaWduaW5nLWtleV8wZTE3ZmRiMi02ZjYzLTQyOGUtODIxMS0wNjRiNTNhNzlkZDYiLCJhbGciOiJIUzI1NiJ9.eyJ1cmwiOiJBdWRpby9OZXcgTWFuYWdlciBTdWNjZXNzIE1vZHVsZSAxL20xLXIxLWIxMS5tcDMiLCJzY29wZSI6ImRvd25sb2FkIiwiaWF0IjoxNzg2NDcxOTk4LCJleHAiOjIxMDE4MzE5OTh9.hVnM1g2Oik5Y3LLojYZ9JbjhrvkZUjFh-pvDvGdsW1Y',
     },
@@ -111,7 +111,7 @@ export const rep01: Rep = {
       type: 'avatar',
       direction: 'full screen, direct close',
       speech:
-        "In the next section, we're going to dig into exactly why high performers often struggle the most when they step into management — and what the shift from doing to leading actually looks like in practice.\n\nLet's keep going.",
+        "In the next section, we're going to dig into exactly why high performers often struggle the most when they step into management, and what the shift from doing to leading actually looks like in practice.\n\nLet's keep going.",
       audioUrl:
         'https://rhteswkgmndgijpllvjt.supabase.co/storage/v1/object/sign/Audio/New%20Manager%20Success%20Module%201/m1-r1-b12.mp3?token=eyJraWQiOiJzdG9yYWdlLXVybC1zaWduaW5nLWtleV8wZTE3ZmRiMi02ZjYzLTQyOGUtODIxMS0wNjRiNTNhNzlkZDYiLCJhbGciOiJIUzI1NiJ9.eyJ1cmwiOiJBdWRpby9OZXcgTWFuYWdlciBTdWNjZXNzIE1vZHVsZSAxL20xLXIxLWIxMi5tcDMiLCJzY29wZSI6ImRvd25sb2FkIiwiaWF0IjoxNzg2NDcyMDE0LCJleHAiOjIxMDE4MzIwMTR9.mbt10H91vhjmGyYxCygr1O-gz-wQ2wglpElAVGpf1_U',
     },
@@ -131,7 +131,7 @@ export const rep01: Rep = {
           text: 'Absorb it. Work late until the old work is finished, then start managing properly.',
           verdict: 'costly',
           response:
-            'This is Myth #3 in action. It works for about three weeks, and the whole time your team is learning that you are unavailable. The old work is also the easier work — that is exactly why it is tempting.',
+            'This is Myth #3 in action. It works for about three weeks, and the whole time your team is learning that you are unavailable. The old work is also the easier work. That is exactly why it is tempting.',
         },
         {
           id: 'b',
@@ -152,7 +152,7 @@ export const rep01: Rep = {
           text: 'Hand the old work to your team and see how it goes.',
           verdict: 'workable',
           response:
-            'Right instinct, incomplete execution. Handing work over without context, expectations, or a check-in point is not delegation — it is disposal. Module 3 takes this apart properly.',
+            'Right instinct, incomplete execution. Handing work over without context, expectations, or a check-in point is not delegation. It is disposal. Module 3 takes this apart properly.',
         },
       ],
     },
@@ -162,13 +162,13 @@ export const rep01: Rep = {
     {
       id: 'm1-r1-gc1',
       triggerAfterBeat: 'b2',
-      prompt: 'Be honest — how much management training did you get before your first day in the role?',
+      prompt: 'Be honest: how much management training did you get before your first day in the role?',
       choices: [
         {
           id: 'a',
           text: 'None at all.',
           reaction:
-            'You are in the majority. That is not a comment on your company — it is how nearly every promotion works.',
+            'You are in the majority. That is not a comment on your company. It is how nearly every promotion works.',
         },
         {
           id: 'b',
@@ -193,13 +193,13 @@ export const rep01: Rep = {
           id: 'a',
           text: 'How they made me feel day to day.',
           reaction:
-            'Almost nobody says "their strategy." It is the daily texture of working for someone — which is entirely inside your control.',
+            'Almost nobody says "their strategy." It is the daily texture of working for someone, which is entirely inside your control.',
         },
         {
           id: 'b',
           text: 'How they made decisions.',
           reaction:
-            'Fair. And notice it is usually not the decision itself — it is never being told why it was made.',
+            'Fair. And notice it is usually not the decision itself. It is never being told why it was made.',
         },
         {
           id: 'c',
@@ -225,7 +225,7 @@ export const rep01: Rep = {
       ref: 'A1',
       kind: 'gut-check',
       where: 'after b2',
-      what: '"How much management training did you get before your first day?" — three options, no scoring.',
+      what: '"How much management training did you get before your first day?" Three options, no scoring.',
       reason:
         'Cards b1-b4 were four consecutive passive cards before the first Curveball. This also makes the learner state the premise of the Rep in their own terms before the script argues it.',
       status: 'proposed',
@@ -234,7 +234,7 @@ export const rep01: Rep = {
       ref: 'A2',
       kind: 'gut-check',
       where: 'after b9',
-      what: '"Think of a manager you left, or nearly left. What tipped it?" — three options, no scoring.',
+      what: '"Think of a manager you left, or nearly left. What tipped it?" Three options, no scoring.',
       reason:
         'The back half ran six passive cards. Landing this immediately after "Employees do not quit companies, they quit managers" turns the claim into the learner\u2019s own memory rather than an assertion.',
       status: 'proposed',
@@ -313,7 +313,7 @@ export const rep01: Rep = {
       id: 'm1-r1-q3',
       kind: 'scenario',
       source: '1.1',
-      stem: 'A newly promoted manager says: “I’m going to run this team exactly the way my old boss ran it — she was great.” What is the risk?',
+      stem: 'A newly promoted manager says: “I’m going to run this team exactly the way my old boss ran it. She was great.” What is the risk?',
       options: [
         {
           id: 'a',
@@ -324,7 +324,7 @@ export const rep01: Rep = {
         },
         {
           id: 'b',
-          text: 'Her style was built for her context, her team, and her strengths — not yours.',
+          text: 'Her style was built for her context, her team, and her strengths, not yours.',
           correct: true,
           feedback:
             'Borrow the principles. Do not clone the person. The context that made her style work is not the context you are in.',
@@ -342,6 +342,18 @@ export const rep01: Rep = {
           feedback: 'Time is not the issue. Fit is.',
         },
       ],
+    },
+  ],
+
+  scriptDeviations: [
+    {
+      ref: 'D7',
+      original: 'Em dashes throughout the approved script, e.g. "your old manager\u2019s style was built for their context \u2014 not yours."',
+      shipped: 'The same words with the dash replaced by a comma, colon, or full stop as the sentence requires.',
+      reason:
+        'The em dash now reads as a marker of machine-written copy, and this product is sold on a human having done the job. Punctuation only: not one word changed, so the recorded voiceover still matches every card.',
+      severity: 'editorial',
+      needsSignoffFrom: 'Course author',
     },
   ],
 };

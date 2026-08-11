@@ -31,9 +31,9 @@ export const rep08: Rep = {
       type: 'avatar',
       direction: 'full screen, direct to camera',
       speech:
-        "You've just completed Module 1. Seven sections covering the most important mindset shifts a new manager needs to make before anything else.\n\nLet's take a few minutes to pull the key ideas together — because the best managers don't just watch and move on. They reflect, connect the dots, and make it stick.",
+        "You've just completed Module 1. Seven sections covering the most important mindset shifts a new manager needs to make before anything else.\n\nLet's take a few minutes to pull the key ideas together, because the best managers don't just watch and move on. They reflect, connect the dots, and make it stick.",
     },
-    { id: 'b2', type: 'overlay', text: 'Module 1 Review — The Mindset Shift' },
+    { id: 'b2', type: 'overlay', text: 'Module 1 Review, The Mindset Shift' },
     {
       id: 'b3',
       type: 'avatar',
@@ -45,13 +45,13 @@ export const rep08: Rep = {
       type: 'buildList',
       direction: 'avatar steps back, items build on screen',
       items: [
-        'Section 1: The Invisible Promotion — most managers are promoted without preparation. That gap is real, and it’s fixable.',
-        'Section 2: The Doer Trap — your value as a manager is measured by your team’s output, not your own.',
-        'Section 3: The Relationship Reset — the goal is not to be liked. It’s to be trusted and respected.',
-        'Section 4: Your Energy Sets the Tone — emotional contagion is real. What you project, your team absorbs.',
-        'Section 5: Emotional Intelligence — self-awareness and self-regulation are the foundation of effective leadership.',
-        'Section 6: Managing in the Moment — different people need different things. Flexibility is not inconsistency.',
-        'Section 7: Leading by Example — your team will not do what you say. They will do what you do.',
+        'Section 1: The Invisible Promotion, most managers are promoted without preparation. That gap is real, and it’s fixable.',
+        'Section 2: The Doer Trap, your value as a manager is measured by your team’s output, not your own.',
+        'Section 3: The Relationship Reset, the goal is not to be liked. It’s to be trusted and respected.',
+        'Section 4: Your Energy Sets the Tone, emotional contagion is real. What you project, your team absorbs.',
+        'Section 5: Emotional Intelligence, self-awareness and self-regulation are the foundation of effective leadership.',
+        'Section 6: Managing in the Moment, different people need different things. Flexibility is not inconsistency.',
+        'Section 7: Leading by Example, your team will not do what you say. They will do what you do.',
       ],
     },
     { id: 'b5', type: 'hold', text: 'All seven visible' },
@@ -60,27 +60,36 @@ export const rep08: Rep = {
       type: 'avatar',
       direction: 'full screen',
       speech:
-        "Now let's put some of these ideas to work with a few real-world scenarios. Think about what you would do in each situation — then we'll walk through it together.",
+        "Now let's put some of these ideas to work with a few real-world scenarios. Think about what you would do in each situation, then we'll walk through it together.",
     },
     {
       id: 'b7',
       type: 'avatar',
       direction: 'full screen, direct close',
       speech:
-        "Those are the moments that define what kind of manager you're becoming. Not the easy days — the ones that test what you've learned.\n\nYou've built the foundation in this module. The mindset, the emotional awareness, the frameworks for understanding your team. Everything that follows in this program builds on what you've started here.\n\nComplete your Module 1 quiz to lock in what you've learned — and then we'll see you in Module 2.",
+        "Those are the moments that define what kind of manager you're becoming. Not the easy days, the ones that test what you've learned.\n\nYou've built the foundation in this module. The mindset, the emotional awareness, the frameworks for understanding your team. Everything that follows in this program builds on what you've started here.\n\nComplete your Module 1 quiz to lock in what you've learned, and then we'll see you in Module 2.",
     },
   ],
 
   scriptDeviations: [
     {
+      ref: 'D7',
+      original: 'Em dashes throughout the approved script, e.g. "your old manager\u2019s style was built for their context \u2014 not yours."',
+      shipped: 'The same words with the dash replaced by a comma, colon, or full stop as the sentence requires.',
+      reason:
+        'The em dash now reads as a marker of machine-written copy, and this product is sold on a human having done the job. Punctuation only: not one word changed, so the recorded voiceover still matches every card.',
+      severity: 'editorial',
+      needsSignoffFrom: 'Course author',
+    },
+    {
       ref: 'D6f',
       severity: 'legal',
       original:
-        'Section 6: Situational Leadership — different people need different things. Flexibility is not inconsistency.',
+        'Section 6: Situational Leadership, different people need different things. Flexibility is not inconsistency.',
       shipped:
-        'Section 6: Managing in the Moment — different people need different things. Flexibility is not inconsistency.',
+        'Section 6: Managing in the Moment, different people need different things. Flexibility is not inconsistency.',
       reason:
-        'Recap line updated to match the retitled section 1.6 (see D6a). Consequential change only — no editorial decision beyond D6a.',
+        'Recap line updated to match the retitled section 1.6 (see D6a). Consequential change only, no editorial decision beyond D6a.',
       needsSignoffFrom: 'Course owner + IP counsel',
     },
   ],
@@ -89,9 +98,9 @@ export const rep08: Rep = {
     {
       id: 'm1-r8-cb1',
       triggerAfterBeat: 'b6',
-      skill: 'Scenario 1 — the friend on your team',
+      skill: 'Scenario 1, the friend on your team',
       scenario:
-        'You’ve just been promoted to manage your former team. One of your closest friends on the team starts treating you the same way he always has — joking around, sharing frustrations about the company, expecting the same dynamic you had as peers.',
+        'You’ve just been promoted to manage your former team. One of your closest friends on the team starts treating you the same way he always has, joking around, sharing frustrations about the company, expecting the same dynamic you had as peers.',
       prompt: 'How do you handle it?',
       choices: [
         {
@@ -99,14 +108,14 @@ export const rep08: Rep = {
           text: 'Let it ride. Forcing a change would make things awkward for no reason.',
           verdict: 'costly',
           response:
-            'The awkwardness does not go away, it just gets deferred to a worse moment — usually the first time you have to hold him accountable.',
+            'The awkwardness does not go away, it just gets deferred to a worse moment, usually the first time you have to hold him accountable.',
         },
         {
           id: 'b',
           text: 'Have the conversation directly, warmly, and early: acknowledge the friendship, be clear the dynamic needs to shift professionally.',
           verdict: 'best',
           response:
-            'Think about Section 1.3. The relationship has changed — and it’s your responsibility to reset it, not his. The conversation needs to happen directly, warmly, and early. You acknowledge the friendship. You’re clear that the dynamic needs to shift professionally — and you do it before a situation forces it to happen in a harder way.',
+            'Think about Section 1.3. The relationship has changed, and it’s your responsibility to reset it, not his. The conversation needs to happen directly, warmly, and early. You acknowledge the friendship. You’re clear that the dynamic needs to shift professionally, and you do it before a situation forces it to happen in a harder way.',
         },
         {
           id: 'c',
@@ -120,14 +129,14 @@ export const rep08: Rep = {
           text: 'Wait until he crosses a real line, then address it in the moment.',
           verdict: 'costly',
           response:
-            'That makes the first conversation a correction rather than a reset — the hardest possible version of it, and the one Section 1.3 tells you to get ahead of.',
+            'That makes the first conversation a correction rather than a reset, the hardest possible version of it, and the one Section 1.3 tells you to get ahead of.',
         },
       ],
     },
     {
       id: 'm1-r8-cb2',
       triggerAfterBeat: 'b6',
-      skill: 'Scenario 2 — the terrible morning',
+      skill: 'Scenario 2, the terrible morning',
       scenario:
         'You walk into work after a genuinely terrible morning. You’re stressed, distracted, and running late. Your team is already at their desks.',
       prompt: 'What do you do before you engage anyone?',
@@ -144,14 +153,14 @@ export const rep08: Rep = {
           text: 'Take two minutes. Name what you’re carrying, decide what you’re leaving at the door, set your intention.',
           verdict: 'best',
           response:
-            'Think about Section 1.4. Two minutes. Name what you’re carrying. Decide what you’re leaving at the door. Set your intention. Your team doesn’t need to absorb your morning — they need their manager.',
+            'Think about Section 1.4. Two minutes. Name what you’re carrying. Decide what you’re leaving at the door. Set your intention. Your team doesn’t need to absorb your morning. They need their manager.',
         },
         {
           id: 'c',
           text: 'Tell the team you’ve had a rough morning so they know it is not about them.',
           verdict: 'workable',
           response:
-            'Better than silent tension, and honest. But it hands the team responsibility for managing around you. Reset first — then, if it is still showing, name it briefly.',
+            'Better than silent tension, and honest. But it hands the team responsibility for managing around you. Reset first, then, if it is still showing, name it briefly.',
         },
         {
           id: 'd',
@@ -165,7 +174,7 @@ export const rep08: Rep = {
     {
       id: 'm1-r8-cb3',
       triggerAfterBeat: 'b6',
-      skill: 'Scenario 3 — the high performer on new ground',
+      skill: 'Scenario 3, the high performer on new ground',
       scenario:
         'You have a high performer on your team who has been crushing it in her role for two years. You ask her to take on a new project in an area she’s never worked in before. She immediately starts asking a lot of questions and seems hesitant.',
       prompt: 'What’s happening, and how do you respond?',
@@ -182,7 +191,7 @@ export const rep08: Rep = {
           text: 'She moved to a new task at a lower readiness level. Coach and support her through this one.',
           verdict: 'best',
           response:
-            'Think about Section 1.6. She didn’t get worse. She moved to a new task at a lower readiness level. She needs your coaching and support right now — not the same high-autonomy approach you’d use for her usual work. Meet her where she is.',
+            'Think about Section 1.6. She didn’t get worse. She moved to a new task at a lower readiness level. She needs your coaching and support right now, not the same high-autonomy approach you’d use for her usual work. Meet her where she is.',
         },
         {
           id: 'c',
@@ -196,7 +205,7 @@ export const rep08: Rep = {
           text: 'Give the project to someone with relevant experience instead.',
           verdict: 'costly',
           response:
-            'You solved this week and lost the development. She also learns that asking questions gets work taken away — so next time she will not ask.',
+            'You solved this week and lost the development. She also learns that asking questions gets work taken away, so next time she will not ask.',
         },
       ],
     },
@@ -233,7 +242,7 @@ export const rep08: Rep = {
         },
         {
           id: 'c',
-          text: 'Neutral — it depends entirely on your industry.',
+          text: 'Neutral, it depends entirely on your industry.',
           correct: false,
           feedback: 'The shift from task leadership to people leadership holds across professions.',
         },
@@ -256,7 +265,7 @@ export const rep08: Rep = {
           id: 'a',
           text: 'Be liked by your team; treat everyone identically.',
           correct: false,
-          feedback: 'Both are named as traps — approval-seeking, and inflexibility mistaken for fairness.',
+          feedback: 'Both are named as traps, approval-seeking, and inflexibility mistaken for fairness.',
         },
         {
           id: 'b',
@@ -269,7 +278,7 @@ export const rep08: Rep = {
           text: 'Be trusted and respected; treat everyone identically.',
           correct: false,
           feedback:
-            'First half right. Managing everyone identically does not make you fair — it makes you inflexible.',
+            'First half right. Managing everyone identically does not make you fair. It makes you inflexible.',
         },
         {
           id: 'd',
@@ -287,28 +296,28 @@ export const rep08: Rep = {
       options: [
         {
           id: 'a',
-          text: 'The doer trap — they assume you will just fix it yourself.',
+          text: 'The doer trap, they assume you will just fix it yourself.',
           correct: false,
           feedback:
             'Plausible and worth checking. But the doer trap usually produces more problems arriving, not fewer.',
         },
         {
           id: 'b',
-          text: 'Emotional contagion — they are reading tension from you and staying out of the way.',
+          text: 'Emotional contagion. They are reading tension from you and staying out of the way.',
           correct: true,
           feedback:
             'Questions go unasked, issues go unreported, and nobody ever says a word about what is wrong.',
         },
         {
           id: 'c',
-          text: 'The relationship reset — you have become too distant.',
+          text: 'The relationship reset. You have become too distant.',
           correct: false,
           feedback:
             'Possible, but the reset is about the nature of the relationship, not about approachability collapsing.',
         },
         {
           id: 'd',
-          text: 'Readiness — they are all at Level 4 and do not need you.',
+          text: 'Readiness. They are all at Level 4 and do not need you.',
           correct: false,
           feedback: 'A Level 4 still reports problems. Silence is a different signal.',
         },
@@ -332,7 +341,7 @@ export const rep08: Rep = {
           text: 'Holding a standard for the team that you visibly do not hold for yourself.',
           correct: true,
           feedback:
-            'Credibility is earned through alignment between what you say and what you do — and lost fast when they do not match.',
+            'Credibility is earned through alignment between what you say and what you do, and lost fast when they do not match.',
         },
         {
           id: 'c',
@@ -356,7 +365,7 @@ export const rep08: Rep = {
       options: [
         {
           id: 'a',
-          text: 'You were promoted because you were great at your job — that is your starting point, not your finish line.',
+          text: 'You were promoted because you were great at your job. That is your starting point, not your finish line.',
           correct: true,
           feedback:
             'And the skills that made you an exceptional doer are different from the ones that will make you an exceptional manager. Those can be learned.',
@@ -378,7 +387,7 @@ export const rep08: Rep = {
           text: 'Your first ninety days determine whether you will succeed.',
           correct: false,
           feedback:
-            'The first ninety days set patterns that are hard to undo — true, but not the program’s core reframe.',
+            'The first ninety days set patterns that are hard to undo, true, but not the program’s core reframe.',
         },
       ],
     },

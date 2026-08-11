@@ -41,7 +41,7 @@ export const rep06: Rep = {
       type: 'avatar',
       direction: 'full screen, direct to camera',
       speech:
-        "One of the most common mistakes new managers make — and it's a costly one — is treating everyone on their team exactly the same way.\n\nOn the surface, that sounds fair. Same rules, same approach, same style for everyone. But here's the problem.\n\nDifferent people need different things from their manager. And the same person can need different things from you depending on the task, the situation, or where they are in their development.\n\nManaging everyone identically doesn't make you fair. It makes you inflexible.",
+        "One of the most common mistakes new managers make, and it's a costly one, is treating everyone on their team exactly the same way.\n\nOn the surface, that sounds fair. Same rules, same approach, same style for everyone. But here's the problem.\n\nDifferent people need different things from their manager. And the same person can need different things from you depending on the task, the situation, or where they are in their development.\n\nManaging everyone identically doesn't make you fair. It makes you inflexible.",
     },
     { id: 'b2', type: 'overlay', text: 'The Readiness Dial' },
     {
@@ -49,17 +49,17 @@ export const rep06: Rep = {
       type: 'avatar',
       direction: 'full screen',
       speech:
-        "The Readiness Dial is built on one simple idea: the most effective leadership style depends on the person you're leading and the specific task at hand.\n\nThis isn't about playing favorites or being inconsistent. It's about being smart enough to recognize that a brand-new employee learning an unfamiliar process needs something completely different from a seasoned team member who's been doing the same job for three years.\n\nLet's break this down.\n\nEvery employee on your team sits somewhere on a readiness spectrum for any given task. Readiness is a combination of two things — their skill level and their confidence level for that specific task.",
+        "The Readiness Dial is built on one simple idea: the most effective leadership style depends on the person you're leading and the specific task at hand.\n\nThis isn't about playing favorites or being inconsistent. It's about being smart enough to recognize that a brand-new employee learning an unfamiliar process needs something completely different from a seasoned team member who's been doing the same job for three years.\n\nLet's break this down.\n\nEvery employee on your team sits somewhere on a readiness spectrum for any given task. Readiness is a combination of two things, their skill level and their confidence level for that specific task.",
     },
     {
       id: 'b4',
       type: 'buildList',
       direction: 'avatar steps back, items build on screen',
       items: [
-        'Level 1: Unable and Unsure — new to the task, low skill, low confidence. Needs clear direction.',
-        'Level 2: Unable but Willing — low skill but eager and motivated. Needs coaching and encouragement.',
-        'Level 3: Able but Unsure — has the skill but lacks confidence. Needs support and reassurance.',
-        'Level 4: Able and Confident — high skill, high confidence. Needs autonomy and trust.',
+        'Level 1: Unable and Unsure, new to the task, low skill, low confidence. Needs clear direction.',
+        'Level 2: Unable but Willing, low skill but eager and motivated. Needs coaching and encouragement.',
+        'Level 3: Able but Unsure, has the skill but lacks confidence. Needs support and reassurance.',
+        'Level 4: Able and Confident, high skill, high confidence. Needs autonomy and trust.',
       ],
     },
     { id: 'b5', type: 'hold', text: 'All four visible' },
@@ -75,10 +75,10 @@ export const rep06: Rep = {
       type: 'buildList',
       direction: 'avatar steps back, items build on screen',
       items: [
-        'For Level 1 — Direct. Be specific, give clear instructions, check in frequently.',
-        'For Level 2 — Coach. Explain the why, involve them in problem-solving, celebrate progress.',
-        'For Level 3 — Support. Encourage, ask questions, step back and let them lead while staying close.',
-        'For Level 4 — Delegate. Hand it over. Set the goal and get out of the way.',
+        'For Level 1, Direct. Be specific, give clear instructions, check in frequently.',
+        'For Level 2, Coach. Explain the why, involve them in problem-solving, celebrate progress.',
+        'For Level 3, Support. Encourage, ask questions, step back and let them lead while staying close.',
+        'For Level 4, Delegate. Hand it over. Set the goal and get out of the way.',
       ],
     },
     { id: 'b8', type: 'hold', text: 'All four visible' },
@@ -87,7 +87,7 @@ export const rep06: Rep = {
       type: 'avatar',
       direction: 'full screen',
       speech:
-        "Here's the part that trips up most new managers. These levels are task-specific — not person-specific.\n\nYour strongest employee might be a Level 4 on the work they do every day. But put them on a new project in an unfamiliar area and they may drop to a Level 2. They still need your guidance — just in a different way than the newest person on your team.",
+        "Here's the part that trips up most new managers. These levels are task-specific, not person-specific.\n\nYour strongest employee might be a Level 4 on the work they do every day. But put them on a new project in an unfamiliar area and they may drop to a Level 2. They still need your guidance, just in a different way than the newest person on your team.",
     },
     { id: 'b10', type: 'moment', text: 'Flexibility is not inconsistency. It’s intelligence.' },
     {
@@ -95,7 +95,7 @@ export const rep06: Rep = {
       type: 'avatar',
       direction: 'full screen',
       speech:
-        "Let me give you a real example.\n\nYou have two team members. Maria has been in her role for three years. She knows the process inside out. You give her goals and she runs. That's Level 4 — you delegate and trust.\n\nThen you ask Maria to take on a brand new responsibility she's never done before. Suddenly she's asking more questions, second-guessing herself, needing more check-ins. She didn't get worse at her job. She just moved to a new task where she's a Level 2 right now. She needs your coaching, not your distance.\n\nManaging her the same way you did yesterday — high autonomy, minimal direction — would be the wrong call.",
+        "Let me give you a real example.\n\nYou have two team members. Maria has been in her role for three years. She knows the process inside out. You give her goals and she runs. That's Level 4, you delegate and trust.\n\nThen you ask Maria to take on a brand new responsibility she's never done before. Suddenly she's asking more questions, second-guessing herself, needing more check-ins. She didn't get worse at her job. She just moved to a new task where she's a Level 2 right now. She needs your coaching, not your distance.\n\nManaging her the same way you did yesterday (high autonomy, minimal direction) would be the wrong call.",
     },
     {
       id: 'b12',
@@ -115,15 +115,24 @@ export const rep06: Rep = {
       type: 'avatar',
       direction: 'full screen, direct close',
       speech:
-        "In our final content section of Module 1, we're going to bring everything together — because all the mindset shifts we've talked about mean very little if they don't show up in how you actually behave every day.\n\nLeading by example. Acting like an owner. That's where we're headed next.",
+        "In our final content section of Module 1, we're going to bring everything together, because all the mindset shifts we've talked about mean very little if they don't show up in how you actually behave every day.\n\nLeading by example. Acting like an owner. That's where we're headed next.",
     },
   ],
 
   scriptDeviations: [
     {
+      ref: 'D7',
+      original: 'Em dashes throughout the approved script, e.g. "your old manager\u2019s style was built for their context \u2014 not yours."',
+      shipped: 'The same words with the dash replaced by a comma, colon, or full stop as the sentence requires.',
+      reason:
+        'The em dash now reads as a marker of machine-written copy, and this product is sold on a human having done the job. Punctuation only: not one word changed, so the recorded voiceover still matches every card.',
+      severity: 'editorial',
+      needsSignoffFrom: 'Course author',
+    },
+    {
       ref: 'D6a',
       severity: 'legal',
-      original: 'SECTION 1.6: “Situational Leadership — One Style Doesn’t Fit All”',
+      original: 'SECTION 1.6: “Situational Leadership, One Style Doesn’t Fit All”',
       shipped: 'Rep 1.6: “Managing in the Moment” (subtitle: “One style doesn’t fit all”)',
       reason:
         'Adopts the title already approved in the August 2026 Expanded Module Outline, which supersedes the April script header. Removes the registered mark from the section title while keeping the original subtitle line.',
@@ -163,10 +172,10 @@ export const rep06: Rep = {
       severity: 'legal',
       original:
         'Four-level readiness ladder and the paired response verbs Direct / Coach / Support / Delegate (retained verbatim).',
-      shipped: 'Retained verbatim — no change made. Flagged for review only.',
+      shipped: 'Retained verbatim, no change made. Flagged for review only.',
       reason:
         'NOT CHANGED, but counsel should look at it. The underlying idea that leadership style should vary with a person’s skill and confidence on a given task is not protectable. However, the specific four-style set Directing / Coaching / Supporting / Delegating is closely associated with SLII® (Blanchard), and the four-quadrant readiness ladder with Situational Leadership®. If counsel wants additional distance, the cheapest change is to rename the four responses (e.g. Show / Build / Back / Release) without touching the descriptions.',
-      needsSignoffFrom: 'IP counsel — decision required before public launch',
+      needsSignoffFrom: 'IP counsel, decision required before public launch',
     },
   ],
 
@@ -176,7 +185,7 @@ export const rep06: Rep = {
       triggerAfterBeat: 'b8',
       skill: 'Reading readiness on a specific task',
       scenario:
-        'Your most reliable person — five years in the role, never needs chasing — is running her first client presentation on Thursday. She has asked you three clarifying questions today, which is three more than she normally asks in a month.',
+        'Your most reliable person (five years in the role, never needs chasing) is running her first client presentation on Thursday. She has asked you three clarifying questions today, which is three more than she normally asks in a month.',
       prompt: 'Where is she, and what does she need?',
       choices: [
         {
@@ -191,14 +200,14 @@ export const rep06: Rep = {
           text: 'Somewhere around Level 2 on this task. Coach: explain the why, work the problem together, celebrate progress.',
           verdict: 'best',
           response:
-            'She did not get worse at her job. She moved to a new task. The questions are the signal — meet her where she is on this one thing, then dial back up.',
+            'She did not get worse at her job. She moved to a new task. The questions are the signal, meet her where she is on this one thing, then dial back up.',
         },
         {
           id: 'c',
           text: 'Level 1. Write her a script and sit in on the rehearsal to correct her.',
           verdict: 'costly',
           response:
-            'Over-correcting is its own failure. She has the underlying skill and the motivation — treating her like a beginner will land as a loss of confidence in her.',
+            'Over-correcting is its own failure. She has the underlying skill and the motivation, treating her like a beginner will land as a loss of confidence in her.',
         },
         {
           id: 'd',
@@ -215,7 +224,7 @@ export const rep06: Rep = {
     id: 'm1-r6-fn1',
     topic: 'Readiness and adapting your style',
     prompt:
-      'Pick one person on your team and one specific task they are working on right now. Where are they on the dial for that task — and are you managing them that way?',
+      'Pick one person on your team and one specific task they are working on right now. Where are they on the dial for that task, and are you managing them that way?',
     placeholder: 'The second half of the question is the one that matters.',
     suggestedMinChars: 90,
   },
@@ -231,7 +240,7 @@ export const rep06: Rep = {
           id: 'a',
           text: 'Skill level and confidence level for that specific task.',
           correct: true,
-          feedback: 'Both, and always for a specific task — not for the person in general.',
+          feedback: 'Both, and always for a specific task, not for the person in general.',
         },
         { id: 'b', text: 'Experience and seniority.', correct: false, feedback: 'Neither is what readiness measures.' },
         { id: 'c', text: 'Motivation and attitude.', correct: false, feedback: 'Motivation shows up inside the levels, but readiness is skill plus confidence.' },
@@ -279,30 +288,30 @@ export const rep06: Rep = {
       options: [
         {
           id: 'a',
-          text: 'Level 1 — Direct. Give specific instructions and check in frequently.',
+          text: 'Level 1, Direct. Give specific instructions and check in frequently.',
           correct: false,
           feedback: 'They already have the skill. Directing them will confirm the doubt they already have.',
         },
         {
           id: 'b',
-          text: 'Level 3 — Support. Encourage, ask questions, step back and let them lead while staying close.',
+          text: 'Level 3, Support. Encourage, ask questions, step back and let them lead while staying close.',
           correct: true,
           feedback:
-            'Able but unsure. The gap is confidence, not capability — so the answer is presence, not instruction.',
+            'Able but unsure. The gap is confidence, not capability, so the answer is presence, not instruction.',
         },
         {
           id: 'c',
-          text: 'Level 4 — Delegate. Hand it over and get out of the way.',
+          text: 'Level 4, Delegate. Hand it over and get out of the way.',
           correct: false,
           feedback:
             'Skill says Level 4, confidence says otherwise. Full withdrawal at this point usually stalls the work.',
         },
         {
           id: 'd',
-          text: 'Level 2 — Coach. Explain the why and involve them in problem-solving.',
+          text: 'Level 2, Coach. Explain the why and involve them in problem-solving.',
           correct: false,
           feedback:
-            'Coaching addresses a skill gap. There isn’t one here — teaching them what they already know can read as condescension.',
+            'Coaching addresses a skill gap. There isn’t one here, teaching them what they already know can read as condescension.',
         },
       ],
     },

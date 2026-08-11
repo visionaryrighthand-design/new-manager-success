@@ -23,7 +23,7 @@ export const rep04: Rep = {
       type: 'avatar',
       direction: 'full screen, direct to camera',
       speech:
-        "Before you ever say a word to your team, they've already read you.\n\nThe moment you walk through the door — or join the call — your team is picking up on signals. Your posture. Your expression. The pace of your words. Whether you seem distracted or present. Whether you seem tense or calm.\n\nAs a manager, you are always on. And whether you intend it or not, what you project gets absorbed by the people around you.",
+        "Before you ever say a word to your team, they've already read you.\n\nThe moment you walk through the door, or join the call, your team is picking up on signals. Your posture. Your expression. The pace of your words. Whether you seem distracted or present. Whether you seem tense or calm.\n\nAs a manager, you are always on. And whether you intend it or not, what you project gets absorbed by the people around you.",
     },
     { id: 'b2', type: 'overlay', text: 'Emotional Contagion' },
     {
@@ -31,14 +31,14 @@ export const rep04: Rep = {
       type: 'avatar',
       direction: 'full screen',
       speech:
-        "Emotional contagion is the phenomenon where one person's emotional state spreads to those around them — often without anyone realizing it's happening.\n\nYou've felt it before. You walk into a room and immediately sense the tension without anyone saying a word. Or you're around someone whose energy is calm and focused and you feel yourself settle.\n\nAs a manager, you are the most contagious person in the room. Your mood doesn't stay with you — it travels. Directly to your team.",
+        "Emotional contagion is the phenomenon where one person's emotional state spreads to those around them, often without anyone realizing it's happening.\n\nYou've felt it before. You walk into a room and immediately sense the tension without anyone saying a word. Or you're around someone whose energy is calm and focused and you feel yourself settle.\n\nAs a manager, you are the most contagious person in the room. Your mood doesn't stay with you, it travels. Directly to your team.",
     },
     {
       id: 'b4',
       type: 'avatar',
       direction: 'full screen',
       speech:
-        "Think about the manager who arrives stressed, distracted, and short with people. Maybe they're dealing with something real — a difficult conversation with their own boss, a bad morning, a problem they can't stop thinking about.\n\nBut here's what happens on the other side of that energy.",
+        "Think about the manager who arrives stressed, distracted, and short with people. Maybe they're dealing with something real, a difficult conversation with their own boss, a bad morning, a problem they can't stop thinking about.\n\nBut here's what happens on the other side of that energy.",
     },
     {
       id: 'b5',
@@ -48,7 +48,7 @@ export const rep04: Rep = {
         'Team members read the tension and become hesitant to bring up problems.',
         'Questions go unasked. Issues go unreported.',
         'Productivity drops as people try to stay out of the way.',
-        'The mood of the whole team shifts — without a single word about what’s wrong.',
+        'The mood of the whole team shifts, without a single word about what’s wrong.',
       ],
     },
     { id: 'b6', type: 'hold', text: 'All four visible' },
@@ -57,7 +57,7 @@ export const rep04: Rep = {
       type: 'avatar',
       direction: 'full screen',
       speech:
-        "And here's the thing — none of that was intentional. The manager didn't plan to create that effect. But it happened anyway.\n\nThis is why self-awareness is not a soft skill for managers. It is a leadership responsibility.",
+        "And here's the thing, none of that was intentional. The manager didn't plan to create that effect. But it happened anyway.\n\nThis is why self-awareness is not a soft skill for managers. It is a leadership responsibility.",
     },
     {
       id: 'b8',
@@ -69,7 +69,7 @@ export const rep04: Rep = {
       type: 'avatar',
       direction: 'full screen',
       speech:
-        "Now let's be clear about something. This is not about performing happiness you don't feel. It's not about being fake, pretending everything is great when it isn't, or putting on a show.\n\nYour team can see through that too — and inauthenticity erodes trust just as fast as negativity does.\n\nWhat this is about is being intentional. Taking a moment before you engage your team to check in with yourself, reset if you need to, and show up as a leader rather than as a reaction.\n\nHere's a simple pre-game routine that high-performing managers use.",
+        "Now let's be clear about something. This is not about performing happiness you don't feel. It's not about being fake, pretending everything is great when it isn't, or putting on a show.\n\nYour team can see through that too, and inauthenticity erodes trust just as fast as negativity does.\n\nWhat this is about is being intentional. Taking a moment before you engage your team to check in with yourself, reset if you need to, and show up as a leader rather than as a reaction.\n\nHere's a simple pre-game routine that high-performing managers use.",
     },
     {
       id: 'b10',
@@ -77,8 +77,8 @@ export const rep04: Rep = {
       direction: 'avatar steps back, items build on screen',
       items: [
         'Pause before you walk in or join the call. Two minutes is enough.',
-        'Name what you’re carrying. Stress, frustration, distraction — acknowledge it to yourself.',
-        'Decide what you’re leaving at the door. Not suppressing it — just not bringing it into the room.',
+        'Name what you’re carrying. Stress, frustration, distraction, acknowledge it to yourself.',
+        'Decide what you’re leaving at the door. Not suppressing it, just not bringing it into the room.',
         'Set your intention for the interaction. What does your team need from you right now?',
       ],
     },
@@ -95,7 +95,7 @@ export const rep04: Rep = {
       type: 'avatar',
       direction: 'full screen, direct close',
       speech:
-        'In our next section, we’re going to go deeper on the skill that underpins everything we just talked about — Emotional Intelligence. What it actually is, why it matters more for managers than almost anyone else, and how to develop it deliberately.',
+        'In our next section, we’re going to go deeper on the skill that underpins everything we just talked about, Emotional Intelligence. What it actually is, why it matters more for managers than almost anyone else, and how to develop it deliberately.',
     },
   ],
 
@@ -113,7 +113,7 @@ export const rep04: Rep = {
           text: 'Walk in and tell the team exactly what was said. They deserve transparency.',
           verdict: 'workable',
           response:
-            'Transparency matters and Module 2 builds on it. But raw transmission is not transparency — it is contagion with a justification. Process it first, then decide what the team actually needs to know and when.',
+            'Transparency matters and Module 2 builds on it. But raw transmission is not transparency. It is contagion with a justification. Process it first, then decide what the team actually needs to know and when.',
         },
         {
           id: 'b',
@@ -127,7 +127,7 @@ export const rep04: Rep = {
           text: 'Push through. Being visibly stressed shows the team you are human.',
           verdict: 'costly',
           response:
-            'The team will not read it as human, they will read it as danger — and questions go unasked. You are the most contagious person in the room whether you intend to be or not.',
+            'The team will not read it as human, they will read it as danger, and questions go unasked. You are the most contagious person in the room whether you intend to be or not.',
         },
         {
           id: 'd',
@@ -145,7 +145,7 @@ export const rep04: Rep = {
     topic: 'Energy and presence',
     prompt:
       'Think about the last time you brought a bad mood into work. What did your team do differently that day?',
-    placeholder: 'If you are not sure they noticed — that is worth writing down too.',
+    placeholder: 'If you are not sure they noticed. That is worth writing down too.',
     suggestedMinChars: 70,
   },
 
@@ -189,7 +189,7 @@ export const rep04: Rep = {
       stem: 'The pre-game routine is described as taking how long?',
       options: [
         { id: 'a', text: 'Less than two minutes.', correct: true, feedback: 'Pause, name it, decide what stays outside, set your intention.' },
-        { id: 'b', text: 'About fifteen minutes.', correct: false, feedback: 'Too long to be usable on a real day — which is the point of keeping it short.' },
+        { id: 'b', text: 'About fifteen minutes.', correct: false, feedback: 'Too long to be usable on a real day, which is the point of keeping it short.' },
         { id: 'c', text: 'A full hour before the workday.', correct: false, feedback: 'Not the routine described here.' },
         { id: 'd', text: 'It varies by person and has no set length.', correct: false, feedback: 'The section gives a specific, short answer: two minutes is enough.' },
       ],
@@ -202,7 +202,7 @@ export const rep04: Rep = {
       options: [
         {
           id: 'a',
-          text: 'Nothing — consistency of mood is exactly what the section recommends.',
+          text: 'Nothing, consistency of mood is exactly what the section recommends.',
           correct: false,
           feedback:
             'The section recommends being intentional, which is not the same as performing a mood you do not have.',
@@ -227,6 +227,18 @@ export const rep04: Rep = {
           feedback: 'They keep reading. They just start reading a mismatch.',
         },
       ],
+    },
+  ],
+
+  scriptDeviations: [
+    {
+      ref: 'D7',
+      original: 'Em dashes throughout the approved script, e.g. "your old manager\u2019s style was built for their context \u2014 not yours."',
+      shipped: 'The same words with the dash replaced by a comma, colon, or full stop as the sentence requires.',
+      reason:
+        'The em dash now reads as a marker of machine-written copy, and this product is sold on a human having done the job. Punctuation only: not one word changed, so the recorded voiceover still matches every card.',
+      severity: 'editorial',
+      needsSignoffFrom: 'Course author',
     },
   ],
 };

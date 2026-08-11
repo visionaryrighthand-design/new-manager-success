@@ -25,7 +25,7 @@ export const rep02: Rep = {
       type: 'avatar',
       direction: 'full screen, direct to camera',
       speech:
-        "There's an uncomfortable truth that most organizations never talk about when they promote someone into management.\n\nThe very things that made you exceptional as an individual contributor — your speed, your technical expertise, your ability to get things done — those same qualities can work directly against you as a manager.\n\nNot because they're bad qualities. They're not. But the job has fundamentally changed, and the tools that worked in your old role don't fit the new one.",
+        "There's an uncomfortable truth that most organizations never talk about when they promote someone into management.\n\nThe very things that made you exceptional as an individual contributor (your speed, your technical expertise, your ability to get things done) those same qualities can work directly against you as a manager.\n\nNot because they're bad qualities. They're not. But the job has fundamentally changed, and the tools that worked in your old role don't fit the new one.",
     },
     {
       id: 'b2',
@@ -37,31 +37,31 @@ export const rep02: Rep = {
     {
       id: 'b3',
       type: 'overlay',
-      text: 'Task Leadership — you are measured by what YOU produce.',
+      text: 'Task Leadership. You are measured by what YOU produce.',
       speech: "That's task leadership. And you were exceptional at it.",
     },
     {
       id: 'b4',
       type: 'overlay',
-      text: 'People Leadership — you are measured by what your TEAM produces.',
+      text: 'People Leadership. You are measured by what your TEAM produces.',
       speech:
-        "People leadership is a different game entirely. Your value is no longer in what you personally produce — it's in what you help your team produce. Your job is not to be the best at the work. Your job is to create the conditions where your team can do their best work.",
+        "People leadership is a different game entirely. Your value is no longer in what you personally produce. It's in what you help your team produce. Your job is not to be the best at the work. Your job is to create the conditions where your team can do their best work.",
     },
     {
       id: 'b5',
       type: 'avatar',
       direction: 'full screen',
       speech:
-        "That shift — from doing to enabling — is the single most important transition you will make as a manager.\n\nAnd here's what happens when new managers don't make it. They keep doing. They jump in when things get complicated. They solve problems their team should be solving. They take work back because it's just easier to do it themselves.\n\nWe call this the doer trap. And it creates three problems simultaneously.",
+        "That shift, from doing to enabling, is the single most important transition you will make as a manager.\n\nAnd here's what happens when new managers don't make it. They keep doing. They jump in when things get complicated. They solve problems their team should be solving. They take work back because it's just easier to do it themselves.\n\nWe call this the doer trap. And it creates three problems simultaneously.",
     },
     {
       id: 'b6',
       type: 'buildList',
       direction: 'avatar steps back, items build on screen',
       items: [
-        'Problem 1: It creates a bottleneck — everything runs through you.',
-        'Problem 2: It stunts your team’s growth — they learn by doing, not watching.',
-        'Problem 3: It signals you don’t trust them — and a team that feels untrusted stops giving their best.',
+        'Problem 1: It creates a bottleneck, everything runs through you.',
+        'Problem 2: It stunts your team’s growth. They learn by doing, not watching.',
+        'Problem 3: It signals you don’t trust them, and a team that feels untrusted stops giving their best.',
       ],
     },
     { id: 'b7', type: 'hold', text: 'All three visible' },
@@ -69,17 +69,17 @@ export const rep02: Rep = {
       id: 'b8',
       type: 'avatar',
       direction: 'full screen',
-      speech: "So if great managers aren't doing the work — what are they doing?",
+      speech: "So if great managers aren't doing the work, what are they doing?",
     },
     {
       id: 'b9',
       type: 'buildList',
       direction: 'avatar steps back, items build on screen',
       items: [
-        'Building clarity — everyone knows what success looks like.',
-        'Removing obstacles — clearing the path so their team can perform.',
-        'Developing people — coaching, feedback, growth conversations.',
-        'Making decisions — priorities, resources, when to step in and when to step back.',
+        'Building clarity, everyone knows what success looks like.',
+        'Removing obstacles, clearing the path so their team can perform.',
+        'Developing people, coaching, feedback, growth conversations.',
+        'Making decisions, priorities, resources, when to step in and when to step back.',
       ],
     },
     { id: 'b10', type: 'hold', text: 'All four visible' },
@@ -96,14 +96,14 @@ export const rep02: Rep = {
       type: 'avatar',
       direction: 'full screen',
       speech:
-        "Nobody is born knowing how to run a one-on-one meeting, deliver a hard performance conversation, or delegate effectively. These are things you learn. The managers who struggle aren't the ones who lack talent — they're the ones who were never given the tools.\n\nThat's what's changing right now.\n\nBefore your promotion, a great day meant you finished your work and hit your numbers. In your new role, a great day is one where your team made progress, your people felt clear and supported, and you created the conditions for them to succeed.\n\nWhen you start measuring your success by the success of your team — everything changes.\n\nThat's the shift. That's the job.",
+        "Nobody is born knowing how to run a one-on-one meeting, deliver a hard performance conversation, or delegate effectively. These are things you learn. The managers who struggle aren't the ones who lack talent. They're the ones who were never given the tools.\n\nThat's what's changing right now.\n\nBefore your promotion, a great day meant you finished your work and hit your numbers. In your new role, a great day is one where your team made progress, your people felt clear and supported, and you created the conditions for them to succeed.\n\nWhen you start measuring your success by the success of your team, everything changes.\n\nThat's the shift. That's the job.",
     },
     {
       id: 'b14',
       type: 'avatar',
       direction: 'full screen, direct close',
       speech:
-        'In our next section, we’re going to tackle something that trips up nearly every new manager — what happens to your relationships, your friendships, and your professional identity when you become the boss.',
+        'In our next section, we’re going to tackle something that trips up nearly every new manager, what happens to your relationships, your friendships, and your professional identity when you become the boss.',
     },
   ],
 
@@ -128,7 +128,7 @@ export const rep02: Rep = {
           text: 'Sit with them for thirty minutes, name the two specific gaps, and let them close them.',
           verdict: 'best',
           response:
-            'You protect the deadline and the development at once. Naming two specific gaps — not twelve — is what makes this fit in the time you actually have.',
+            'You protect the deadline and the development at once. Naming two specific gaps, not twelve, is what makes this fit in the time you actually have.',
         },
         {
           id: 'c',
@@ -153,7 +153,7 @@ export const rep02: Rep = {
     topic: 'The doer trap',
     prompt:
       'Name one task you are still doing yourself that somebody on your team could be doing. What is actually stopping you from handing it over?',
-    placeholder: 'Be honest about the second part — that is where the useful answer is.',
+    placeholder: 'Be honest about the second part. That is where the useful answer is.',
     suggestedMinChars: 80,
   },
 
@@ -182,7 +182,7 @@ export const rep02: Rep = {
           text: 'Task leadership is about processes; people leadership is about being liked.',
           correct: false,
           feedback:
-            'Being liked is explicitly not the goal — section 1.3 takes that apart.',
+            'Being liked is explicitly not the goal, section 1.3 takes that apart.',
         },
         {
           id: 'd',
@@ -200,7 +200,7 @@ export const rep02: Rep = {
       options: [
         {
           id: 'a',
-          text: 'It creates a bottleneck — everything runs through you.',
+          text: 'It creates a bottleneck, everything runs through you.',
           correct: false,
           feedback: 'That is problem 1.',
         },
@@ -221,7 +221,7 @@ export const rep02: Rep = {
           text: 'It makes the work take longer overall.',
           correct: true,
           feedback:
-            'Correct — and note that in the short term the doer trap often makes work faster. That is exactly why it is a trap.',
+            'Correct, and note that in the short term the doer trap often makes work faster. That is exactly why it is a trap.',
         },
       ],
     },
@@ -236,7 +236,7 @@ export const rep02: Rep = {
           text: 'A strong day. Three problems solved is three problems solved.',
           correct: false,
           feedback:
-            'It felt like a strong day — that is the pull of the doer trap. Look at what your team learned from those three problems.',
+            'It felt like a strong day. That is the pull of the doer trap. Look at what your team learned from those three problems.',
         },
         {
           id: 'b',
@@ -259,6 +259,18 @@ export const rep02: Rep = {
           feedback: 'Documentation helps, but it does not address who is doing the solving.',
         },
       ],
+    },
+  ],
+
+  scriptDeviations: [
+    {
+      ref: 'D7',
+      original: 'Em dashes throughout the approved script, e.g. "your old manager\u2019s style was built for their context \u2014 not yours."',
+      shipped: 'The same words with the dash replaced by a comma, colon, or full stop as the sentence requires.',
+      reason:
+        'The em dash now reads as a marker of machine-written copy, and this product is sold on a human having done the job. Punctuation only: not one word changed, so the recorded voiceover still matches every card.',
+      severity: 'editorial',
+      needsSignoffFrom: 'Course author',
     },
   ],
 };

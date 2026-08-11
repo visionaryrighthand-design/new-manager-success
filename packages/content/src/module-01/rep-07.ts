@@ -28,7 +28,7 @@ export const rep07: Rep = {
       type: 'avatar',
       direction: 'full screen, direct to camera',
       speech:
-        'Your team is not listening to what you say nearly as much as they are watching what you do.\n\nThis is one of the most important things to understand about leadership — and one of the most humbling.\n\nYou can give the best speech about accountability. You can put up a poster about team values. You can talk all day about the standards you expect.\n\nBut if your behavior doesn’t match your words, your team will follow your behavior. Every single time.',
+        'Your team is not listening to what you say nearly as much as they are watching what you do.\n\nThis is one of the most important things to understand about leadership, and one of the most humbling.\n\nYou can give the best speech about accountability. You can put up a poster about team values. You can talk all day about the standards you expect.\n\nBut if your behavior doesn’t match your words, your team will follow your behavior. Every single time.',
     },
     { id: 'b2', type: 'moment', text: 'Your team will not do what you say. They will do what you do.' },
     {
@@ -36,21 +36,21 @@ export const rep07: Rep = {
       type: 'avatar',
       direction: 'full screen',
       speech:
-        "Leading by example is not about being perfect. It's not about never making mistakes or always having the right answer.\n\nIt's about being consistent. Showing up the same way on a tough Tuesday as you do on a great Friday. Holding yourself to the same standards you hold your team. And being visible about it.\n\nWhen you're running five minutes late to a meeting you've told your team to always be on time for — they notice. When you skip the process you told everyone to follow because you're in a hurry — they notice. When you talk about transparency but keep your team in the dark — they notice.\n\nCredibility is earned through alignment between what you say and what you do. And it is lost fast when those two things don't match.",
+        "Leading by example is not about being perfect. It's not about never making mistakes or always having the right answer.\n\nIt's about being consistent. Showing up the same way on a tough Tuesday as you do on a great Friday. Holding yourself to the same standards you hold your team. And being visible about it.\n\nWhen you're running five minutes late to a meeting you've told your team to always be on time for, they notice. When you skip the process you told everyone to follow because you're in a hurry, they notice. When you talk about transparency but keep your team in the dark, they notice.\n\nCredibility is earned through alignment between what you say and what you do. And it is lost fast when those two things don't match.",
     },
     {
       id: 'b4',
       type: 'avatar',
       direction: 'full screen',
       speech:
-        "Now let's talk about what it means to act like an owner — because this concept is especially powerful in a small business.",
+        "Now let's talk about what it means to act like an owner, because this concept is especially powerful in a small business.",
     },
     {
       id: 'b5',
       type: 'overlay',
       text: 'Acting Like an Owner',
       speech:
-        "Acting like an owner doesn't mean you have equity in the business or that you make every decision. It means you think beyond your immediate task. You care about outcomes, not just outputs. You treat the business's resources — time, money, people — with the same respect you'd give them if they were your own.\n\nHere's what that actually looks like day to day.",
+        "Acting like an owner doesn't mean you have equity in the business or that you make every decision. It means you think beyond your immediate task. You care about outcomes, not just outputs. You treat the business's resources (time, money, people) with the same respect you'd give them if they were your own.\n\nHere's what that actually looks like day to day.",
     },
     {
       id: 'b6',
@@ -59,7 +59,7 @@ export const rep07: Rep = {
       items: [
         'You don’t wait to be told what needs to be done. You see it and you address it.',
         'You think about impact, not just activity. Busy is not the same as effective.',
-        'You protect the team’s time and energy like they matter — because they do.',
+        'You protect the team’s time and energy like they matter, because they do.',
         'You take responsibility for outcomes, not just effort.',
       ],
     },
@@ -69,26 +69,26 @@ export const rep07: Rep = {
       type: 'avatar',
       direction: 'full screen',
       speech:
-        "There's a concept in leadership called Servant Leadership — and it connects directly to everything we've been talking about.\n\nThe idea is simple. Your job as a manager is not to be served by your team. Your job is to serve your team. To remove the obstacles in their path. To give them what they need to do their best work. To put their development and success at the center of what you do.",
+        "There's a concept in leadership called Servant Leadership, and it connects directly to everything we've been talking about.\n\nThe idea is simple. Your job as a manager is not to be served by your team. Your job is to serve your team. To remove the obstacles in their path. To give them what they need to do their best work. To put their development and success at the center of what you do.",
     },
     {
       id: 'b9',
       type: 'overlay',
-      text: 'Servant Leadership — your job is to clear the path, not stand in it.',
+      text: 'Servant Leadership, your job is to clear the path, not stand in it.',
     },
     {
       id: 'b10',
       type: 'avatar',
       direction: 'full screen',
       speech:
-        "This might feel counterintuitive. You just got promoted — shouldn't the team be supporting you?\n\nHere's the reframe. The team supporting you means your team performs well. And your team performs well when you are genuinely invested in helping them succeed. That's how it compounds.\n\nThe managers who spend their energy protecting their authority, hoarding information, and making sure everyone knows who's in charge — their teams underperform. The managers who spend their energy enabling, developing, and clearing the path for their people — those teams are the ones that get results.",
+        "This might feel counterintuitive. You just got promoted, shouldn't the team be supporting you?\n\nHere's the reframe. The team supporting you means your team performs well. And your team performs well when you are genuinely invested in helping them succeed. That's how it compounds.\n\nThe managers who spend their energy protecting their authority, hoarding information, and making sure everyone knows who's in charge, their teams underperform. The managers who spend their energy enabling, developing, and clearing the path for their people: those teams are the ones that get results.",
     },
     {
       id: 'b11',
       type: 'avatar',
       direction: 'full screen',
       speech:
-        "Let's close Module 1 with this.\n\nThe first ninety days you spend as a manager will set patterns that are very hard to undo. The culture you build — or allow — in those early weeks becomes the baseline your team operates from.",
+        "Let's close Module 1 with this.\n\nThe first ninety days you spend as a manager will set patterns that are very hard to undo. The culture you build, or allow, in those early weeks becomes the baseline your team operates from.",
     },
     {
       id: 'b12',
@@ -107,7 +107,7 @@ export const rep07: Rep = {
       type: 'avatar',
       direction: 'full screen, direct close',
       speech:
-        'You are not just managing tasks or people. You are shaping a culture — whether you realize it or not.\n\nDo it deliberately. Do it consistently. And do it in a way that the people on your team will look back on and say — that’s the kind of manager I want to be someday.\n\nThat’s what this is all about.\n\nComing up next — your Module 1 review. We’re going to pull all seven sections together and make sure the key ideas are locked in before you move forward.',
+        'You are not just managing tasks or people. You are shaping a culture, whether you realize it or not.\n\nDo it deliberately. Do it consistently. And do it in a way that the people on your team will look back on and say. That’s the kind of manager I want to be someday.\n\nThat’s what this is all about.\n\nComing up next, your Module 1 review. We’re going to pull all seven sections together and make sure the key ideas are locked in before you move forward.',
     },
   ],
 
@@ -201,7 +201,7 @@ export const rep07: Rep = {
       stem: 'Complete the pattern: “What you model becomes the standard. What you tolerate becomes…”',
       options: [
         { id: 'a', text: '…the norm.', correct: true, feedback: 'And what you ignore tells your team what does not actually matter.' },
-        { id: 'b', text: '…the exception.', correct: false, feedback: 'The opposite — tolerated behaviour becomes normal, not exceptional.' },
+        { id: 'b', text: '…the exception.', correct: false, feedback: 'The opposite, tolerated behaviour becomes normal, not exceptional.' },
         { id: 'c', text: '…a problem for HR.', correct: false, feedback: 'Not the line, and not the point.' },
         { id: 'd', text: '…your reputation.', correct: false, feedback: 'Not the line from the section.' },
       ],
@@ -220,7 +220,7 @@ export const rep07: Rep = {
         },
         {
           id: 'b',
-          text: 'That the standard applies to them and not to him — and credibility is lost fast when words and behaviour do not match.',
+          text: 'That the standard applies to them and not to him, and credibility is lost fast when words and behaviour do not match.',
           correct: true,
           feedback: 'Credibility is earned through alignment. Two missed deadlines outweigh one good speech.',
         },
@@ -228,7 +228,7 @@ export const rep07: Rep = {
           id: 'c',
           text: 'Nothing much. Managers have more competing demands and the team knows it.',
           correct: false,
-          feedback: 'They notice. The section is explicit about this — three times.',
+          feedback: 'They notice. The section is explicit about this, three times.',
         },
         {
           id: 'd',
@@ -237,6 +237,18 @@ export const rep07: Rep = {
           feedback: 'Closer, but the specific damage is the gap between his standard and his behaviour.',
         },
       ],
+    },
+  ],
+
+  scriptDeviations: [
+    {
+      ref: 'D7',
+      original: 'Em dashes throughout the approved script, e.g. "your old manager\u2019s style was built for their context \u2014 not yours."',
+      shipped: 'The same words with the dash replaced by a comma, colon, or full stop as the sentence requires.',
+      reason:
+        'The em dash now reads as a marker of machine-written copy, and this product is sold on a human having done the job. Punctuation only: not one word changed, so the recorded voiceover still matches every card.',
+      severity: 'editorial',
+      needsSignoffFrom: 'Course author',
     },
   ],
 };
