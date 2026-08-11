@@ -2,38 +2,33 @@ import Svg, { Path } from 'react-native-svg';
 import { colors } from '../theme';
 
 /**
- * The New Manager Success mark. Same geometry as
- * `packages/brand/assets/logo-mark.svg` — a stylised N with an arrow rising
- * through it. Kept as code rather than a bundled PNG so it stays crisp at any
- * size and takes colour from the theme.
+ * The New Manager Success mark. Geometry is identical to
+ * `packages/brand/assets/logo-mark.svg` — a brush "N" whose final upstroke is
+ * taken over by a rising arrow. Kept as code rather than a bundled PNG so it
+ * stays crisp at any size and takes colour from the theme.
  *
- * ⚠ Provisional geometry — see the note in the SVG. When the source vector
- * arrives, update both files together.
+ * ⚠ Provisional geometry — when the source vector arrives, update this file,
+ * the web component, and the five SVGs in packages/brand/assets together.
  */
 export function Mark({ size = 32 }: { size?: number }) {
   return (
     <Svg width={size} height={size} viewBox="0 0 64 64" fill="none">
       <Path
-        d="M11 54 L19.5 14 L31 44 L38.5 16"
+        d="M13 56 L22 16 L34 50 L39 33"
         stroke={colors.fg}
-        strokeWidth={7.5}
+        strokeWidth={10.5}
+        fill="none"
         strokeLinecap="round"
         strokeLinejoin="round"
       />
       <Path
-        d="M35 40 C41 31 45 22 49 11"
+        d="M33 46 L47 19"
         stroke={colors.accent}
-        strokeWidth={6.5}
+        strokeWidth={9}
+        fill="none"
         strokeLinecap="round"
-        strokeLinejoin="round"
       />
-      <Path
-        d="M38.5 15 L50.5 8.5 L52 21.5"
-        stroke={colors.accent}
-        strokeWidth={6.5}
-        strokeLinecap="round"
-        strokeLinejoin="round"
-      />
+      <Path d="M55 6.5 L37 12 L46.5 19 L44 31 Z" fill={colors.accent} />
     </Svg>
   );
 }

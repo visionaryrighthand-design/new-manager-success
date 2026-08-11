@@ -1,29 +1,23 @@
 <!--
   New Manager Success — primary mark.
 
-  A brush-drawn "N" with an arrow rising through it and breaking out top-right:
-  the letterform is where you are, the arrow is where the job is going.
+  A brush-drawn "N" whose final upstroke is taken over by a rising arrow that
+  breaks out top-right. The letterform is where you are; the arrow is where the
+  job is going.
 
-  ⚠ PROVISIONAL — a clean vector interpretation of the supplied artwork, not
-  the artwork itself. The original is brush-painted with dry-brush texture and
-  tapered strokes; that texture is deliberately NOT faked here, because a
-  hand-approximated brush reads worse than an honest clean version. Replace
-  this file with the source vector when it is available — everything
-  downstream (app icon, favicon, lockups, the inline React components in
-  apps/web/src/components/Logo.tsx and apps/mobile/src/components/Mark.tsx)
-  derives from this geometry and must be updated together.
+  ⚠ PROVISIONAL — a clean vector interpretation of the supplied artwork, not the
+  artwork itself. The original is brush-painted with dry-brush texture and
+  tapered strokes; that texture is deliberately NOT faked, because a
+  hand-approximated brush reads worse than an honest clean shape. Replace with
+  the source vector when it is available — see docs/brand/BRAND_GUIDE.md § The
+  mark for the full list of files carrying this geometry.
 
-  Drawn on a 64pt grid. The 7pt stroke is what lets it survive a 20px favicon.
-  Minimum size 20px. Clear space: one stroke width on all sides.
+  Drawn on a 64pt grid. Inked bounds: x 7.75-55, y 6.5-61.25.
+  Minimum size 20px. Clear space: one N-stroke width on all sides.
 -->
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64" fill="none" role="img" aria-label="New Manager Success">
   <title>New Manager Success</title>
-  <g stroke-linecap="round" stroke-linejoin="round" fill="none">
-    <!-- The N: up, down, up. Sharp peaks, matching the brush original. -->
-    <path d="M11 54 L19.5 14 L31 44 L38.5 16" stroke="#FFFFFF" stroke-width="7.5"/>
-    <!-- Arrow shaft, rising out of the N's right stroke. -->
-    <path d="M35 40 C41 31 45 22 49 11" stroke="#1E6BF0" stroke-width="6.5"/>
-    <!-- Arrowhead breaking out above the letterform, pointing up-right. -->
-    <path d="M38.5 15 L50.5 8.5 L52 21.5" stroke="#1E6BF0" stroke-width="6.5"/>
-  </g>
+  <path d="M13 56 L22 16 L34 50 L39 33" stroke="#FFFFFF" stroke-width="10.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M33 46 L47 19" stroke="#1E6BF0" stroke-width="9" fill="none" stroke-linecap="round"/>
+  <path d="M55 6.5 L37 12 L46.5 19 L44 31 Z" fill="#1E6BF0"/>
 </svg>

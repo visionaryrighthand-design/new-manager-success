@@ -1,15 +1,16 @@
 <!--
   New Manager Success — single-colour mark. Inherits `currentColor`.
-  Use where the two-colour mark fails: embossing, one-colour print, a favicon
-  mask, or a photographic background.
+  Use where the two-colour mark fails: one-colour print, embossing, a favicon
+  mask, or a photographic background. The arrow drops to 60% opacity so the
+  letterform still reads when both are the same colour.
 
   ⚠ PROVISIONAL — see logo-mark.svg.
 -->
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64" fill="none" role="img" aria-label="New Manager Success">
   <title>New Manager Success</title>
-  <g stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" fill="none">
-    <path d="M11 54 L19.5 14 L31 44 L38.5 16" stroke-width="7.5"/>
-    <path d="M35 40 C41 31 45 22 49 11" stroke-width="6.5" opacity="0.6"/>
-    <path d="M38.5 15 L50.5 8.5 L52 21.5" stroke-width="6.5" opacity="0.6"/>
+  <path d="M13 56 L22 16 L34 50 L39 33" stroke="currentColor" stroke-width="10.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+  <g opacity="0.6">
+    <path d="M33 46 L47 19" stroke="currentColor" stroke-width="9" fill="none" stroke-linecap="round"/>
+    <path d="M55 6.5 L37 12 L46.5 19 L44 31 Z" fill="currentColor"/>
   </g>
 </svg>

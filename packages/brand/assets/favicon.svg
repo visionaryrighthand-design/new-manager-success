@@ -1,10 +1,5 @@
-<!-- New Manager Success favicon. Filled tile so the mark holds up in both light and dark browser chrome. ⚠ Provisional — see logo-mark.svg. -->
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64">
-  <rect width="64" height="64" rx="14" fill="#000000"/>
-  <g transform="translate(2 2) scale(0.96)">
-  <g stroke-linecap="round" stroke-linejoin="round" fill="none">
-    <path d="M11 54 L19.5 14 L31 44 L38.5 16" stroke="#FFFFFF" stroke-width="7.5"/>
-    <path d="M35 40 C41 31 45 22 49 11" stroke="#1E6BF0" stroke-width="6.5"/>
-    <path d="M38.5 15 L50.5 8.5 L52 21.5" stroke="#1E6BF0" stroke-width="6.5"/>
-  </g></g>
-</svg>
+<!-- New Manager Success favicon. Filled tile so the mark holds in light and dark browser chrome. ⚠ Provisional — see logo-mark.svg. -->
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64"><rect width="64" height="64" rx="14" fill="#000"/><g transform="translate(4.13 1.91) scale(0.8884)">
+  <path d="M13 56 L22 16 L34 50 L39 33" stroke="#FFFFFF" stroke-width="10.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M33 46 L47 19" stroke="#1E6BF0" stroke-width="9" fill="none" stroke-linecap="round"/>
+  <path d="M55 6.5 L37 12 L46.5 19 L44 31 Z" fill="#1E6BF0"/></g></svg>

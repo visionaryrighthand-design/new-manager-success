@@ -20,15 +20,22 @@ export function LogoMark({ size = 32, title }: { size?: number; title?: string }
       aria-label={title}
     >
       {title ? <title>{title}</title> : null}
-      <g strokeLinecap="round" strokeLinejoin="round">
-        <path d="M11 54 L19.5 14 L31 44 L38.5 16" stroke="var(--nms-color-fg)" strokeWidth="7.5" />
-        <path
-          d="M35 40 C41 31 45 22 49 11"
-          stroke="var(--nms-color-accent)"
-          strokeWidth="6.5"
-        />
-        <path d="M38.5 15 L50.5 8.5 L52 21.5" stroke="var(--nms-color-accent)" strokeWidth="6.5" />
-      </g>
+      <path
+        d="M13 56 L22 16 L34 50 L39 33"
+        stroke="var(--nms-color-fg)"
+        strokeWidth="10.5"
+        fill="none"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+      <path
+        d="M33 46 L47 19"
+        stroke="var(--nms-color-accent)"
+        strokeWidth="9"
+        fill="none"
+        strokeLinecap="round"
+      />
+      <path d="M55 6.5 L37 12 L46.5 19 L44 31 Z" fill="var(--nms-color-accent)" />
     </svg>
   );
 }

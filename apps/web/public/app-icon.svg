@@ -1,19 +1,4 @@
-<!--
-  New Manager Success — app icon master, 1024x1024, for iOS and Android.
-  iOS applies its own squircle mask, so the artwork is full-bleed and opaque
-  (Apple rejects icons with an alpha channel). For the Android adaptive icon,
-  adaptive-icon.png is the transparent foreground layer, sized to clear the
-  66% safe circle; the background layer is flat #000000.
-
-  ⚠ PROVISIONAL — regenerate from the source vector when it lands, via
-  packages/brand/scripts/gen-icons.mjs.
--->
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024" width="1024" height="1024">
-  <rect width="1024" height="1024" fill="#000000"/>
-  <g transform="translate(98.66666666666669 98.66666666666669) scale(13.226666666666667)">
-  <g stroke-linecap="round" stroke-linejoin="round" fill="none">
-    <path d="M11 54 L19.5 14 L31 44 L38.5 16" stroke="#FFFFFF" stroke-width="7.5"/>
-    <path d="M35 40 C41 31 45 22 49 11" stroke="#1E6BF0" stroke-width="6.5"/>
-    <path d="M38.5 15 L50.5 8.5 L52 21.5" stroke="#1E6BF0" stroke-width="6.5"/>
-  </g></g>
-</svg>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024" width="1024" height="1024"><rect width="1024" height="1024" fill="#000"/><g transform="translate(124.70 93.84) scale(12.3441)">
+  <path d="M13 56 L22 16 L34 50 L39 33" stroke="#FFFFFF" stroke-width="10.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M33 46 L47 19" stroke="#1E6BF0" stroke-width="9" fill="none" stroke-linecap="round"/>
+  <path d="M55 6.5 L37 12 L46.5 19 L44 31 Z" fill="#1E6BF0"/></g></svg>

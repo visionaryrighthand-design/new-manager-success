@@ -1,26 +1,25 @@
 <!--
   New Manager Success — horizontal lockup for LIGHT backgrounds.
 
-  The N flips from white to near-black; the blue darkens one step so it holds
-  contrast on white. These are the only sanctioned recolours of the mark.
+  Mark, hairline rule, then the two-line wordmark: NEW MANAGER above SUCCESS,
+  the second line tracked out so both optically align to the same width.
 
-  ⚠ PROVISIONAL — see logo-lockup-dark.svg.
+  ⚠ PROVISIONAL, twice over:
+   1. The mark is an interpretation — see logo-mark.svg.
+   2. The wordmark is live <text> in a system stack. The original uses a heavy
+      condensed grotesk. Before ANY external use, set it in the real face and
+      convert to outlines, or it will re-flow on a machine without that font.
 -->
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 420 96" width="420" height="96" fill="none" role="img" aria-label="New Manager Success">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 430 96" width="430" height="96" fill="none" role="img" aria-label="New Manager Success">
   <title>New Manager Success</title>
-
-  <g transform="translate(4 12) scale(1.05)" stroke-linecap="round" stroke-linejoin="round" fill="none">
-    <path d="M11 54 L19.5 14 L31 44 L38.5 16" stroke="#05070B" stroke-width="7.5"/>
-    <path d="M35 40 C41 31 45 22 49 11" stroke="#1652CC" stroke-width="6.5"/>
-    <path d="M38.5 15 L50.5 8.5 L52 21.5" stroke="#1652CC" stroke-width="6.5"/>
+  <g transform="translate(-2 8) scale(1.15)">
+    <path d="M13 56 L22 16 L34 50 L39 33" stroke="#05070B" stroke-width="10.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+    <path d="M33 46 L47 19" stroke="#1652CC" stroke-width="9" fill="none" stroke-linecap="round"/>
+    <path d="M55 6.5 L37 12 L46.5 19 L44 31 Z" fill="#1652CC"/>
   </g>
-
-  <line x1="76" y1="20" x2="76" y2="76" stroke="#05070B" stroke-width="2" opacity="0.35"/>
-
-  <text x="98" y="47"
-        font-family="'Archivo', 'Anton', 'Helvetica Neue', Impact, system-ui, sans-serif"
+  <line x1="82" y1="20" x2="82" y2="76" stroke="#05070B" stroke-width="2" opacity="0.35"/>
+  <text x="104" y="47" font-family="'Archivo', 'Anton', 'Helvetica Neue', Impact, system-ui, sans-serif"
         font-size="38" font-weight="800" letter-spacing="-0.5" fill="#05070B">NEW MANAGER</text>
-  <text x="99" y="82"
-        font-family="'Archivo', 'Anton', 'Helvetica Neue', Impact, system-ui, sans-serif"
+  <text x="105" y="82" font-family="'Archivo', 'Anton', 'Helvetica Neue', Impact, system-ui, sans-serif"
         font-size="31" font-weight="800" letter-spacing="10.4" fill="#1652CC">SUCCESS</text>
 </svg>
