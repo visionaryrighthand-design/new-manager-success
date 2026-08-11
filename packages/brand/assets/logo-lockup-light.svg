@@ -1,0 +1,19 @@
+<!--
+  Promoted — horizontal lockup for LIGHT backgrounds (ink-50 and lighter).
+
+  The Volt chevron is darkened to volt-600 here: Volt-300 (#D8FF3E) is a
+  4.3:1 contrast failure on white and reads as a highlighter smear in print.
+  This is the only sanctioned recolour of the mark.
+
+  NOTE FOR PRODUCTION: convert the wordmark to outlines before external use.
+-->
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 262 72" width="262" height="72" fill="none" role="img" aria-label="Promoted">
+  <title>Promoted</title>
+  <g transform="translate(-5.2 6.5) scale(0.875)" stroke-linecap="round" stroke-linejoin="round" fill="none">
+    <path d="M15 35 L32 18 L49 35" stroke="#8FAB00" stroke-width="9"/>
+    <path d="M20 50 L32 38 L44 50" stroke="#2A4BD6" stroke-width="8"/>
+  </g>
+  <text x="58" y="50"
+        font-family="Bricolage Grotesque, Space Grotesk, SF Pro Display, Segoe UI, system-ui, sans-serif"
+        font-size="40" font-weight="800" letter-spacing="-1.4" fill="#0A0C12">Promoted</text>
+</svg>

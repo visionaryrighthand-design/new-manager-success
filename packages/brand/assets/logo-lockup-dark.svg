@@ -1,0 +1,21 @@
+<!--
+  Promoted — horizontal lockup for DARK backgrounds (ink-900 and darker).
+
+  Clear space either side of the wordmark equals the mark's stroke width.
+  Do not re-space, re-weight, or re-colour the wordmark.
+
+  NOTE FOR PRODUCTION: the wordmark below is live <text> so this file stays
+  editable during MVP. Before any external use, convert it to outlines
+  (`Path > Object to Path`) so the lockup cannot re-flow on a machine without
+  Bricolage Grotesque installed. See docs/brand/BRAND_GUIDE.md § Wordmark.
+-->
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 262 72" width="262" height="72" fill="none" role="img" aria-label="Promoted">
+  <title>Promoted</title>
+  <g transform="translate(-5.2 6.5) scale(0.875)" stroke-linecap="round" stroke-linejoin="round" fill="none">
+    <path d="M15 35 L32 18 L49 35" stroke="#D8FF3E" stroke-width="9"/>
+    <path d="M20 50 L32 38 L44 50" stroke="#3A63FF" stroke-width="8"/>
+  </g>
+  <text x="58" y="50"
+        font-family="Bricolage Grotesque, Space Grotesk, SF Pro Display, Segoe UI, system-ui, sans-serif"
+        font-size="40" font-weight="800" letter-spacing="-1.4" fill="#F4F6FA">Promoted</text>
+</svg>

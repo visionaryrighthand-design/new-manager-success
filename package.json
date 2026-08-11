@@ -1,0 +1,23 @@
+{
+  "name": "promoted",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Promoted — social-style manager training. Monorepo: brand, content, core, web, mobile.",
+  "workspaces": [
+    "packages/*",
+    "apps/*"
+  ],
+  "engines": {
+    "node": ">=20.11"
+  },
+  "scripts": {
+    "build:packages": "npm run build --workspace=@promoted/brand --workspace=@promoted/content --workspace=@promoted/core",
+    "test": "npm run test --workspace=@promoted/core",
+    "typecheck": "npm run typecheck --workspaces --if-present",
+    "web": "npm run dev --workspace=@promoted/web",
+    "mobile": "npm run start --workspace=@promoted/mobile"
+  },
+  "devDependencies": {
+    "typescript": "^5.6.3"
+  }
+}

@@ -1,0 +1,12 @@
+<!--
+  Promoted — single-colour mark. Uses `currentColor` so it inherits from CSS.
+  Use wherever the two-colour mark would fail: embossing, one-colour print,
+  a favicon mask, or on a photographic background.
+-->
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64" fill="none" role="img" aria-label="Promoted">
+  <title>Promoted</title>
+  <g stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" fill="none">
+    <path d="M15 35 L32 18 L49 35" stroke-width="9"/>
+    <path d="M20 50 L32 38 L44 50" stroke-width="8" opacity="0.55"/>
+  </g>
+</svg>

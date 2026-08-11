@@ -1,0 +1,35 @@
+<!--
+  Promoted — app icon, 1024x1024 master for iOS and Android.
+
+  iOS applies its own squircle mask, so the artwork is drawn full-bleed and the
+  22.37% corner radius here is only for previews and the Android legacy icon.
+  For Android adaptive icons, export the chevron group alone at 66% scale as
+  the foreground layer and the ink field as the background layer — see
+  docs/brand/BRAND_GUIDE.md.
+
+  The mark's inked bounding box (x 10.5-53.5, y 13.5-54 on the 64pt grid) is
+  scaled to 600x565px — 59% of the canvas — and optically centred: horizontally
+  true, vertically 10px low, because a chevron carries its visual mass above
+  its geometric centre.
+-->
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024" width="1024" height="1024" role="img" aria-label="Promoted app icon">
+  <title>Promoted</title>
+  <defs>
+    <linearGradient id="field" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#141827"/>
+      <stop offset="100%" stop-color="#06070B"/>
+    </linearGradient>
+    <radialGradient id="glow" cx="0.5" cy="0.36" r="0.55">
+      <stop offset="0%" stop-color="#3A63FF" stop-opacity="0.34"/>
+      <stop offset="100%" stop-color="#3A63FF" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+
+  <rect width="1024" height="1024" rx="229" fill="url(#field)"/>
+  <rect width="1024" height="1024" rx="229" fill="url(#glow)"/>
+
+  <g transform="translate(66 51) scale(13.95)" stroke-linecap="round" stroke-linejoin="round" fill="none">
+    <path d="M15 35 L32 18 L49 35" stroke="#D8FF3E" stroke-width="9"/>
+    <path d="M20 50 L32 38 L44 50" stroke="#3A63FF" stroke-width="8"/>
+  </g>
+</svg>
