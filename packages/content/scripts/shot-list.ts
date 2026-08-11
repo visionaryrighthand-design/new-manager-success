@@ -19,6 +19,7 @@ import { module01, findRep, estimateBeatSeconds, type Rep, type Beat } from '../
 
 const args = process.argv.slice(2);
 const asCsv = args.includes('--csv');
+const asMarkdown = args.includes('--md');
 const repArg = args.find((a) => !a.startsWith('--'));
 
 const reps: Rep[] = repArg
@@ -56,11 +57,63 @@ const rows = reps.flatMap((rep) =>
     words: narration(beat) ? narration(beat).split(' ').length : 0,
     onScreen: beat.text ?? (beat.items ?? []).join(' • '),
     narration: narration(beat),
-    status: beat.videoUrl ? 'HAS FOOTAGE' : needsFootage(beat) ? 'to render' : 'no footage — native card',
+    // A `hold` is a direction for a video edit — the feed already holds
+    // indefinitely because the learner drives every advance, so the player
+    // skips them entirely. They are listed only so the shot list maps
+    // one-to-one onto the script.
+    status: beat.videoUrl
+      ? 'HAS FOOTAGE'
+      : needsFootage(beat)
+        ? 'to render'
+        : beat.type === 'hold'
+          ? 'not shown — edit direction only'
+          : 'no footage — native card',
   })),
 );
 
-if (asCsv) {
+if (asMarkdown) {
+  const toRender = rows.filter((r) => r.status === 'to render');
+  const totalSeconds = toRender.reduce((n, r) => n + r.seconds, 0);
+  const totalWords = toRender.reduce((n, r) => n + r.words, 0);
+
+  console.log('# Avatar shot list — New Manager Success, Module 1\n');
+  console.log(`**${toRender.length} clips · ~${Math.round(totalSeconds / 60)} minutes of footage · ${totalWords} words**\n`);
+  console.log('Render **one clip per beat**, not one video per Rep. The app plays a card');
+  console.log('per beat and a Curveball interrupts between them — a single long video in a');
+  console.log('feed is just a video. Build-lists and full-screen moments are marked *native');
+  console.log('card*: they are already animated in the app and need no footage.\n');
+  console.log('Narration is flattened to one paragraph and ready to paste. Do not re-wrap it.\n');
+  console.log('---\n');
+
+  let currentRep = '';
+  for (const r of rows) {
+    if (r.rep !== currentRep) {
+      currentRep = r.rep;
+      const rep = reps.find((x) => x.number === r.rep)!;
+      const clips = rows.filter((x) => x.rep === r.rep && x.status === 'to render');
+      console.log(`\n## Rep ${rep.number} — ${rep.title}\n`);
+      if (rep.subtitle) console.log(`*${rep.subtitle}*\n`);
+      console.log(`${clips.length} clips · ${clips.reduce((n, x) => n + x.seconds, 0)}s · ${clips.reduce((n, x) => n + x.words, 0)} words\n`);
+    }
+    if (r.status !== 'to render' && r.status !== 'HAS FOOTAGE') {
+      const label = r.onScreen ? `: ${r.onScreen}` : '';
+      console.log(`- \`${r.beat}\` — *${r.status}*${label}`);
+      continue;
+    }
+    console.log(`\n### \`${r.clip}\`  ·  ~${r.seconds}s  ·  ${r.words} words\n`);
+    if (r.direction) console.log(`**Camera:** ${r.direction}  `);
+    if (r.onScreen) console.log(`**On screen:** ${r.onScreen}  `);
+    console.log('');
+    console.log('```');
+    console.log(r.narration);
+    console.log('```');
+  }
+  console.log('\n---\n');
+  console.log('## Wiring a clip in\n');
+  console.log('Set `videoUrl` on that beat in `packages/content/src/module-01/rep-XX.ts`.');
+  console.log('It must be a direct MP4 or HLS URL — a Google Drive share link will not play.');
+  console.log('Beats without a `videoUrl` keep rendering as text, so clips can land one at a time.\n');
+} else if (asCsv) {
   const cols = ['rep', 'clip', 'type', 'direction', 'seconds', 'words', 'status', 'narration'] as const;
   const esc = (v: unknown) => `"${String(v).replace(/"/g, '""')}"`;
   console.log(cols.join(','));
@@ -87,8 +140,8 @@ if (asCsv) {
       console.log(`REP ${rep.number} — ${rep.title}`);
       console.log('─'.repeat(78));
     }
-    if (r.status === 'no footage — native card') {
-      console.log(`\n  [${r.beat}] ${r.type} — no footage, renders natively`);
+    if (r.status !== 'to render' && r.status !== 'HAS FOOTAGE') {
+      console.log(`\n  [${r.beat}] ${r.type} — ${r.status}`);
       if (r.onScreen) console.log(`        on screen: ${r.onScreen.slice(0, 70)}`);
       continue;
     }
