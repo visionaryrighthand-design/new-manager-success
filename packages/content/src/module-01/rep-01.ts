@@ -68,6 +68,13 @@ export const rep01: Rep = {
       direction: 'full screen',
       speech:
         "All three of those will get you in trouble.\n\nYour old manager's style was built for their context — not yours. Your track record impresses leadership, not necessarily your team. And trying to do both jobs at once usually means doing neither one well.\n\nHere's what happens when a manager steps in without the right preparation.",
+      // NB: the source file is named "Copy of From Solo Star to Team Leader…",
+      // which is b3's title — a Synthesia project duplicated rather than
+      // renamed. Distinct file, distinct URL, but the name is not evidence of
+      // the content. Confirm this clip actually opens on "All three of those
+      // will get you in trouble" before the demo.
+      videoUrl:
+        'https://rhteswkgmndgijpllvjt.supabase.co/storage/v1/object/public/videos/New%20Manager%20Success/Copy%20of%20From%20Solo%20Star%20to%20Team%20Leader_%20Navigating%20Your%20First%20Promotion.mp4',
     },
     {
       id: 'b7',
