@@ -4,49 +4,52 @@ The web app is **not at the repository root** — it lives at `apps/web`, and it
 depends on three workspace packages (`@nms/brand`, `@nms/content`, `@nms/core`)
 that must be compiled before Next.js builds.
 
-That is the whole reason for a 404 on a fresh Vercel import: Vercel builds from
-the root by default, finds no Next.js app there, deploys nothing, and every URL
-returns `NOT_FOUND`. The build does not fail loudly — there is simply nothing to
-serve.
+Two settings have to be right. Getting either wrong produces the same
+symptom — a 404 on every URL, with a build that **succeeds**, which is what
+makes it confusing.
 
 ---
 
-## The fix (one setting, 30 seconds)
+## Required settings
 
-In the Vercel dashboard, on the project:
+**Settings → Build and Deployment**
 
-**Settings → Build and Deployment → Root Directory**
+| Setting | Value |
+|---|---|
+| **Framework Preset** | **Next.js** |
+| Root Directory | `apps/web` |
+| Include files outside the root directory | Enabled |
+| All Override toggles | Off |
 
-Set it to:
-
-```
-apps/web
-```
-
-Leave **"Include files outside of the root directory in the build step"**
-switched **ON** — it is on by default, and it is required here, because the
-lockfile and the shared packages live above `apps/web`.
-
-Then **Deployments → ⋯ on the latest deployment → Redeploy**, with
-"Use existing Build Cache" **unchecked** for the first run after the change.
-
-That is it. Everything else is already in the repository:
-
-- `apps/web/package.json` has a `vercel-build` script, which Vercel prefers over
-  `build`. It compiles the three workspace packages first, then runs
-  `next build`.
-- `apps/web/vercel.json` pins the framework so detection cannot drift.
+Then **Deployments → ⋯ → Redeploy**, with **"Use existing Build Cache"
+unchecked** on the first run after a change.
 
 ---
 
-## If you cannot change the Root Directory
+## Why "Other" produces a 404
 
-There is a fallback already committed: `vercel.json` at the repository root sets
-`buildCommand` and `outputDirectory` to reach into `apps/web`. It only applies
-when Root Directory is the repo root.
+This was the actual cause here, and it is worth understanding because nothing
+about it looks like an error.
 
-This path works but is the less-supported one for Next.js — Vercel's own
-guidance for monorepos is the Root Directory setting above. Prefer that.
+With Framework Preset set to **Other**, Vercel does not run the Next.js runtime.
+Its Output Directory default becomes *"`public` if it exists, or `.`"* — so it
+runs the build, discards the `.next` output, and publishes `apps/web/public` as
+a flat static site.
+
+That folder contains only `favicon.svg`, `og-image.png`, and `app-icon.svg`.
+There is no `index.html`, so `/` returns `NOT_FOUND` — and the build log shows
+a clean success, because from Vercel's point of view nothing went wrong.
+
+Setting the preset to **Next.js** is the fix. `apps/web/vercel.json` also pins
+`"framework": "nextjs"`, which overrides the dashboard on the next deployment,
+but setting the dropdown removes any doubt.
+
+## Why the Root Directory matters
+
+Vercel builds from the repository root by default. There is no Next.js app
+there, so it finds nothing to deploy. `apps/web` is where the app lives; the
+"include files outside" toggle is what lets the build reach the lockfile and the
+shared packages above it.
 
 ---
 
@@ -60,29 +63,33 @@ fix, it will return 404 forever, no matter how many times you redeploy.
 After redeploying, open the deployment from the Vercel dashboard, or use the
 project's main domain.
 
+A correct deployment serves `/`, `/learn`, `/learn/m1-r1`, `/enroll`, `/corner`,
+`/curriculum`, and `/for-teams`.
+
 ---
 
 ## If it still 404s
 
-Send the **build log** from the failing deployment. The useful part is:
+Send the **build log** from the deployment. The useful parts:
 
-1. Which directory the build ran in (first lines of the log).
+1. Which directory the build ran in (first lines).
 2. Whether `npm run build:packages` ran and succeeded.
-3. Whether `next build` printed its route table — the successful build ends with
-   a list including `/`, `/learn`, `/enroll`, `/corner`, `/curriculum`.
+3. Whether `next build` printed its route table — a successful build ends with a
+   list including `/`, `/learn`, `/enroll`, `/corner`.
+4. What Vercel reports as the output directory near the end.
 
 Both build paths are verified working in this repository:
 
 ```bash
-# what Vercel runs with Root Directory = repo root
-npm install && npm run build:packages && npm run build --workspace=@nms/web
-
-# what Vercel runs with Root Directory = apps/web
+# Root Directory = apps/web  (the configuration above)
 cd apps/web && npm run vercel-build
+
+# Root Directory = repo root (fallback, uses the root vercel.json)
+npm install && npm run build:packages && npm run build --workspace=@nms/web
 ```
 
 Both produce `apps/web/.next` containing `routes-manifest.json`, which is what
-Vercel serves.
+Vercel serves when the framework preset is Next.js.
 
 ---
 
