@@ -22,6 +22,12 @@ The premise: the most consequential promotion of someone's career comes with no
 instruction manual. The existing options are a two-day offsite nobody remembers
 or a video library nobody opens twice. This is neither.
 
+## Deploying
+
+The app is at `apps/web`, not the repo root — see **[DEPLOYMENT.md](DEPLOYMENT.md)**.
+A 404 on Vercel means the project's **Root Directory** needs setting to
+`apps/web`; that is the whole fix.
+
 ## Quick start
 
 ```bash
