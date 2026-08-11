@@ -99,6 +99,11 @@ export const rep01: Rep = {
       direction: 'full screen',
       speech:
         "That's a significant responsibility. But it's also a significant opportunity — because when you get this right, you can build something remarkable.\n\nHere's the reframe this entire program is built on.\n\nYou were promoted because you were great at your job. That's your starting point — not your finish line. The skills that made you an exceptional doer are different from the skills that will make you an exceptional manager.",
+      // Another "Copy of From Solo Star to Team Leader…" — b3's title on a
+      // duplicated project. Confirm this opens on "That's a significant
+      // responsibility" before the demo.
+      videoUrl:
+        'https://rhteswkgmndgijpllvjt.supabase.co/storage/v1/object/public/videos/New%20Manager%20Success/Copy%20of%20From%20Solo%20Star%20to%20Team%20Leader_%20Navigating%20Your%20First%20Promotion%20(1).mp4',
     },
     {
       id: 'b11',

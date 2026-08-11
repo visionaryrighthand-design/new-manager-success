@@ -38,6 +38,11 @@ function fail(message: string): never {
   process.exit(1);
 }
 
+/** "~2 min" reads fine; "~0 min" for the last 25 seconds of a Rep does not. */
+function duration(totalSeconds: number): string {
+  return totalSeconds < 90 ? `${totalSeconds}s` : `~${Math.round(totalSeconds / 60)} min`;
+}
+
 function clipId(rep: Rep, beat: Beat): string {
   return `${rep.id}-${beat.id}`;
 }
@@ -81,7 +86,7 @@ if (asMarkdown) {
   const totalWords = toRender.reduce((n, r) => n + r.words, 0);
 
   console.log('# Avatar shot list — New Manager Success, Module 1\n');
-  console.log(`**${toRender.length} clips · ~${Math.round(totalSeconds / 60)} minutes of footage · ${totalWords} words**\n`);
+  console.log(`**${toRender.length} clips · ${duration(totalSeconds)} of footage · ${totalWords} words**\n`);
   console.log('Render **one clip per beat**, not one video per Rep. The app plays a card');
   console.log('per beat and a Curveball interrupts between them — a single long video in a');
   console.log('feed is just a video. Build-lists and full-screen moments are marked *native');
@@ -129,7 +134,7 @@ if (asMarkdown) {
   console.log('\nAVATAR SHOT LIST');
   console.log('='.repeat(78));
   console.log(
-    `${toRender.length} clips to render · ~${Math.round(totalSeconds / 60)} min of footage · ` +
+    `${toRender.length} clips to render · ${duration(totalSeconds)} of footage · ` +
       `${toRender.reduce((n, r) => n + r.words, 0)} words\n`,
   );
   console.log('Render one clip per beat. Do NOT render a Rep as a single video —');
