@@ -96,9 +96,8 @@ export const rep01: Rep = {
       direction: 'full screen',
       speech:
         "That's a significant responsibility. But it's also a significant opportunity — because when you get this right, you can build something remarkable.\n\nHere's the reframe this entire program is built on.\n\nYou were promoted because you were great at your job. That's your starting point — not your finish line. The skills that made you an exceptional doer are different from the skills that will make you an exceptional manager.",
-      // Filename is b3's title again; content confirmed correct by the author.
-      // NOTE: b11 below currently carries this exact same URL, so cards 9 and
-      // 10 play the same file. Replace b11's when its own clip is uploaded.
+      // b12 still carries this same URL, so cards 9 and 11 play one file.
+      // Swap b12's when its own render is uploaded.
       videoUrl:
         'https://rhteswkgmndgijpllvjt.supabase.co/storage/v1/object/public/videos/New%20Manager%20Success/Copy%20of%20From%20Solo%20Star%20to%20Team%20Leader_%20Navigating%20Your%20First%20Promotion%20(1).mp4',
     },
@@ -108,11 +107,8 @@ export const rep01: Rep = {
       text: 'Those skills can be learned. That’s what this program is for.',
       speech:
         "You're not behind. You're not failing. You're at the beginning of a new game — and now you know the rules are different.",
-      // Same URL as b10 above — one Supabase object, two beats, so cards 9 and
-      // 10 play the same 28-second clip rather than this beat's 9-second one.
-      // Wired at the author's direction; swap when b11's own render exists.
       videoUrl:
-        'https://rhteswkgmndgijpllvjt.supabase.co/storage/v1/object/public/videos/New%20Manager%20Success/Copy%20of%20From%20Solo%20Star%20to%20Team%20Leader_%20Navigating%20Your%20First%20Promotion%20(1).mp4',
+        'https://rhteswkgmndgijpllvjt.supabase.co/storage/v1/object/public/videos/New%20Manager%20Success/Copy%20of%20From%20Solo%20Star%20to%20Team%20Leader_%20Navigating%20Your%20First%20Promotion%20(2).mp4',
     },
     {
       id: 'b12',
@@ -120,6 +116,9 @@ export const rep01: Rep = {
       direction: 'full screen, direct close',
       speech:
         "In the next section, we're going to dig into exactly why high performers often struggle the most when they step into management — and what the shift from doing to leading actually looks like in practice.\n\nLet's keep going.",
+      // Same URL as b10 — see the note there.
+      videoUrl:
+        'https://rhteswkgmndgijpllvjt.supabase.co/storage/v1/object/public/videos/New%20Manager%20Success/Copy%20of%20From%20Solo%20Star%20to%20Team%20Leader_%20Navigating%20Your%20First%20Promotion%20(1).mp4',
     },
   ],
 
