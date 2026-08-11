@@ -344,6 +344,21 @@ interface CardViewProps {
 function CardView(props: CardViewProps) {
   const { card, rep } = props;
 
+  if (card.kind === 'repIntro') {
+    return (
+      <View style={styles.card}>
+        <Text style={styles.introEyebrow}>
+          REP {card.rep.number} · {card.rep.title.toUpperCase()}
+        </Text>
+        <Text style={styles.introHook}>{card.rep.hook}</Text>
+        <Text style={styles.introMeta}>
+          {card.rep.curveballs.length} Curveball
+          {card.rep.curveballs.length === 1 ? '' : 's'} · {card.rep.quiz.length} questions
+        </Text>
+      </View>
+    );
+  }
+
   if (card.kind === 'beat') {
     const { beat } = card;
 
@@ -789,6 +804,10 @@ const styles = StyleSheet.create({
     borderLeftColor: colors.bright,
     paddingLeft: space[4],
   },
+
+  introEyebrow: { ...type.label, color: colors.accentText },
+  introHook: { ...type.h1, color: colors.fg },
+  introMeta: { ...type.numeric, fontSize: 12, color: colors.fgSubtle },
 
   readingRule: { width: 40, height: 2, borderRadius: 2, backgroundColor: colors.accent },
   readingLede: { ...type.h2, color: colors.fg },

@@ -46,9 +46,11 @@
       var(--wash-top, color-mix(in srgb, var(--nms-color-accent) 20%, transparent)),
       transparent 42%
     ),
-    /* The pool of light behind the card. */
+    /* The pool of light behind the card. Its horizontal position shifts with
+       the Rep index, so consecutive Reps are lit from different sides. */
     radial-gradient(
-      var(--wash-size, 92% 54%) at var(--wash-at, 18% 24%),
+      var(--wash-size, 92% 54%) at
+        calc(var(--wash-x, 18%) + var(--rep-seed, 1) * 7%) var(--wash-y, 24%),
       var(--wash, color-mix(in srgb, var(--nms-color-accent) 26%, transparent)),
       transparent 74%
     ),
@@ -63,21 +65,21 @@
 .player[data-card='beat'] {
   --wash: color-mix(in srgb, var(--nms-color-accent) 24%, transparent);
   --wash-top: color-mix(in srgb, var(--nms-color-accent) 16%, transparent);
-  --wash-at: 18% 24%;
+  --wash-x: 18%; --wash-y: 24%;
 }
 
 /* A Gut Check is a beat of white light. It reads as a pause, not a test. */
 .player[data-card='gutCheck'] {
   --wash: color-mix(in srgb, var(--nms-color-bright) 15%, transparent);
   --wash-top: color-mix(in srgb, var(--nms-color-bright) 10%, transparent);
-  --wash-at: 80% 28%;
+  --wash-x: 62%; --wash-y: 28%;
 }
 
 /* A Curveball runs warm, and the temperature changes before a word is read. */
 .player[data-card='curveball'] {
   --wash: color-mix(in srgb, var(--nms-color-alert) 34%, transparent);
   --wash-top: color-mix(in srgb, var(--nms-color-alert) 30%, transparent);
-  --wash-at: 50% 6%;
+  --wash-x: 34%; --wash-y: 6%;
   --wash-size: 116% 62%;
 }
 
@@ -85,7 +87,7 @@
 .player[data-card='quiz'] {
   --wash: color-mix(in srgb, var(--nms-color-accent) 26%, transparent);
   --wash-top: color-mix(in srgb, var(--nms-color-accent) 10%, transparent);
-  --wash-at: 24% 86%;
+  --wash-x: 10%; --wash-y: 86%;
   --wash-size: 104% 58%;
 }
 
@@ -93,7 +95,7 @@
 .player[data-card='fieldNote'] {
   --wash: color-mix(in srgb, var(--nms-color-bright) 12%, transparent);
   --wash-top: color-mix(in srgb, var(--nms-color-bright) 8%, transparent);
-  --wash-at: 50% 48%;
+  --wash-x: 32%; --wash-y: 48%;
   --wash-size: 124% 70%;
 }
 
@@ -101,8 +103,17 @@
 .player[data-card='summary'] {
   --wash: color-mix(in srgb, var(--nms-color-accent) 40%, transparent);
   --wash-top: color-mix(in srgb, var(--nms-color-accent) 14%, transparent);
-  --wash-at: 50% 92%;
+  --wash-x: 32%; --wash-y: 92%;
   --wash-size: 136% 80%;
+}
+
+/* The cold open is lit from below and hardest of all: it is an arrival. */
+.player[data-card='repIntro'] {
+  --wash: color-mix(in srgb, var(--nms-color-accent) 46%, transparent);
+  --wash-top: color-mix(in srgb, var(--nms-color-accent) 8%, transparent);
+  --wash-x: 20%;
+  --wash-y: 96%;
+  --wash-size: 140% 86%;
 }
 
 /* A moment paints its own glow, keyed to the payoff line. Two would fight. */
@@ -320,6 +331,86 @@
   border-left: 3px solid var(--nms-color-bright);
   padding-left: var(--nms-space-4);
 }
+
+/* ---- Cold open --------------------------------------------------------- */
+
+.intro {
+  position: relative;
+  isolation: isolate;
+  width: 100%;
+  max-width: var(--nms-feed-max-width);
+  display: flex;
+  flex-direction: column;
+  gap: var(--nms-space-4);
+  animation: rise var(--nms-duration-slow) var(--nms-ease-entrance) both;
+}
+
+/*
+ * The Rep number, enormous and nearly gone. It is a texture, not a label —
+ * the readable version is in the eyebrow underneath.
+ */
+.introNumber {
+  position: absolute;
+  z-index: -1;
+  inset-block-start: -0.34em;
+  inset-inline-start: -0.06em;
+  font-family: var(--nms-font-display);
+  font-size: 13rem;
+  font-weight: 800;
+  line-height: 0.8;
+  letter-spacing: -0.06em;
+  color: color-mix(in srgb, var(--nms-color-fg) 6%, transparent);
+  animation: introNum var(--nms-duration-slow) var(--nms-ease-entrance) both;
+}
+
+@keyframes introNum {
+  from { opacity: 0; transform: translateY(20px) scale(1.08); }
+  to { opacity: 1; transform: none; }
+}
+
+.introEyebrow {
+  font-family: var(--nms-font-mono);
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--nms-color-accent-text);
+}
+
+.introHook {
+  font-family: var(--nms-font-display);
+  font-size: clamp(2.1rem, 1.3rem + 3.4vw, 3rem);
+  line-height: 1;
+  font-weight: 800;
+  letter-spacing: -0.045em;
+  text-wrap: balance;
+  margin: 0;
+  animation: rise var(--nms-duration-slow) var(--nms-ease-entrance) both;
+  animation-delay: 0.14s;
+}
+
+.introMeta {
+  font-family: var(--nms-font-mono);
+  font-size: 0.72rem;
+  letter-spacing: 0.06em;
+  color: var(--nms-color-fg-subtle);
+  animation: rise var(--nms-duration-slow) var(--nms-ease-entrance) both;
+  animation-delay: 0.26s;
+}
+
+/* ---- Kinetic text ------------------------------------------------------ */
+
+/*
+ * A word that has not been spoken yet is dimmed; it comes up to full contrast
+ * as the voice reaches it. Only ever active while audio is playing — a card
+ * with the sound off renders at full contrast, because half-lit text a learner
+ * cannot un-dim is just unreadable text.
+ */
+.word {
+  color: color-mix(in srgb, currentColor 34%, transparent);
+  transition: color 140ms linear;
+}
+.word[data-spoken='true'] { color: inherit; }
 
 /* ---- Reading card ------------------------------------------------------ */
 

@@ -227,6 +227,15 @@ export function contentAdditions(): Array<ContentAddition & { repId: string; rep
  * is a report that says the product is fine while the product is not.
  */
 export type FeedCard =
+  /**
+   * The cold open. Rep number, hook, title, full bleed.
+   *
+   * Every Rep used to start on a paragraph, which meant all eight opened
+   * identically and the learner had no sense of having arrived somewhere new.
+   * The hook is already written for exactly this job — "three seconds to earn
+   * the swipe" — and was only being used on the Rep list.
+   */
+  | { kind: 'repIntro'; key: string; rep: Rep; seconds: number }
   | { kind: 'beat'; key: string; beat: Beat; seconds: number }
   | { kind: 'curveball'; key: string; curveball: Curveball; seconds: number }
   | { kind: 'gutCheck'; key: string; gutCheck: GutCheck; seconds: number }
@@ -240,7 +249,7 @@ export function isInteractive(card: FeedCard): boolean {
 }
 
 export function feedCards(rep: Rep): FeedCard[] {
-  const cards: FeedCard[] = [];
+  const cards: FeedCard[] = [{ kind: 'repIntro', key: `intro-${rep.id}`, rep, seconds: 4 }];
   for (const beat of rep.beats) {
     // A `hold` is a direction for an edit. The feed already holds indefinitely.
     if (beat.type !== 'hold') {

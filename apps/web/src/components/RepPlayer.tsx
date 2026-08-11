@@ -20,6 +20,7 @@ import type {
 } from '@nms/content';
 import {
   estimateBeatSeconds,
+  estimateRepTotalSeconds,
   feedCards,
   fieldNotePrompt,
   splitListItem,
@@ -173,6 +174,10 @@ export function RepPlayer({ rep, nextRepId }: RepPlayerProps) {
       // card it left a seam at the header, and half the effect is the chrome
       // changing colour with the content.
       data-card={cards[active]?.kind ?? 'beat'}
+      // Eight Reps used to be lit identically. The index seeds the angle and
+      // the height of the wash, so 1.3 does not look like 1.1 even on the same
+      // kind of card, without introducing a colour the brand does not own.
+      style={{ '--rep-seed': rep.index } as CSSProperties}
       data-moment={cards[active]?.kind === 'beat' && cards[active]?.beat.type === 'moment'}
     >
       <header className={styles.header}>
@@ -331,6 +336,8 @@ function CardView(props: CardViewProps) {
   const { card } = props;
 
   switch (card.kind) {
+    case 'repIntro':
+      return <RepIntroCard rep={card.rep} />;
     case 'beat':
       return (
         <BeatCard
@@ -387,6 +394,32 @@ function CardView(props: CardViewProps) {
   }
 }
 
+/**
+ * The cold open.
+ *
+ * The Rep number set enormous and nearly transparent behind the hook, which is
+ * the one line already written to earn a swipe in three seconds. Every Rep now
+ * opens on a different sentence at display scale rather than on a paragraph,
+ * which is most of what makes eight Reps feel like eight things.
+ */
+function RepIntroCard({ rep }: { rep: Rep }) {
+  return (
+    <div className={styles.intro}>
+      <span className={styles.introNumber} aria-hidden>
+        {rep.number}
+      </span>
+      <span className={styles.introEyebrow}>
+        Rep {rep.number} · {rep.title}
+      </span>
+      <p className={styles.introHook}>{rep.hook}</p>
+      <span className={styles.introMeta}>
+        {Math.round(estimateRepTotalSeconds(rep) / 60)} min · {rep.curveballs.length} Curveball
+        {rep.curveballs.length === 1 ? '' : 's'} · {rep.quiz.length} questions
+      </span>
+    </div>
+  );
+}
+
 interface BeatCardProps {
   beat: Beat;
   isActive: boolean;
@@ -395,6 +428,21 @@ interface BeatCardProps {
 }
 
 function BeatCard({ beat, isActive, soundOn, onSoundOn }: BeatCardProps) {
+  const vo = useVoiceover(beat, isActive, soundOn);
+  const transport = beat.audioUrl ? (
+    <>
+      <Transport
+        playing={vo.playing}
+        total={vo.total}
+        elapsed={vo.elapsed}
+        fallbackSeconds={estimateBeatSeconds(beat)}
+        onToggle={vo.toggle}
+        onSoundOn={onSoundOn}
+      />
+      {vo.audio}
+    </>
+  ) : null;
+
   if (beat.type === 'moment') {
     const lines = splitMomentLines(beat.text ?? '');
     return (
@@ -414,7 +462,7 @@ function BeatCard({ beat, isActive, soundOn, onSoundOn }: BeatCardProps) {
             </span>
           ))}
         </p>
-        <Voiceover beat={beat} isActive={isActive} soundOn={soundOn} onSoundOn={onSoundOn} />
+        {transport}
       </div>
     );
   }
@@ -447,12 +495,12 @@ function BeatCard({ beat, isActive, soundOn, onSoundOn }: BeatCardProps) {
             );
           })}
         </ol>
-        <Voiceover beat={beat} isActive={isActive} soundOn={soundOn} onSoundOn={onSoundOn} />
+        {transport}
       </div>
     );
   }
 
-  return <ProseCard beat={beat} isActive={isActive} soundOn={soundOn} onSoundOn={onSoundOn} />;
+  return <ProseCard beat={beat} progress={vo.progress} transport={transport} />;
 }
 
 /**
@@ -471,7 +519,15 @@ function BeatCard({ beat, isActive, soundOn, onSoundOn }: BeatCardProps) {
  * apart is typesetting what is already there — which is the difference
  * between a card and a paragraph of grey text.
  */
-function ProseCard({ beat, isActive, soundOn, onSoundOn }: BeatCardProps) {
+function ProseCard({
+  beat,
+  progress,
+  transport,
+}: {
+  beat: Beat;
+  progress: number | null;
+  transport: React.ReactNode;
+}) {
   const paragraphs = (beat.speech ?? '').split('\n\n').map((p) => p.trim()).filter(Boolean);
   const title = beat.text;
 
@@ -482,23 +538,184 @@ function ProseCard({ beat, isActive, soundOn, onSoundOn }: BeatCardProps) {
   const kicker = rest.length > 0 ? rest[rest.length - 1] : undefined;
   const body = rest.slice(0, -1);
 
+  // One running offset across every paragraph, so the highlight travels down
+  // the card the way the voice does.
+  const totalWords = paragraphs.reduce((n, para) => n + wordCount(para), 0);
+  let cursor = 0;
+  const at = (text: string) => {
+    const start = cursor;
+    cursor += wordCount(text);
+    return start;
+  };
+  const ledeOffset = lede === undefined ? 0 : at(lede);
+  const bodyOffsets = body.map((para) => at(para));
+  const kickerOffset = kicker === undefined ? 0 : at(kicker);
+
   return (
     <article className={styles.reading}>
       <span className={styles.readingRule} aria-hidden />
       {title ? <h2 className={styles.readingTitle}>{title}</h2> : null}
-      {lede ? <p className={styles.readingLede}>{lede}</p> : null}
+      {lede ? (
+        <SpokenText
+          text={lede}
+          progress={progress}
+          className={styles.readingLede}
+          offset={ledeOffset}
+          total={totalWords}
+        />
+      ) : null}
       {beat.type === 'reading' && !beat.audioUrl ? (
         <p className={styles.readingMeta}>{estimateBeatSeconds(beat)} sec read</p>
       ) : null}
-      <Voiceover beat={beat} isActive={isActive} soundOn={soundOn} onSoundOn={onSoundOn} />
+      {transport}
       {body.map((para, i) => (
-        <p key={i} className={styles.readingBody}>
-          {para}
-        </p>
+        <SpokenText
+          key={i}
+          text={para}
+          progress={progress}
+          className={styles.readingBody}
+          offset={bodyOffsets[i]!}
+          total={totalWords}
+        />
       ))}
-      {kicker ? <p className={styles.readingKicker}>{kicker}</p> : null}
+      {kicker ? (
+        <SpokenText
+          text={kicker}
+          progress={progress}
+          className={styles.readingKicker}
+          offset={kickerOffset}
+          total={totalWords}
+        />
+      ) : null}
     </article>
   );
+}
+
+
+/**
+ * Playback for one beat's voiceover.
+ *
+ * Owned here rather than inside the transport because the text needs it too:
+ * the card lights up word by word as the line is spoken, which is the single
+ * mechanic that makes social video feel alive and is the reason a caption is
+ * worth watching with the sound off.
+ *
+ * The word position is interpolated from elapsed/duration rather than from
+ * real timings. Per-word timestamps would need a forced aligner and a build
+ * step; a linear map is wrong in the middle of a sentence by a fraction of a
+ * word and exactly right at both ends, which is where the eye checks.
+ */
+function useVoiceover(beat: Beat, isActive: boolean, soundOn: boolean) {
+  const ref = useRef<HTMLAudioElement>(null);
+  const [playing, setPlaying] = useState(false);
+  const [elapsed, setElapsed] = useState(0);
+  const [total, setTotal] = useState(0);
+
+  useEffect(() => {
+    const el = ref.current;
+    if (!el) return;
+    if (isActive && soundOn) {
+      // Rejects until the browser has seen a gesture. Expected, not an error.
+      void el.play().catch(() => {});
+    } else {
+      el.pause();
+      if (!isActive) {
+        el.currentTime = 0;
+        setElapsed(0);
+      }
+    }
+  }, [isActive, soundOn]);
+
+  const toggle = useCallback(() => {
+    const el = ref.current;
+    if (!el) return;
+    if (el.paused) void el.play().catch(() => {});
+    else el.pause();
+  }, []);
+
+  const audio = beat.audioUrl ? (
+    <audio
+      ref={ref}
+      src={beat.audioUrl}
+      preload="metadata"
+      onPlay={() => setPlaying(true)}
+      onPause={() => setPlaying(false)}
+      onEnded={() => setPlaying(false)}
+      // Duration is read on every tick, not only on loadedmetadata. With
+      // preload="metadata" the browser can resolve it before React attaches
+      // the handler, and a missed loadedmetadata left `total` at 0 — which
+      // silently disabled the word highlighting and pinned the countdown to
+      // its estimate.
+      onTimeUpdate={(e) => {
+        setElapsed(e.currentTarget.currentTime);
+        const d = e.currentTarget.duration;
+        if (Number.isFinite(d) && d > 0) setTotal(d);
+      }}
+      onDurationChange={(e) => {
+        const d = e.currentTarget.duration;
+        if (Number.isFinite(d) && d > 0) setTotal(d);
+      }}
+      onLoadedMetadata={(e) => setTotal(e.currentTarget.duration || 0)}
+    />
+  ) : null;
+
+  return {
+    audio,
+    toggle,
+    playing,
+    total,
+    elapsed,
+    /** 0 to 1, or null when this beat has no audio or has not started. */
+    progress: beat.audioUrl && total > 0 && elapsed > 0 ? elapsed / total : null,
+  };
+}
+
+/**
+ * Text that lights up as it is spoken.
+ *
+ * With no playback it renders as ordinary type at full contrast — a card must
+ * never be left dimmed because the learner has the sound off.
+ */
+function SpokenText({
+  text,
+  progress,
+  className,
+  offset,
+  total,
+}: {
+  text: string;
+  progress: number | null;
+  className: string;
+  offset: number;
+  total: number;
+}) {
+  if (progress === null || total === 0) return <p className={className}>{text}</p>;
+
+  // Position within the whole beat, not within this paragraph. With
+  // per-paragraph progress every paragraph lit at the same fraction at once,
+  // which reads as a rendering fault rather than a voice moving down a page.
+  const spokenGlobal = progress * total;
+  const parts = text.split(/(\s+)/);
+  let seen = 0;
+
+  return (
+    <p className={className} data-kinetic="true">
+      {parts.map((part, i) => {
+        if (!part.trim()) return part;
+        seen += 1;
+        return (
+          <span key={i} className={styles.word} data-spoken={offset + seen <= spokenGlobal}>
+            {part}
+          </span>
+        );
+      })}
+    </p>
+  );
+}
+
+/** Word count, matching how SpokenText splits. */
+function wordCount(text: string): number {
+  return text.split(/\s+/).filter(Boolean).length;
 }
 
 /**
@@ -511,46 +728,28 @@ function ProseCard({ beat, isActive, soundOn, onSoundOn }: BeatCardProps) {
  * pressed play once. Browsers block sound before a gesture, and firing a
  * silently-rejected play() on every scroll is worse than not trying.
  */
-function Voiceover({ beat, isActive, soundOn, onSoundOn }: BeatCardProps) {
-  const ref = useRef<HTMLAudioElement>(null);
-  const [playing, setPlaying] = useState(false);
-  const [elapsed, setElapsed] = useState(0);
-  const [total, setTotal] = useState(0);
+interface TransportProps {
+  playing: boolean;
+  total: number;
+  elapsed: number;
+  fallbackSeconds: number;
+  onToggle: () => void;
+  onSoundOn: () => void;
+}
 
-  useEffect(() => {
-    const el = ref.current;
-    if (!el) return;
-    if (isActive && soundOn) {
-      // Rejects when the browser has not seen a gesture yet. That is expected,
-      // not an error — the learner presses play and it follows them after.
-      void el.play().catch(() => {});
-    } else {
-      el.pause();
-      if (!isActive) el.currentTime = 0;
-    }
-  }, [isActive, soundOn]);
-
-  if (!beat.audioUrl) return null;
-
+/** The transport under a card. Renders nothing when the beat has no audio. */
+function Transport({ playing, total, elapsed, fallbackSeconds, onToggle, onSoundOn }: TransportProps) {
   const pct = total > 0 ? (elapsed / total) * 100 : 0;
-
-  const toggle = () => {
-    const el = ref.current;
-    if (!el) return;
-    if (el.paused) {
-      onSoundOn();
-      void el.play().catch(() => {});
-    } else {
-      el.pause();
-    }
-  };
 
   return (
     <div className={styles.voiceover}>
       <button
         type="button"
         className={styles.voiceoverBtn}
-        onClick={toggle}
+        onClick={() => {
+          onSoundOn();
+          onToggle();
+        }}
         aria-label={playing ? 'Pause narration' : 'Play narration'}
       >
         <span aria-hidden>{playing ? '❙❙' : '▶'}</span>
@@ -559,18 +758,8 @@ function Voiceover({ beat, isActive, soundOn, onSoundOn }: BeatCardProps) {
         <span className={styles.voiceoverFill} style={{ width: `${pct}%` }} />
       </span>
       <span className={styles.voiceoverTime} aria-hidden>
-        {formatTime(total > 0 ? total - elapsed : estimateBeatSeconds(beat))}
+        {formatTime(total > 0 ? total - elapsed : fallbackSeconds)}
       </span>
-      <audio
-        ref={ref}
-        src={beat.audioUrl}
-        preload="metadata"
-        onPlay={() => setPlaying(true)}
-        onPause={() => setPlaying(false)}
-        onEnded={() => setPlaying(false)}
-        onTimeUpdate={(e) => setElapsed(e.currentTarget.currentTime)}
-        onLoadedMetadata={(e) => setTotal(e.currentTarget.duration || 0)}
-      />
     </div>
   );
 }
