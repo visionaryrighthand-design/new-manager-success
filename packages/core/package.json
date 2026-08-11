@@ -1,8 +1,8 @@
 {
-  "name": "@promoted/core",
+  "name": "@nms/core",
   "version": "0.1.0",
   "private": true,
-  "description": "Promoted domain logic: registration, update levels, inactivity alerts, digests, progress, streaks.",
+  "description": "New Manager Success domain logic: registration, update levels, inactivity alerts, digests, progress, streaks.",
   "type": "module",
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
@@ -20,7 +20,7 @@
     "pretest": "tsc -p tsconfig.test.json"
   },
   "dependencies": {
-    "@promoted/content": "*"
+    "@nms/content": "*"
   },
   "devDependencies": {
     "@types/node": "^22.9.0",

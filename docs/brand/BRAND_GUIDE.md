@@ -1,4 +1,4 @@
-# Promoted — brand guide
+# New Manager Success — brand guide
 
 The name, the mark, the palette, the voice, and the rules that keep a push
 notification sounding like the same company as the website.
@@ -11,28 +11,31 @@ updating.
 
 ## 1. The name
 
-### Promoted
+### New Manager Success
 
-One word. The exact moment the customer is living through, used as the product
-name. It works as a verb, a status, and a badge, and it survives being said out
-loud in a noisy room — which is how most of this product will get recommended.
+Says exactly what it is and who it is for, which is the right trade for a
+category that does not exist yet: nobody is searching for a clever name for
+something they do not know they can buy. It also survives being said out loud
+in a noisy room, which is how most of this product will get recommended.
+
+**Use the full name on first mention.** `NMS` is permitted only in UI chrome
+where space genuinely forces it. Never shorten to "New Manager" — that reads as
+a description of the customer, not the product.
 
 **The name is a token.** It lives in `packages/brand/src/voice.ts` as
-`brand.name`, and no file hardcodes it. If trademark search comes back badly,
-changing that one string moves the whole codebase.
+`brand.name`, and nothing hardcodes it. Changing that one string moves the whole
+codebase.
 
-**Before committing:** run a USPTO/EUIPO search in class 41 (education and
-training services) and class 9 (downloadable software). "Promoted" is a common
-English word, which cuts both ways — hard to own broadly, easy to use
-descriptively. Secure the domain first; preferences in order are
-`getpromoted.app`, `promoted.training`, `joinpromoted.com`.
+**Still to do:** a USPTO/EUIPO search in class 41 (education and training
+services) and class 9 (downloadable software). A descriptive name is harder to
+register and easier for competitors to use descriptively — expect to rely on the
+logo and the composite mark rather than the words alone.
 
 ### Taglines
 
 **Primary — "Training for the job nobody trained you for."**
-It states the gap in the market in eight words. It comes almost directly out of
-the locked script's own opening, which is why it rings true rather than
-constructed.
+States the gap in the market in eight words. It comes almost directly out of the
+locked script's own opening, which is why it rings true rather than constructed.
 
 **Completion — "Be the manager you wished you had."**
 Reserved for certification, module completions, and anywhere the tone should
@@ -44,88 +47,111 @@ Do not mix them. The first sells, the second rewards.
 
 ## 2. The mark
 
-**The Ascent** — two stacked chevrons.
+A brush-drawn **N** with an arrow rising through it and breaking out top-right.
+The letterform is where you are; the arrow is where the job is going.
 
-Read top to bottom it is a level-up indicator. Read as a silhouette it is a
-play button tipped on its side. Promotion and video in one shape, which is
-exactly what the product is.
+> ### ⚠ The vector files in this repo are provisional
+>
+> The mark in `packages/brand/assets/` is a **clean vector interpretation** of
+> the supplied artwork, built from a raster reference. The original is
+> brush-painted with dry-brush texture and tapered strokes, and that texture is
+> deliberately *not* faked — a hand-approximated brush reads worse than an
+> honest clean version.
+>
+> **Supply the source vector (SVG/AI/EPS) and this all gets replaced.** The
+> geometry is duplicated in exactly four places, which must be updated together:
+> `logo-mark.svg`, `logo-mark-mono.svg`, the two lockups, plus the inline React
+> copies in `apps/web/src/components/Logo.tsx` and
+> `apps/mobile/src/components/Mark.tsx`. Icons regenerate from the master.
 
 | Asset | File | Use |
 |---|---|---|
-| Primary mark | `packages/brand/assets/logo-mark.svg` | Anywhere it can be two colours |
-| Single colour | `logo-mark-mono.svg` | Inherits `currentColor`. Embossing, one-colour print, photographic backgrounds |
-| Horizontal lockup | `logo-lockup-dark.svg` / `-light.svg` | Headers, decks, email |
+| Primary mark | `logo-mark.svg` | Anywhere it can be two colours |
+| Single colour | `logo-mark-mono.svg` | Inherits `currentColor`. One-colour print, embossing, photographic backgrounds |
+| Horizontal lockup | `logo-lockup-dark.svg` / `-light.svg` | Headers, email, anywhere with limited height |
+| **Stacked lockup** | `logo-lockup-stacked.svg` | The primary arrangement. Social avatars, store listing art, splash, title cards |
 | App icon | `app-icon.svg` → `apps/mobile/assets/icon.png` | iOS and Android |
 | Favicon | `favicon.svg` | Browser tab |
 
 ### Construction
 
-Drawn on a 64pt grid with a 9pt stroke, round caps and joins. The 9pt stroke is
-what lets it survive a 20px favicon; anything thinner turns to mush.
+Drawn on a 64pt grid: a 7.5pt stroke for the N, 6.5pt for the arrow, round caps
+and joins throughout. Those weights are what let it survive a 20px favicon.
 
 - **Minimum size:** 20px. Below that, use the mono version on a filled tile.
-- **Clear space:** one stroke width (9/64 of the mark) on all sides.
-- **Never:** rotate it, add a third chevron, outline it, put it in a circle,
-  gradient-fill the strokes, or reproduce it in any colours but the sanctioned
-  pairs.
+- **Clear space:** one stroke width on all sides.
+- **Never:** rotate it, detach the arrow from the letterform, outline it,
+  gradient-fill the strokes, or add a drop shadow.
 
 ### The one sanctioned recolour
 
-On light backgrounds the Volt chevron drops from `volt-300` (#D8FF3E) to
-`volt-600` (#8FAB00), and Cobalt from 500 to 600. Volt-300 is a 4.3:1 contrast
-failure on white and reads as a highlighter smear in print. This is handled for
-you in `logo-lockup-light.svg`.
+On light backgrounds the N flips from white to ink-950 and the blue darkens from
+`blue-500` to `blue-600`. Handled for you in `logo-lockup-light.svg`. Nothing
+else about the mark may be recoloured.
 
 ### Wordmark
 
-Set in the display face at weight 800, tracking −0.035em. The lockup SVGs
-currently carry live `<text>` so they stay editable during MVP. **Convert to
-outlines before any external use** — otherwise the lockup re-flows on any
-machine without the display font installed, which will eventually be a client's.
+Two lines: **NEW MANAGER** in heavy white caps, **SUCCESS** tracked out in blue
+beneath it, optically aligned to the same width. The stacked lockup adds a blue
+brush swoosh between them.
+
+The lockup SVGs currently carry live `<text>` in a system stack so they stay
+editable during MVP. **Set them in the real face and convert to outlines before
+any external use** — otherwise the lockup re-flows on any machine without that
+font, which will eventually be a client's.
 
 ---
 
 ## 3. Colour
 
-Dark-first. The feed is the product's centre of gravity and it is a dark,
-full-bleed surface — the TikTok half of the DNA. Marketing pages and the Corner
-dashboards run light, because those are read by HR and bosses and need to feel
-like a document. Both themes generate from the same ramps, so an app screenshot
-never looks like a different company from the website.
+Three brand colours: **black, white, and one blue.** Everything else in the
+system is functional — the smallest set a learning product cannot do without.
+
+Dark-first, because the logo is drawn for black and the lesson feed is the
+product's centre of gravity. Marketing pages and the Corner dashboards run
+light, since those get read by HR and bosses and should feel like a document.
+Both themes generate from the same ramps, so an app screenshot never looks like
+a different company from the website.
 
 | Token | Dark | Light | Role |
 |---|---|---|---|
-| `bg` | `#0A0C12` | `#FFFFFF` | Page / feed |
-| `surface` | `#10131B` | `#F4F6FA` | Cards, options |
-| `fg` | `#F4F6FA` | `#0A0C12` | Body text |
-| `accent` (Cobalt) | `#3A63FF` | `#2A4BD6` | Primary actions, focus, trust |
-| `volt` | `#D8FF3E` | `#B4D400` | Progress, XP, "you did the thing" |
-| `ember` | `#FF6A3D` | `#D14018` | Streaks, Curveballs, urgency |
+| `bg` | `#05070B` | `#FFFFFF` | Page / feed |
+| `surface` | `#10141D` | `#F4F6FA` | Cards, options |
+| `fg` | `#F4F6FA` | `#090C13` | Body text |
+| `accent` | `#1E6BF0` | `#1652CC` | **The brand blue.** Primary actions, focus, progress |
+| `bright` | `#FFFFFF` | `#1652CC` | Maximum emphasis: completion, XP |
+| `alert` | `#FF7A3D` | `#D14E18` | Streaks, Curveballs, inactivity |
 | `success` | `#2FD98B` | `#12915B` | Correct |
 | `danger` | `#FF4D6A` | `#C4183C` | Incorrect |
 
+> **⚠ The blue is approximate.** `#1E6BF0` is read off the supplied logo
+> raster, not sampled from source artwork. It is defined once, as `BRAND_BLUE`
+> in `packages/brand/src/color.ts`, and the whole ramp derives from it —
+> correcting it later is a one-line change.
+
 ### Rules
 
-1. **Volt is never body text.** It fails contrast at small sizes in both
-   themes. Fills, borders, large display type, progress bars — that is the whole
-   list.
-2. **Cobalt means "do this".** If it is Cobalt, it is tappable or it is the
-   thing you should read next. Do not use it decoratively.
-3. **Ember means "this one has stakes".** Curveball labels, streak counts,
-   inactivity alerts. Nothing else, or it stops meaning anything.
-4. **Every `fg` token clears WCAG AA (4.5:1) against its paired `bg`** in both
-   themes. Do not introduce a colour that has not been checked.
+1. **Blue means "do this".** If it is blue, it is tappable or it is the thing to
+   read next. Never decorative, and never body text.
+2. **`bright` is the reward colour.** White on dark, blue on light — in both
+   cases the highest-contrast mark available, which is what makes progress feel
+   earned without inventing a colour the brand does not own.
+3. **`alert` is not a brand colour.** It exists because Curveballs and
+   inactivity warnings must be distinguishable from both "primary" and
+   "correct". If it starts appearing anywhere else, it has stopped meaning
+   anything.
+4. **Every `fg` token clears WCAG AA (4.5:1)** against its paired `bg` in both
+   themes. Do not add a colour that has not been checked.
 5. **Never hardcode a hex.** Use the token. `packages/brand/assets/tokens.css`
-   is generated from the TypeScript source; run
-   `npm run build --workspace=@promoted/brand` after any change.
+   is generated; run `npm run build --workspace=@nms/brand` after any change.
 
-### Why this palette and not lime-on-white
+### Why no fourth colour
 
-The obvious move for a Duolingo-adjacent product is a friendly green. It was
-rejected: this audience is being asked to take the product seriously enough to
-show it to their boss, and a toy palette undercuts that. Cobalt does the
-professional work; Volt supplies the energy without carrying any of the
-information a nervous first-time manager needs to trust.
+The obvious move for a Duolingo-adjacent product is a friendly lime or green.
+It was tried and removed. The logo commits to black/white/blue, and a learner is
+being asked to take this seriously enough to show it to their boss — a toy
+palette undercuts that, and an accent the brand does not own would show up first
+in every screenshot.
 
 ---
 
@@ -133,10 +159,10 @@ information a nervous first-time manager needs to trust.
 
 Two families. Nothing else, ever.
 
-**Display** — Bricolage Grotesque, falling back to Space Grotesk then the
-platform grotesk. Full-screen moments, section titles, the wordmark. Tight
-tracking (negative at every display size) is what makes big grotesk read as
-confident rather than shouty.
+**Display** — Archivo, falling back to Anton then the platform grotesk. Heavy
+and slightly condensed, chosen to match the logo's own wordmark. Full-screen
+moments, section titles, the wordmark itself. Tight tracking (negative at every
+display size) is what makes big grotesk read as confident rather than shouty.
 
 **Text** — Inter, falling back to the platform UI sans. Everything a learner
 reads at length: transcripts, quiz stems, Field Note prompts, digests.
@@ -228,9 +254,9 @@ The course is built around an avatar presenter, per the locked scripts'
 ## 8. Applying it
 
 ```bash
-npm run build --workspace=@promoted/brand   # regenerates tokens.css from TS
+npm run build --workspace=@nms/brand   # regenerates tokens.css from TS
 ```
 
-Web consumes `@promoted/brand/tokens.css` as CSS custom properties. Native
+Web consumes `@nms/brand/tokens.css` as CSS custom properties. Native
 consumes the same TypeScript objects through `apps/mobile/src/theme.ts`. There
 is no third copy, and there must never be one.

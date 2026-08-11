@@ -1,6 +1,6 @@
 import { notFound } from 'next/navigation';
 import type { Metadata } from 'next';
-import { findRep, module01, nextRep } from '@promoted/content';
+import { findRep, module01, nextRep } from '@nms/content';
 import { RepPlayer } from '@/components/RepPlayer';
 
 export function generateStaticParams() {

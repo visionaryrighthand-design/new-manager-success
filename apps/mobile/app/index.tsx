@@ -1,9 +1,9 @@
 import { ScrollView, StyleSheet, Text, View, Pressable } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Link } from 'expo-router';
-import { module01, estimateRepTotalSeconds } from '@promoted/content';
-import { moduleCompletionPercent, nextRepFor } from '@promoted/core';
-import { brand } from '@promoted/brand';
+import { module01, estimateRepTotalSeconds } from '@nms/content';
+import { moduleCompletionPercent, nextRepFor } from '@nms/core';
+import { brand } from '@nms/brand';
 import { colors, radius, space, type } from '../src/theme';
 import { useProgress } from '../src/progress-store';
 import { Mark } from '../src/components/Mark';
@@ -28,7 +28,10 @@ export default function HomeScreen() {
     >
       <View style={styles.header}>
         <Mark size={30} />
-        <Text style={styles.wordmark}>{brand.name}</Text>
+        <View style={styles.wordmark}>
+          <Text style={styles.wordmarkLine1}>{brand.wordmark.line1}</Text>
+          <Text style={styles.wordmarkLine2}>{brand.wordmark.line2}</Text>
+        </View>
         <View style={styles.streakPill}>
           <Text style={styles.streakText}>
             {progress.streak.current} day{progress.streak.current === 1 ? '' : 's'}
@@ -112,7 +115,10 @@ const styles = StyleSheet.create({
   screen: { flex: 1, backgroundColor: colors.bg },
 
   header: { flexDirection: 'row', alignItems: 'center', gap: space[3] },
-  wordmark: { ...type.h3, color: colors.fg, flex: 1 },
+  wordmark: { flex: 1 },
+  wordmarkLine1: { ...type.h3, color: colors.fg, fontWeight: '800', letterSpacing: 0 },
+  // Tracked out so the two lines optically align to the same width, as in the lockup.
+  wordmarkLine2: { ...type.caption, color: colors.accent, fontWeight: '800', letterSpacing: 4.4 },
   streakPill: {
     paddingHorizontal: space[3],
     paddingVertical: space[1],
@@ -121,9 +127,9 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: colors.border,
   },
-  streakText: { ...type.caption, color: colors.ember, fontWeight: '700' },
+  streakText: { ...type.caption, color: colors.alert, fontWeight: '700' },
 
-  xp: { ...type.moment, color: colors.volt, marginTop: space[7] },
+  xp: { ...type.moment, color: colors.bright, marginTop: space[7] },
   moduleLabel: { ...type.caption, color: colors.fgMuted, marginTop: space[1] },
 
   track: {
@@ -133,7 +139,7 @@ const styles = StyleSheet.create({
     marginTop: space[3],
     overflow: 'hidden',
   },
-  trackFill: { height: '100%', backgroundColor: colors.volt, borderRadius: radius.pill },
+  trackFill: { height: '100%', backgroundColor: colors.bright, borderRadius: radius.pill },
 
   riskBanner: {
     marginTop: space[5],
@@ -141,7 +147,7 @@ const styles = StyleSheet.create({
     borderRadius: radius.md,
     backgroundColor: colors.surface,
     borderLeftWidth: 3,
-    borderLeftColor: colors.ember,
+    borderLeftColor: colors.alert,
   },
   riskText: { ...type.caption, color: colors.fgMuted },
 
@@ -180,14 +186,14 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: colors.borderStrong,
   },
-  repDotDone: { backgroundColor: colors.volt, borderColor: colors.volt },
+  repDotDone: { backgroundColor: colors.bright, borderColor: colors.bright },
   repDotText: { ...type.numeric, color: colors.fgMuted },
-  repDotTextDone: { color: colors.onVolt, fontWeight: '700' },
+  repDotTextDone: { color: colors.onBright, fontWeight: '700' },
 
   repBody: { flex: 1, gap: 2 },
   repTitle: { ...type.bodyStrong, color: colors.fg },
   repHook: { ...type.caption, color: colors.fgMuted },
-  repScore: { ...type.numeric, color: colors.volt },
+  repScore: { ...type.numeric, color: colors.bright },
 
   footnote: { ...type.caption, color: colors.fgSubtle, marginTop: space[8] },
 });

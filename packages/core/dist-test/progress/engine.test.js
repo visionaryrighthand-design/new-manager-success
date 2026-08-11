@@ -1,7 +1,7 @@
 import { test, describe } from 'node:test';
 import assert from 'node:assert/strict';
 import { applyActivity, computeStreak, daysSinceStart, emptyProgress, moduleCompletionPercent, nextRepFor, recordQuizAttempt, XP, } from './engine.js';
-import { module01 } from '@promoted/content';
+import { module01 } from '@nms/content';
 const START = new Date('2026-08-03T09:00:00Z');
 const at = (iso) => new Date(`${iso}T10:00:00Z`);
 const event = (over) => ({

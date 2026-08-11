@@ -1,4 +1,4 @@
-import { findRep } from '@promoted/content';
+import { findRep } from '@nms/content';
 /**
  * Level 3 conversation prompts.
  *

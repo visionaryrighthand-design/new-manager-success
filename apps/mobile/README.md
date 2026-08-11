@@ -1,14 +1,14 @@
-# Promoted — mobile
+# New Manager Success — mobile
 
-Expo (React Native) app for iOS and Android. Shares `@promoted/content`,
-`@promoted/core`, and `@promoted/brand` with the web app, so lesson content,
+Expo (React Native) app for iOS and Android. Shares `@nms/content`,
+`@nms/core`, and `@nms/brand` with the web app, so lesson content,
 scoring, streaks, and colour come from one source on every platform.
 
 ## Run it
 
 ```bash
 npm install                       # from the repo root
-npm run start --workspace=@promoted/mobile
+npm run start --workspace=@nms/mobile
 ```
 
 Then press `i` for the iOS simulator, `a` for Android, or scan the QR code with
@@ -22,7 +22,7 @@ app/                    expo-router file routes
   index.tsx             home: streak, XP, module progress, up-next
   rep/[repId].tsx       the feed — one full-screen card per script beat
 src/
-  theme.ts              native theme derived from @promoted/brand tokens
+  theme.ts              native theme derived from @nms/brand tokens
   progress-store.tsx    on-device progress, persisted via AsyncStorage
   components/Mark.tsx   the logo, as SVG
 assets/                 generated app icons (see below)
@@ -34,7 +34,7 @@ assets/                 generated app icons (see below)
 target, not the source of truth. A manager doing a Rep on a factory floor, a
 hospital ward, or the Tube needs their streak to survive a dead connection — a
 streak that resets because a request failed is worse than no streak. The rules
-all live in `@promoted/core`, so device and server compute identical results
+all live in `@nms/core`, so device and server compute identical results
 from the same events.
 
 **Dark only.** `userInterfaceStyle: "dark"` in `app.json`. The feed is a
@@ -52,7 +52,7 @@ Expo SDK 52 pins React 18.3.1, which changes how npm hoists the tree.
 
 ## Verified so far
 
-- `npm run typecheck --workspace=@promoted/mobile` — clean
+- `npm run typecheck --workspace=@nms/mobile` — clean
 - `npx expo export --platform ios` / `--platform android` — both bundle
   (1,129 modules, all imports resolve)
 

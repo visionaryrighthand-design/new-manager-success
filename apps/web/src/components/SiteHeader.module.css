@@ -2,15 +2,15 @@
   position: sticky;
   top: 0;
   z-index: 50;
-  background: color-mix(in srgb, var(--pr-color-bg) 88%, transparent);
+  background: color-mix(in srgb, var(--nms-color-bg) 88%, transparent);
   backdrop-filter: blur(14px);
-  border-bottom: 1px solid var(--pr-color-border);
+  border-bottom: 1px solid var(--nms-color-border);
 }
 
 .inner {
   display: flex;
   align-items: center;
-  gap: var(--pr-space-6);
+  gap: var(--nms-space-6);
   height: 68px;
 }
 
@@ -23,30 +23,30 @@
 
 .nav {
   display: none;
-  gap: var(--pr-space-6);
-  margin-inline-start: var(--pr-space-4);
+  gap: var(--nms-space-6);
+  margin-inline-start: var(--nms-space-4);
 }
 
 .link {
   text-decoration: none;
-  font-size: var(--pr-font-caption-size);
+  font-size: var(--nms-font-caption-size);
   font-weight: 500;
-  color: var(--pr-color-fg-muted);
+  color: var(--nms-color-fg-muted);
   white-space: nowrap;
-  transition: color var(--pr-duration-quick) var(--pr-ease-standard);
+  transition: color var(--nms-duration-quick) var(--nms-ease-standard);
 }
-.link:hover { color: var(--pr-color-fg); }
+.link:hover { color: var(--nms-color-fg); }
 
 .actions {
   margin-inline-start: auto;
   display: flex;
-  gap: var(--pr-space-2);
+  gap: var(--nms-space-2);
   align-items: center;
 }
 
 .compact {
-  padding: var(--pr-space-2) var(--pr-space-4);
-  font-size: var(--pr-font-caption-size);
+  padding: var(--nms-space-2) var(--nms-space-4);
+  font-size: var(--nms-font-caption-size);
 }
 
 /* The ghost "Open Module 1" button is the second priority on a phone. */

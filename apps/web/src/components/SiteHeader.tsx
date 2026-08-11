@@ -11,8 +11,8 @@ const NAV = [
 export function SiteHeader() {
   return (
     <header className={styles.header}>
-      <div className={`pr-shell ${styles.inner}`}>
-        <Link href="/" className={styles.brand} aria-label="Promoted, home">
+      <div className={`nms-shell ${styles.inner}`}>
+        <Link href="/" className={styles.brand} aria-label="New Manager Success, home">
           <Lockup size={22} />
         </Link>
 
@@ -25,10 +25,10 @@ export function SiteHeader() {
         </nav>
 
         <div className={styles.actions}>
-          <Link href="/learn" className={`pr-btn pr-btn--ghost ${styles.compact}`}>
+          <Link href="/learn" className={`nms-btn nms-btn--ghost ${styles.compact}`}>
             Open Module 1
           </Link>
-          <Link href="/enroll" className={`pr-btn ${styles.compact}`}>
+          <Link href="/enroll" className={`nms-btn ${styles.compact}`}>
             Enroll
           </Link>
         </div>

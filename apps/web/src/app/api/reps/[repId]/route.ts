@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { findRep, module01, nextRep } from '@promoted/content';
+import { findRep, module01, nextRep } from '@nms/content';
 
 /** Full content for one Rep. Fetched by the app when a learner opens it. */
 export const dynamic = 'force-static';

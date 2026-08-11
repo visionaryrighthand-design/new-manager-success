@@ -5,7 +5,7 @@ import { SiteFooter } from '@/components/SiteFooter';
 export default function SiteLayout({ children }: { children: React.ReactNode }) {
   return (
     <>
-      <a href="#main" className="pr-visually-hidden">
+      <a href="#main" className="nms-visually-hidden">
         Skip to content
       </a>
       <SiteHeader />

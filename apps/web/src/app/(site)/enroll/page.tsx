@@ -9,7 +9,7 @@ export const metadata: Metadata = {
 
 export default function EnrollPage() {
   return (
-    <div className="pr-shell">
+    <div className="nms-shell">
       <EnrollFlow />
     </div>
   );

@@ -1,4 +1,4 @@
-import { findRep } from '@promoted/content';
+import { findRep } from '@nms/content';
 import type { Contact, Enrollment, UpdateLevel } from '../registration/types.js';
 import { contactsAtLevel, contactsAtOrAbove } from '../registration/rules.js';
 import type { LearnerProgress } from '../progress/types.js';

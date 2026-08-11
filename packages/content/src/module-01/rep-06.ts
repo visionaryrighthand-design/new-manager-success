@@ -18,7 +18,7 @@ import type { Rep } from '../types.js';
  * What ships: the newer approved title, with the model named originally as
  * The Readiness Dial. Every substantive idea in the locked script is retained
  * unchanged. All four wording changes are recorded in `scriptDeviations` and
- * printed by `npm run report:ip -w @promoted/content` for sign-off.
+ * printed by `npm run report:ip -w @nms/content` for sign-off.
  */
 export const rep06: Rep = {
   id: 'm1-r6',

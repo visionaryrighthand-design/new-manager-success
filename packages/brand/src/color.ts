@@ -1,68 +1,73 @@
 /**
- * Promoted — colour system.
+ * New Manager Success — colour system.
  *
- * Dark-first. The lesson feed is the product's centre of gravity and it is a
- * dark, full-bleed surface (the TikTok half of the DNA). Marketing and the
- * "Corner" dashboards run light (the trust half — these are read by HR and
- * bosses). Both themes are generated from the same ramps so a screenshot of
- * the app never looks like a different company from the website.
+ * The identity is three colours: black, white, and one blue. Everything below
+ * is built from those, plus the smallest set of functional colours a learning
+ * product cannot do without (correct / incorrect / attention). Those functional
+ * colours are deliberately NOT brand colours — see the note on `alert`.
+ *
+ * Dark-first, because the logo is drawn for black and the lesson feed is the
+ * product's centre of gravity. Marketing pages and the Corner dashboards run
+ * light, since those get read by HR and bosses and should feel like a document.
+ * Both themes generate from the same ramps, so an app screenshot never looks
+ * like a different company from the website.
  *
  * Accessibility contract: every `fg` token clears WCAG AA (4.5:1) against its
- * paired `bg` token in both themes. `accent` tokens are never used for body
- * text — only for fills, borders, and large display type.
+ * paired `bg` token in both themes. `accent` is never used for body text.
  */
 
-/** Raw brand ramps. Do not consume these directly in product code — use `theme`. */
+/**
+ * ⚠ BLUE IS APPROXIMATE. #1E6BF0 is read off the supplied logo raster, not
+ * sampled from source artwork. Replace with the exact value once the vector
+ * lands — it is defined once, here, and everything else derives from it.
+ */
+export const BRAND_BLUE = '#1E6BF0';
+
+/** Raw ramps. Do not consume directly in product code — use `theme`. */
 export const ramp = {
-  /** Near-black base with a cool cast. The feed surface. */
+  /** Black through white. The logo sits on pure black, so the base runs dark. */
   ink: {
-    950: '#06070B',
-    900: '#0A0C12',
-    850: '#10131B',
-    800: '#171B25',
-    700: '#232838',
-    600: '#333A4E',
-    500: '#4A5268',
-    400: '#6B748C',
-    300: '#939BB0',
-    200: '#BFC5D4',
+    1000: '#000000',
+    950: '#05070B',
+    900: '#090C13',
+    850: '#10141D',
+    800: '#171C27',
+    700: '#232937',
+    600: '#333B4D',
+    500: '#4A5468',
+    400: '#6B758C',
+    300: '#939CB0',
+    200: '#BFC6D4',
     100: '#E1E5ED',
     50: '#F4F6FA',
     0: '#FFFFFF',
   },
-  /** Cobalt — primary. Trust, focus, the "professional" signal. */
-  cobalt: {
-    900: '#101C4D',
-    800: '#17297A',
-    700: '#1F39A8',
-    600: '#2A4BD6',
-    500: '#3A63FF',
-    400: '#6285FF',
-    300: '#8DA7FF',
-    200: '#B8C8FF',
-    100: '#DCE4FF',
-    50: '#EFF3FF',
+  /** The brand blue and its ramp. */
+  blue: {
+    900: '#0A1D4E',
+    800: '#0F2C7A',
+    700: '#143D9B',
+    600: '#1652CC',
+    500: '#1E6BF0',
+    400: '#4E8BFF',
+    300: '#86ADFF',
+    200: '#B5C9FF',
+    100: '#DAE5FF',
+    50: '#EEF3FF',
   },
-  /** Volt — accent. Progress, XP, "you did the thing". Never body text. */
-  volt: {
-    700: '#6E8500',
-    600: '#8FAB00',
-    500: '#B4D400',
-    400: '#CBEF2E',
-    300: '#D8FF3E',
-    200: '#E6FF85',
-    100: '#F2FFC2',
+  /**
+   * Alert. NOT a brand colour — a functional one, used only where blue would
+   * be ambiguous: Curveball labels, streaks, inactivity warnings. If it starts
+   * appearing anywhere else it has stopped carrying meaning.
+   */
+  alert: {
+    700: '#A33A0F',
+    600: '#D14E18',
+    500: '#FF7A3D',
+    400: '#FF9E6E',
+    100: '#FFE9DD',
   },
-  /** Ember — streaks, Curveballs, urgency. */
-  ember: {
-    700: '#A32E10',
-    600: '#D14018',
-    500: '#FF6A3D',
-    400: '#FF8A64',
-    300: '#FFB299',
-    100: '#FFE6DD',
-  },
-  /** Mint — correct answers, completion. */
+  /** Correct. Functional only. */
   mint: {
     700: '#0C6E45',
     600: '#12915B',
@@ -70,7 +75,7 @@ export const ramp = {
     400: '#63E5A9',
     100: '#DFFAED',
   },
-  /** Rose — incorrect answers, destructive. Never "failure" language, just signal. */
+  /** Incorrect. Functional only. Never framed as failure in copy. */
   rose: {
     700: '#96122E',
     600: '#C4183C',
@@ -82,17 +87,17 @@ export const ramp = {
 
 export type Ramp = typeof ramp;
 
-/** Semantic tokens. This is the only colour surface product code should touch. */
+/** Semantic tokens. The only colour surface product code should touch. */
 export interface ThemeColors {
   /** Page / feed background. */
   bg: string;
   /** Raised surface: cards, sheets, quiz options. */
   surface: string;
-  /** Surface one step further forward: selected option, modal. */
+  /** One step further forward: selected option, modal. */
   surfaceRaised: string;
   /** Hairlines and dividers. */
   border: string;
-  /** Stronger border, e.g. focused input. */
+  /** Stronger border, e.g. a focused input. */
   borderStrong: string;
   /** Primary body text. */
   fg: string;
@@ -102,18 +107,23 @@ export interface ThemeColors {
   fgSubtle: string;
   /** Text/icon on top of `accent`. */
   onAccent: string;
-  /** Primary brand fill (buttons, active nav, progress). */
+  /** Brand blue. Primary actions, focus, progress. */
   accent: string;
   /** Hover/pressed state of `accent`. */
   accentHover: string;
   /** Tinted background derived from accent (badges, callouts). */
   accentSoft: string;
-  /** Progress / XP / streak-safe fill. */
-  volt: string;
-  /** Text colour that is legible on `volt`. */
-  onVolt: string;
-  /** Streaks and Curveball challenges. */
-  ember: string;
+  /**
+   * Maximum-emphasis fill: completion ticks, XP, the "you did the thing"
+   * moment. White on dark, blue on light — in both cases the highest-contrast
+   * mark available, which is what makes progress feel earned without
+   * introducing a colour the brand does not own.
+   */
+  bright: string;
+  /** Text colour legible on `bright`. */
+  onBright: string;
+  /** Streaks, Curveballs, inactivity. Functional, used sparingly. */
+  alert: string;
   /** Correct. */
   success: string;
   /** Incorrect. */
@@ -123,7 +133,7 @@ export interface ThemeColors {
 }
 
 export const darkColors: ThemeColors = {
-  bg: ramp.ink[900],
+  bg: ramp.ink[950],
   surface: ramp.ink[850],
   surfaceRaised: ramp.ink[800],
   border: ramp.ink[700],
@@ -132,15 +142,15 @@ export const darkColors: ThemeColors = {
   fgMuted: ramp.ink[300],
   fgSubtle: ramp.ink[400],
   onAccent: ramp.ink[0],
-  accent: ramp.cobalt[500],
-  accentHover: ramp.cobalt[400],
-  accentSoft: 'rgba(58, 99, 255, 0.16)',
-  volt: ramp.volt[300],
-  onVolt: ramp.ink[950],
-  ember: ramp.ember[500],
+  accent: ramp.blue[500],
+  accentHover: ramp.blue[400],
+  accentSoft: 'rgba(30, 107, 240, 0.18)',
+  bright: ramp.ink[0],
+  onBright: ramp.ink[1000],
+  alert: ramp.alert[500],
   success: ramp.mint[500],
   danger: ramp.rose[500],
-  warning: ramp.volt[400],
+  warning: ramp.alert[400],
 };
 
 export const lightColors: ThemeColors = {
@@ -153,15 +163,15 @@ export const lightColors: ThemeColors = {
   fgMuted: ramp.ink[500],
   fgSubtle: ramp.ink[400],
   onAccent: ramp.ink[0],
-  accent: ramp.cobalt[600],
-  accentHover: ramp.cobalt[700],
-  accentSoft: ramp.cobalt[50],
-  volt: ramp.volt[500],
-  onVolt: ramp.ink[950],
-  ember: ramp.ember[600],
+  accent: ramp.blue[600],
+  accentHover: ramp.blue[700],
+  accentSoft: ramp.blue[50],
+  bright: ramp.blue[600],
+  onBright: ramp.ink[0],
+  alert: ramp.alert[600],
   success: ramp.mint[600],
   danger: ramp.rose[600],
-  warning: ramp.volt[700],
+  warning: ramp.alert[700],
 };
 
 export const theme = { dark: darkColors, light: lightColors } as const;

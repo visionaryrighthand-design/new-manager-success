@@ -1,6 +1,6 @@
 import { test, describe } from 'node:test';
 import assert from 'node:assert/strict';
-import { course, module01, validateContent, estimateRepTotalSeconds } from '@promoted/content';
+import { course, module01, validateContent, estimateRepTotalSeconds } from '@nms/content';
 /**
  * Content integrity. These live in core rather than in the content package so
  * one `npm test` covers both, and so a content edit that breaks a product rule

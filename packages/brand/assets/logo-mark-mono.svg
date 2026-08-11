@@ -1,12 +1,15 @@
 <!--
-  Promoted — single-colour mark. Uses `currentColor` so it inherits from CSS.
-  Use wherever the two-colour mark would fail: embossing, one-colour print,
-  a favicon mask, or on a photographic background.
+  New Manager Success — single-colour mark. Inherits `currentColor`.
+  Use where the two-colour mark fails: embossing, one-colour print, a favicon
+  mask, or a photographic background.
+
+  ⚠ PROVISIONAL — see logo-mark.svg.
 -->
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64" fill="none" role="img" aria-label="Promoted">
-  <title>Promoted</title>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64" fill="none" role="img" aria-label="New Manager Success">
+  <title>New Manager Success</title>
   <g stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" fill="none">
-    <path d="M15 35 L32 18 L49 35" stroke-width="9"/>
-    <path d="M20 50 L32 38 L44 50" stroke-width="8" opacity="0.55"/>
+    <path d="M11 54 L19.5 14 L31 44 L38.5 16" stroke-width="7.5"/>
+    <path d="M35 40 C41 31 45 22 49 11" stroke-width="6.5" opacity="0.6"/>
+    <path d="M38.5 15 L50.5 8.5 L52 21.5" stroke-width="6.5" opacity="0.6"/>
   </g>
 </svg>

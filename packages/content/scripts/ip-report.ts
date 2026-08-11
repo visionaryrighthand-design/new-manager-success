@@ -2,7 +2,7 @@
  * Prints every recorded difference between the approved course scripts and
  * what ships, grouped by severity. Run before any content sign-off:
  *
- *   npm run report:ip -w @promoted/content
+ *   npm run report:ip -w @nms/content
  *
  * "Locked" only means something if changes are visible. This is that.
  */

@@ -1,4 +1,4 @@
-import { findRep } from '@promoted/content';
+import { findRep } from '@nms/content';
 import { contactsAtLevel, contactsAtOrAbove } from '../registration/rules.js';
 import { daysSinceStart } from '../progress/engine.js';
 import { evaluateInactivity } from './inactivity.js';

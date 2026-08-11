@@ -1,5 +1,5 @@
 import type { Metadata, Viewport } from 'next';
-import { brand } from '@promoted/brand';
+import { brand } from '@nms/brand';
 import './globals.css';
 
 /**

@@ -10,7 +10,7 @@ import {
   recordQuizAttempt,
   XP,
 } from './engine.js';
-import { module01 } from '@promoted/content';
+import { module01 } from '@nms/content';
 import type { ActivityEvent } from './types.js';
 
 const START = new Date('2026-08-03T09:00:00Z');

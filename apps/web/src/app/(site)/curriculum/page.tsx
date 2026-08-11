@@ -1,6 +1,6 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
-import { course, exams, module01 } from '@promoted/content';
+import { course, exams, module01 } from '@nms/content';
 import styles from './curriculum.module.css';
 
 export const metadata: Metadata = {
@@ -17,8 +17,8 @@ const STATUS_LABEL = {
 
 export default function CurriculumPage() {
   return (
-    <div className={`pr-shell ${styles.wrap}`}>
-      <p className="pr-eyebrow">The programme</p>
+    <div className={`nms-shell ${styles.wrap}`}>
+      <p className="nms-eyebrow">The programme</p>
       <h1 className={styles.title}>Twelve modules. One promotion survived.</h1>
       <p className={styles.lede}>
         The full arc runs from the mindset shift a new manager has to make in week one through to a
@@ -60,10 +60,10 @@ export default function CurriculumPage() {
       </ol>
 
       <div className={styles.cta}>
-        <Link href="/learn/m1-r1" className="pr-btn pr-btn--volt">
+        <Link href="/learn/m1-r1" className="nms-btn nms-btn--bright">
           Start Rep 1.1
         </Link>
-        <Link href="/enroll" className="pr-btn pr-btn--ghost">
+        <Link href="/enroll" className="nms-btn nms-btn--ghost">
           Enroll
         </Link>
       </div>

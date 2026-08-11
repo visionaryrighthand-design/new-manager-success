@@ -2,7 +2,7 @@
 
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import Link from 'next/link';
-import type { Beat, Curveball, CurveballVerdict, QuizQuestion, Rep } from '@promoted/content';
+import type { Beat, Curveball, CurveballVerdict, QuizQuestion, Rep } from '@nms/content';
 import styles from './RepPlayer.module.css';
 
 /**
@@ -103,7 +103,7 @@ export function RepPlayer({ rep, nextRepId }: RepPlayerProps) {
         ))}
       </div>
 
-      <p ref={liveRef} className="pr-visually-hidden" role="status" aria-live="polite" />
+      <p ref={liveRef} className="nms-visually-hidden" role="status" aria-live="polite" />
 
       <div className={styles.stage}>
         <CardView
@@ -133,7 +133,7 @@ export function RepPlayer({ rep, nextRepId }: RepPlayerProps) {
         </button>
         <button
           type="button"
-          className={`pr-btn ${styles.nextBtn}`}
+          className={`nms-btn ${styles.nextBtn}`}
           onClick={() => go(1)}
           disabled={atEnd || !canAdvance(card, answers, curveballChoices)}
         >
@@ -417,7 +417,7 @@ function FieldNoteCard({
       <p className={styles.fieldNoteLabel}>Field Note · {rep.fieldNote.topic}</p>
       <p className={styles.prompt}>{rep.fieldNote.prompt}</p>
 
-      <label htmlFor="field-note" className="pr-visually-hidden">
+      <label htmlFor="field-note" className="nms-visually-hidden">
         {rep.fieldNote.prompt}
       </label>
       <textarea
@@ -469,15 +469,15 @@ function SummaryCard({
 
       <div className={styles.summaryActions}>
         {nextRepId ? (
-          <Link href={`/learn/${nextRepId}`} className="pr-btn pr-btn--volt">
+          <Link href={`/learn/${nextRepId}`} className="nms-btn nms-btn--bright">
             Next Rep
           </Link>
         ) : (
-          <Link href="/learn" className="pr-btn pr-btn--volt">
+          <Link href="/learn" className="nms-btn nms-btn--bright">
             Back to Module 1
           </Link>
         )}
-        <Link href="/learn" className={`pr-btn pr-btn--ghost ${styles.ghostOnDark}`}>
+        <Link href="/learn" className={`nms-btn nms-btn--ghost ${styles.ghostOnDark}`}>
           All Reps
         </Link>
       </div>

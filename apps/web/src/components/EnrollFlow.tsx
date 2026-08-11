@@ -14,7 +14,7 @@ import {
   type Enrollment,
   type RegistrationEntry,
   type UpdateLevel,
-} from '@promoted/core';
+} from '@nms/core';
 import styles from './EnrollFlow.module.css';
 
 /**
@@ -190,7 +190,7 @@ export function EnrollFlow() {
           value={me.email}
           onChange={(v) => setMe((m) => ({ ...m, email: v }))}
         />
-        <button className="pr-btn" disabled={!ready} onClick={() => setStep('contacts')}>
+        <button className="nms-btn" disabled={!ready} onClick={() => setStep('contacts')}>
           Continue
         </button>
       </Frame>
@@ -242,7 +242,7 @@ export function EnrollFlow() {
 
         <button
           type="button"
-          className="pr-btn pr-btn--ghost"
+          className="nms-btn nms-btn--ghost"
           onClick={() => setRoster((l) => [...l, { id: nextId(), name: '', email: '', contacts: [] }])}
         >
           Add another person
@@ -259,7 +259,7 @@ export function EnrollFlow() {
         />
 
         <button
-          className="pr-btn"
+          className="nms-btn"
           disabled={!ready}
           onClick={() => {
             setRoster(filled);
@@ -315,7 +315,7 @@ export function EnrollFlow() {
           onChange={setCurrent}
           subjectLabel={forName ? 'them' : 'you'}
         />
-        <button className="pr-btn" onClick={onNext}>
+        <button className="nms-btn" onClick={onNext}>
           {isGroup && rosterCursor < roster.length - 1 ? 'Next person' : 'Review'}
         </button>
       </Frame>
@@ -385,7 +385,7 @@ export function EnrollFlow() {
           whatever their level. That one is not optional — it is the safety net.
         </p>
 
-        <button className="pr-btn pr-btn--volt" disabled={problems.length > 0} onClick={submit}>
+        <button className="nms-btn nms-btn--bright" disabled={problems.length > 0} onClick={submit}>
           Complete registration
         </button>
       </Frame>
@@ -403,10 +403,10 @@ export function EnrollFlow() {
       </p>
       <p className={styles.hint}>
         This pilot build does not send email yet. The rules that decide who gets what, and when,
-        are implemented and tested in <code>@promoted/core</code> — the transport is the part still
+        are implemented and tested in <code>@nms/core</code> — the transport is the part still
         to wire up. See <code>docs/product/MVP_SPEC.md</code>.
       </p>
-      <a className="pr-btn pr-btn--volt" href="/learn/m1-r1">
+      <a className="nms-btn nms-btn--bright" href="/learn/m1-r1">
         Start Rep 1.1
       </a>
     </Frame>
@@ -542,7 +542,7 @@ function Frame({
   return (
     <div className={styles.frame}>
       <div className={styles.frameHead}>
-        <span className="pr-eyebrow">
+        <span className="nms-eyebrow">
           Step {step} of {of}
         </span>
         {badge ? <span className={styles.badge}>{badge}</span> : null}

@@ -1,5 +1,5 @@
 /**
- * Content schema for Promoted.
+ * Content schema for New Manager Success.
  *
  * The locked scripts are already marked up with production beats
  * ([AVATAR], [TEXT OVERLAY], [BUILD LIST], [FULL SCREEN MOMENT], [HOLD]).

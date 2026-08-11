@@ -1,4 +1,4 @@
-import type { CurveballVerdict } from '@promoted/content';
+import type { CurveballVerdict } from '@nms/content';
 
 /**
  * Activity types.

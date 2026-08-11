@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { course, module01, estimateRepTotalSeconds } from '@promoted/content';
+import { course, module01, estimateRepTotalSeconds } from '@nms/content';
 
 /**
  * Course manifest for the mobile app.

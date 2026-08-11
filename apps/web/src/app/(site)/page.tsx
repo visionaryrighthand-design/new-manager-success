@@ -1,7 +1,7 @@
 import Link from 'next/link';
-import { brand } from '@promoted/brand';
-import { course, module01 } from '@promoted/content';
-import { updateLevelSummary } from '@promoted/core';
+import { brand } from '@nms/brand';
+import { course, module01 } from '@nms/content';
+import { updateLevelSummary } from '@nms/core';
 import { LogoMark } from '@/components/Logo';
 import { PhoneFrame } from '@/components/PhoneFrame';
 import styles from './page.module.css';
@@ -28,9 +28,9 @@ export default function HomePage() {
     <>
       {/* ---- Hero ---------------------------------------------------- */}
       <section className={styles.hero}>
-        <div className={`pr-shell ${styles.heroInner}`}>
+        <div className={`nms-shell ${styles.heroInner}`}>
           <div className={styles.heroCopy}>
-            <p className="pr-eyebrow">New manager training</p>
+            <p className="nms-eyebrow">New manager training</p>
             <h1 className={styles.heroTitle}>
               You got promoted because you were great at your job.
               <span className={styles.heroAccent}> Nobody trained you for the new one.</span>
@@ -38,16 +38,16 @@ export default function HomePage() {
             {/* Not brand.description — it opens with the same sentence as the
                 headline, and reading the H1 twice makes the page feel thin. */}
             <p className={styles.heroBody}>
-              Management is a skill, and it can be learned. Promoted teaches it the way you
+              Management is a skill, and it can be learned. New Manager Success teaches it the way you
               actually learn now: seven-minute lessons on your phone, real situations from your
               own week, and a streak that keeps you honest. Any profession, any team size.
             </p>
 
             <div className={styles.heroActions}>
-              <Link href="/learn/m1-r1" className="pr-btn pr-btn--volt">
+              <Link href="/learn/m1-r1" className="nms-btn nms-btn--bright">
                 Start Rep 1.1 — free
               </Link>
-              <Link href="/for-teams" className="pr-btn pr-btn--ghost">
+              <Link href="/for-teams" className="nms-btn nms-btn--ghost">
                 Enroll a team
               </Link>
             </div>
@@ -75,10 +75,10 @@ export default function HomePage() {
       </section>
 
       {/* ---- The gap ------------------------------------------------- */}
-      <section className={`pr-shell ${styles.section}`}>
+      <section className={`nms-shell ${styles.section}`}>
         <div className={styles.gapGrid}>
           <div>
-            <p className="pr-eyebrow">The gap</p>
+            <p className="nms-eyebrow">The gap</p>
             <h2 className={styles.h2}>
               The most consequential promotion of someone’s career comes with no instruction manual.
             </h2>
@@ -102,7 +102,7 @@ export default function HomePage() {
       </section>
 
       {/* ---- Pillars ------------------------------------------------- */}
-      <section className={`pr-shell ${styles.section}`}>
+      <section className={`nms-shell ${styles.section}`}>
         <div className={styles.pillars}>
           {PILLARS.map((pillar, i) => (
             <article key={pillar.title} className={styles.pillar}>
@@ -117,8 +117,8 @@ export default function HomePage() {
       </section>
 
       {/* ---- Module 1 ------------------------------------------------ */}
-      <section className={`pr-shell ${styles.section}`}>
-        <p className="pr-eyebrow">Module 1 — live now</p>
+      <section className={`nms-shell ${styles.section}`}>
+        <p className="nms-eyebrow">Module 1 — live now</p>
         <h2 className={styles.h2}>
           {module01.title}: {module01.subtitle}
         </h2>
@@ -144,8 +144,8 @@ export default function HomePage() {
 
       {/* ---- Corner / update levels ---------------------------------- */}
       <section className={styles.cornerBand}>
-        <div className={`pr-shell ${styles.section}`}>
-          <p className="pr-eyebrow">Your Corner</p>
+        <div className={`nms-shell ${styles.section}`}>
+          <p className="nms-eyebrow">Your Corner</p>
           <h2 className={styles.h2}>Nobody learns to manage entirely alone.</h2>
           <p className={styles.sectionLede}>
             At sign-up you choose who follows your progress — your boss, HR, a mentor, or nobody at
@@ -174,7 +174,7 @@ export default function HomePage() {
       </section>
 
       {/* ---- Closing CTA --------------------------------------------- */}
-      <section className={`pr-shell ${styles.section}`}>
+      <section className={`nms-shell ${styles.section}`}>
         <div className={styles.cta}>
           <LogoMark size={44} />
           <h2 className={styles.ctaTitle}>{brand.taglineAlt}</h2>
@@ -183,10 +183,10 @@ export default function HomePage() {
             pilot.
           </p>
           <div className={styles.heroActions}>
-            <Link href="/enroll" className="pr-btn pr-btn--volt">
+            <Link href="/enroll" className="nms-btn nms-btn--bright">
               Enroll yourself or your team
             </Link>
-            <Link href="/curriculum" className="pr-btn pr-btn--ghost">
+            <Link href="/curriculum" className="nms-btn nms-btn--ghost">
               See all 12 modules
             </Link>
           </div>

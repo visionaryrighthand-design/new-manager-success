@@ -7,7 +7,7 @@ const workspaceRoot = path.resolve(projectRoot, '../..');
 
 const config = getDefaultConfig(projectRoot);
 
-// Watch the whole workspace so edits to @promoted/content or @promoted/core
+// Watch the whole workspace so edits to @nms/content or @nms/core
 // hot-reload in the app instead of needing a restart.
 config.watchFolders = [workspaceRoot];
 

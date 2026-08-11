@@ -1,4 +1,4 @@
-import { darkColors, radius, space, typeScale } from '@promoted/brand';
+import { darkColors, radius, space, typeScale } from '@nms/brand';
 import { Platform } from 'react-native';
 
 /**

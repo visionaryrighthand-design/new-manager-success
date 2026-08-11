@@ -4,7 +4,7 @@ const nextConfig = {
   // The workspace packages ship as ESM built by tsc. Next needs to transpile
   // them so they participate in the app's module graph rather than being
   // treated as pre-bundled externals.
-  transpilePackages: ['@promoted/brand', '@promoted/content', '@promoted/core'],
+  transpilePackages: ['@nms/brand', '@nms/content', '@nms/core'],
 };
 
 export default nextConfig;

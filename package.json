@@ -1,8 +1,8 @@
 {
-  "name": "promoted",
+  "name": "new-manager-success",
   "version": "0.1.0",
   "private": true,
-  "description": "Promoted — social-style manager training. Monorepo: brand, content, core, web, mobile.",
+  "description": "New Manager Success — social-style manager training. Monorepo: brand, content, core, web, mobile.",
   "workspaces": [
     "packages/*",
     "apps/*"
@@ -11,11 +11,11 @@
     "node": ">=20.11"
   },
   "scripts": {
-    "build:packages": "npm run build --workspace=@promoted/brand --workspace=@promoted/content --workspace=@promoted/core",
-    "test": "npm run test --workspace=@promoted/core",
+    "build:packages": "npm run build --workspace=@nms/brand --workspace=@nms/content --workspace=@nms/core",
+    "test": "npm run test --workspace=@nms/core",
     "typecheck": "npm run typecheck --workspaces --if-present",
-    "web": "npm run dev --workspace=@promoted/web",
-    "mobile": "npm run start --workspace=@promoted/mobile"
+    "web": "npm run dev --workspace=@nms/web",
+    "mobile": "npm run start --workspace=@nms/mobile"
   },
   "devDependencies": {
     "typescript": "^5.6.3"

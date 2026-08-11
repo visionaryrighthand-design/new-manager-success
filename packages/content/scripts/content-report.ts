@@ -2,7 +2,7 @@
  * Content health check. Validates the rules the product depends on, then
  * prints per-Rep timing against the script's own targets.
  *
- *   npm run report:content -w @promoted/content
+ *   npm run report:content -w @nms/content
  *
  * Two timings are reported and they answer different questions:
  *

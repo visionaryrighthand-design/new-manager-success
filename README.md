@@ -2,7 +2,7 @@
 
 <img src="packages/brand/assets/logo-mark.svg" width="72" alt="">
 
-# Promoted
+# New Manager Success
 
 **Training for the job nobody trained you for.**
 
@@ -74,8 +74,8 @@ feed renders one beat per card — which is what makes an hour of course feel li
 a scroll instead of a webinar.
 
 ```bash
-npm run report:content -w @promoted/content   # per-Rep timing + validation
-npm run report:ip -w @promoted/content        # every change from a locked script
+npm run report:content -w @nms/content   # per-Rep timing + validation
+npm run report:ip -w @nms/content        # every change from a locked script
 ```
 
 ## Two things to read before shipping

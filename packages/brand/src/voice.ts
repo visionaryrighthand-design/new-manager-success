@@ -1,28 +1,32 @@
 /**
- * Promoted — verbal identity.
+ * New Manager Success — verbal identity.
  *
  * The product name, the vocabulary, and the rules that keep every surface
  * (app, site, email digest, push notification) sounding like one company.
  *
- * Everything here is a token on purpose. If the name changes after trademark
- * search, change it in this file and the whole codebase follows.
+ * Everything here is a token on purpose. Nothing in the codebase hardcodes the
+ * name — change it here and the whole product follows.
  */
 
 export const brand = {
-  name: 'Promoted',
-  /** Used where the wordmark is set in type rather than rendered as a logo. */
-  wordmark: 'Promoted',
-  /** Primary tagline. Straight out of the pain the locked script opens with. */
+  name: 'New Manager Success',
+  /** For tight spaces: app icon label, mobile header, push sender. */
+  shortName: 'NMS',
+  /** The two-line wordmark, as set in the logo lockup. */
+  wordmark: { line1: 'NEW MANAGER', line2: 'SUCCESS' },
+  /** Primary tagline. States the market gap in eight words. */
   tagline: 'Training for the job nobody trained you for.',
-  /** Secondary line, used on completion + certification surfaces. */
+  /** Reserved for completion and certification surfaces. Do not mix with the above. */
   taglineAlt: 'Be the manager you wished you had.',
   /** One-sentence positioning. */
   positioning:
-    'Promoted is social-style management training for newly promoted managers — seven-minute lessons, built for the phone, in any profession.',
+    'New Manager Success is social-style management training for newly promoted managers — seven-minute lessons, built for the phone, in any profession.',
   /** Elevator description for app stores and press. */
   description:
-    'You got promoted because you were great at your job. Nobody handed you a manual for the new one. Promoted is a phone-first management course built the way you actually learn now: short lessons, real scenarios, and a streak that keeps you honest.',
-  domainPreference: ['getpromoted.app', 'promoted.training', 'joinpromoted.com'],
+    'You got promoted because you were great at your job. Nobody handed you a manual for the new one. New Manager Success is a phone-first management course built the way you actually learn now: short lessons, real scenarios, and a streak that keeps you honest.',
+  domainPreference: ['newmanagersuccess.com', 'newmanagersuccess.app'],
+  /** Reverse-DNS root for app bundle identifiers. Permanent once submitted. */
+  bundleRoot: 'com.newmanagersuccess',
 } as const;
 
 /**
@@ -32,9 +36,9 @@ export const brand = {
 export const lexicon = {
   /** One ~7-minute lesson. Generic: "section", "lesson", "unit". */
   rep: { term: 'Rep', plural: 'Reps', generic: 'section' },
-  /** A group of Reps. Generic: "module", "course chapter". */
+  /** A group of Reps. */
   module: { term: 'Module', plural: 'Modules', generic: 'module' },
-  /** Pop-up scenario challenge that interrupts the feed. Generic: "knowledge check". */
+  /** The scenario challenge that interrupts the feed. Generic: "knowledge check". */
   curveball: { term: 'Curveball', plural: 'Curveballs', generic: 'pop quiz' },
   /** Open-ended written reflection. Generic: "free-response question". */
   fieldNote: { term: 'Field Note', plural: 'Field Notes', generic: 'reflection' },
@@ -56,6 +60,7 @@ export const voiceRules = [
   'No shame mechanics. A broken streak gets "Pick it back up", never "You lost it".',
   'Second person present tense in scenarios. "You walk into work after a terrible morning."',
   'Numbers are concrete. "7 minutes", "3 Reps left", not "bite-sized" or "a few".',
+  'Write the product name in full on first use, "NMS" only in UI chrome where space forces it. Never "New Manager".',
 ] as const;
 
 /** Copy that must be identical everywhere it appears. */

@@ -1,6 +1,6 @@
 import Link from 'next/link';
 import type { Metadata } from 'next';
-import { course, module01, estimateRepTotalSeconds } from '@promoted/content';
+import { course, module01, estimateRepTotalSeconds } from '@nms/content';
 import styles from './learn.module.css';
 
 export const metadata: Metadata = {
@@ -10,8 +10,8 @@ export const metadata: Metadata = {
 
 export default function LearnPage() {
   return (
-    <div className={`pr-shell ${styles.wrap}`}>
-      <p className="pr-eyebrow">Module {module01.number} · Live</p>
+    <div className={`nms-shell ${styles.wrap}`}>
+      <p className="nms-eyebrow">Module {module01.number} · Live</p>
       <h1 className={styles.title}>
         {module01.title}
         <span className={styles.sub}>{module01.subtitle}</span>

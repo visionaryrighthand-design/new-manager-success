@@ -1,4 +1,4 @@
-import { module01 } from '@promoted/content';
+import { module01 } from '@nms/content';
 import styles from './PhoneFrame.module.css';
 
 /**
@@ -14,7 +14,7 @@ export function PhoneFrame() {
 
   return (
     <div className={styles.frame} data-surface="feed" role="img"
-         aria-label={`Preview of the Promoted app showing a Curveball scenario from Rep ${rep.number}`}>
+         aria-label={`Preview of the New Manager Success app showing a Curveball scenario from Rep ${rep.number}`}>
       <div className={styles.screen}>
         <div className={styles.statusRow}>
           <span className={styles.repTag}>{rep.number}</span>

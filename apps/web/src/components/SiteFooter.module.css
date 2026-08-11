@@ -1,26 +1,26 @@
 .footer {
-  margin-top: var(--pr-space-12);
-  border-top: 1px solid var(--pr-color-border);
-  padding-block: var(--pr-space-9) var(--pr-space-7);
-  background: var(--pr-color-surface);
+  margin-top: var(--nms-space-12);
+  border-top: 1px solid var(--nms-color-border);
+  padding-block: var(--nms-space-9) var(--nms-space-7);
+  background: var(--nms-color-surface);
 }
 
 .inner {
   display: flex;
   flex-direction: column;
-  gap: var(--pr-space-7);
+  gap: var(--nms-space-7);
 }
 
 .brandCol {
   display: flex;
   flex-direction: column;
-  gap: var(--pr-space-3);
+  gap: var(--nms-space-3);
   max-width: 34ch;
 }
 
 .tagline {
-  font-family: var(--pr-font-display);
-  font-size: var(--pr-font-h3-size);
+  font-family: var(--nms-font-display);
+  font-size: var(--nms-font-h3-size);
   line-height: 1.25;
   font-weight: 700;
   letter-spacing: -0.02em;
@@ -29,21 +29,21 @@
 .links {
   display: flex;
   flex-wrap: wrap;
-  gap: var(--pr-space-3) var(--pr-space-6);
+  gap: var(--nms-space-3) var(--nms-space-6);
 }
 .links a {
   text-decoration: none;
-  font-size: var(--pr-font-caption-size);
-  color: var(--pr-color-fg-muted);
+  font-size: var(--nms-font-caption-size);
+  color: var(--nms-color-fg-muted);
 }
-.links a:hover { color: var(--pr-color-fg); }
+.links a:hover { color: var(--nms-color-fg); }
 
 .legal {
-  margin-top: var(--pr-space-7);
-  padding-top: var(--pr-space-5);
-  border-top: 1px solid var(--pr-color-border);
-  font-size: var(--pr-font-caption-size);
-  color: var(--pr-color-fg-subtle);
+  margin-top: var(--nms-space-7);
+  padding-top: var(--nms-space-5);
+  border-top: 1px solid var(--nms-color-border);
+  font-size: var(--nms-font-caption-size);
+  color: var(--nms-color-fg-subtle);
 }
 
 @media (min-width: 768px) {

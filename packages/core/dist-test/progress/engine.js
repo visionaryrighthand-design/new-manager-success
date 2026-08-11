@@ -1,4 +1,4 @@
-import { findRep, module01 } from '@promoted/content';
+import { findRep, module01 } from '@nms/content';
 import { addCalendarDays, toCalendarDate } from '../time/business-days.js';
 /**
  * XP awards.

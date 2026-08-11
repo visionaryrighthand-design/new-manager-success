@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { categorize, validateEnrollment, type Enrollment } from '@promoted/core';
+import { categorize, validateEnrollment, type Enrollment } from '@nms/core';
 
 /**
  * Enrollment intake.

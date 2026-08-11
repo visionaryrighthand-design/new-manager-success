@@ -1,8 +1,8 @@
 {
-  "name": "@promoted/content",
+  "name": "@nms/content",
   "version": "0.1.0",
   "private": true,
-  "description": "Promoted course content. Module 1 (locked script) structured for the feed player.",
+  "description": "New Manager Success course content. Module 1 (locked script) structured for the feed player.",
   "type": "module",
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",

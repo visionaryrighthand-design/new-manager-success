@@ -12,7 +12,7 @@ import {
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import * as Haptics from 'expo-haptics';
-import { findRep, nextRep, type Beat, type Curveball, type CurveballVerdict, type QuizQuestion, type Rep } from '@promoted/content';
+import { findRep, nextRep, type Beat, type Curveball, type CurveballVerdict, type QuizQuestion, type Rep } from '@nms/content';
 import { colors, radius, space, type } from '../../src/theme';
 import { useProgress } from '../../src/progress-store';
 
@@ -254,7 +254,7 @@ const VERDICT_LABEL: Record<CurveballVerdict, string> = {
 const VERDICT_COLOR: Record<CurveballVerdict, string> = {
   best: colors.success,
   workable: colors.warning,
-  costly: colors.ember,
+  costly: colors.alert,
 };
 
 interface CardViewProps {
@@ -466,9 +466,9 @@ const styles = StyleSheet.create({
   speech: { ...type.body, color: colors.fg, opacity: 0.9 },
   overlay: {
     ...type.h2,
-    color: colors.volt,
+    color: colors.bright,
     borderLeftWidth: 3,
-    borderLeftColor: colors.volt,
+    borderLeftColor: colors.bright,
     paddingLeft: space[4],
   },
 
@@ -476,12 +476,12 @@ const styles = StyleSheet.create({
   moment: { ...type.moment, color: colors.fg, textAlign: 'center' },
 
   listItem: { flexDirection: 'row', gap: space[3], alignItems: 'flex-start' },
-  bullet: { width: 8, height: 8, borderRadius: 4, backgroundColor: colors.volt, marginTop: 8 },
+  bullet: { width: 8, height: 8, borderRadius: 4, backgroundColor: colors.bright, marginTop: 8 },
   listText: { ...type.item, color: colors.fg, flex: 1 },
 
-  curveballLabel: { ...type.label, color: colors.ember },
+  curveballLabel: { ...type.label, color: colors.alert },
   quizLabel: { ...type.label, color: colors.accent },
-  fieldNoteLabel: { ...type.label, color: colors.volt },
+  fieldNoteLabel: { ...type.label, color: colors.bright },
 
   scenario: { ...type.item, color: colors.fgMuted },
   prompt: { ...type.h2, color: colors.fg },
@@ -523,7 +523,7 @@ const styles = StyleSheet.create({
   },
   privacy: { ...type.caption, color: colors.fgSubtle, fontSize: 13 },
 
-  score: { ...type.moment, color: colors.volt, fontSize: 56, lineHeight: 60 },
+  score: { ...type.moment, color: colors.bright, fontSize: 56, lineHeight: 60 },
   scoreTotal: { ...type.h2, color: colors.fgSubtle },
   xpLine: { ...type.numeric, color: colors.fgMuted },
 
@@ -532,10 +532,10 @@ const styles = StyleSheet.create({
     paddingVertical: space[4],
     paddingHorizontal: space[6],
     borderRadius: radius.pill,
-    backgroundColor: colors.volt,
+    backgroundColor: colors.bright,
     alignItems: 'center',
   },
-  finishText: { ...type.bodyStrong, color: colors.onVolt },
+  finishText: { ...type.bodyStrong, color: colors.onBright },
 
   topBar: {
     position: 'absolute',
@@ -554,8 +554,8 @@ const styles = StyleSheet.create({
 
   segments: { flex: 1, flexDirection: 'row', gap: 3 },
   segment: { flex: 1, height: 3, borderRadius: 2, backgroundColor: colors.border },
-  segmentCurveball: { backgroundColor: colors.ember, opacity: 0.35 },
-  segmentDone: { backgroundColor: colors.volt, opacity: 1 },
+  segmentCurveball: { backgroundColor: colors.alert, opacity: 0.35 },
+  segmentDone: { backgroundColor: colors.bright, opacity: 1 },
   segmentNow: { backgroundColor: colors.accent, opacity: 1 },
 
   bottomBar: {

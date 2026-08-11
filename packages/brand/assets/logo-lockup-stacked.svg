@@ -1,0 +1,39 @@
+<!--
+  New Manager Success — STACKED lockup. This is the primary arrangement in the
+  supplied artwork: mark above, NEW / MANAGER in heavy white caps, a blue brush
+  swoosh, then SUCCESS tracked out in blue.
+
+  Use this for square contexts: social avatars, app store listing art, the
+  splash screen, slide title cards. Use the horizontal lockup in headers and
+  anywhere with limited vertical room.
+
+  ⚠ PROVISIONAL, twice over:
+   1. The mark is an interpretation — see logo-mark.svg.
+   2. The wordmark is live <text> in a system stack. The original uses a heavy
+      condensed grotesk. Before ANY external use, set it in the real face and
+      convert to outlines, or it will re-flow on a machine without that font.
+-->
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512" role="img" aria-label="New Manager Success">
+  <title>New Manager Success</title>
+  <rect width="512" height="512" fill="#000000"/>
+
+  <g transform="translate(150 44) scale(3.4)" stroke-linecap="round" stroke-linejoin="round" fill="none">
+    <path d="M11 54 L19.5 14 L31 44 L38.5 16" stroke="#FFFFFF" stroke-width="7.5"/>
+    <path d="M35 40 C41 31 45 22 49 11" stroke="#1E6BF0" stroke-width="6.5"/>
+    <path d="M38.5 15 L50.5 8.5 L52 21.5" stroke="#1E6BF0" stroke-width="6.5"/>
+  </g>
+
+  <g font-family="'Archivo', 'Anton', 'Helvetica Neue', Impact, system-ui, sans-serif"
+     font-weight="800" text-anchor="middle" fill="#FFFFFF">
+    <text x="256" y="336" font-size="74" letter-spacing="-1">NEW</text>
+    <text x="256" y="404" font-size="74" letter-spacing="-1">MANAGER</text>
+  </g>
+
+  <!-- Brush swoosh: slightly arced and asymmetric so it reads as a stroke, not a rule. -->
+  <path d="M74 430 Q256 412 438 428" stroke="#1E6BF0" stroke-width="13" fill="none" stroke-linecap="round"/>
+
+  <text x="256" y="480"
+        font-family="'Archivo', 'Anton', 'Helvetica Neue', Impact, system-ui, sans-serif"
+        font-size="42" font-weight="800" letter-spacing="17" text-anchor="middle" fill="#1E6BF0"
+        >SUCCESS</text>
+</svg>

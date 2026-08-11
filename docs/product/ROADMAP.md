@@ -112,7 +112,7 @@ Each of these is documented where it lives; collected here so nothing gets lost.
 | 2 | Accept ~4-minute narration, or commission ~40% more script | Course owner | `MVP_SPEC.md § Runtime` |
 | 3 | Confirm Level 3 sends questions, never raw answers | Course owner | `MVP_SPEC.md § The Corner` |
 | 4 | Do public holidays count toward the 7 business days? | Product | `MVP_SPEC.md § Business days` |
-| 5 | Trademark search on "Promoted" in classes 41 and 9 | Founders | `BRAND_GUIDE.md § The name` |
+| 5 | Trademark search on "New Manager Success" in classes 41 and 9 | Founders | `BRAND_GUIDE.md § The name` |
 | 6 | Convert the wordmark to outlines before external use | Design | `BRAND_GUIDE.md § Wordmark` |
 
 Items 1 and 5 block a public launch. The rest do not block the pilot.

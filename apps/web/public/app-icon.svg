@@ -1,35 +1,19 @@
 <!--
-  Promoted — app icon, 1024x1024 master for iOS and Android.
+  New Manager Success — app icon master, 1024x1024, for iOS and Android.
+  iOS applies its own squircle mask, so the artwork is full-bleed and opaque
+  (Apple rejects icons with an alpha channel). For the Android adaptive icon,
+  adaptive-icon.png is the transparent foreground layer, sized to clear the
+  66% safe circle; the background layer is flat #000000.
 
-  iOS applies its own squircle mask, so the artwork is drawn full-bleed and the
-  22.37% corner radius here is only for previews and the Android legacy icon.
-  For Android adaptive icons, export the chevron group alone at 66% scale as
-  the foreground layer and the ink field as the background layer — see
-  docs/brand/BRAND_GUIDE.md.
-
-  The mark's inked bounding box (x 10.5-53.5, y 13.5-54 on the 64pt grid) is
-  scaled to 600x565px — 59% of the canvas — and optically centred: horizontally
-  true, vertically 10px low, because a chevron carries its visual mass above
-  its geometric centre.
+  ⚠ PROVISIONAL — regenerate from the source vector when it lands, via
+  packages/brand/scripts/gen-icons.mjs.
 -->
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024" width="1024" height="1024" role="img" aria-label="Promoted app icon">
-  <title>Promoted</title>
-  <defs>
-    <linearGradient id="field" x1="0" y1="0" x2="0" y2="1">
-      <stop offset="0%" stop-color="#141827"/>
-      <stop offset="100%" stop-color="#06070B"/>
-    </linearGradient>
-    <radialGradient id="glow" cx="0.5" cy="0.36" r="0.55">
-      <stop offset="0%" stop-color="#3A63FF" stop-opacity="0.34"/>
-      <stop offset="100%" stop-color="#3A63FF" stop-opacity="0"/>
-    </radialGradient>
-  </defs>
-
-  <rect width="1024" height="1024" rx="229" fill="url(#field)"/>
-  <rect width="1024" height="1024" rx="229" fill="url(#glow)"/>
-
-  <g transform="translate(66 51) scale(13.95)" stroke-linecap="round" stroke-linejoin="round" fill="none">
-    <path d="M15 35 L32 18 L49 35" stroke="#D8FF3E" stroke-width="9"/>
-    <path d="M20 50 L32 38 L44 50" stroke="#3A63FF" stroke-width="8"/>
-  </g>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024" width="1024" height="1024">
+  <rect width="1024" height="1024" fill="#000000"/>
+  <g transform="translate(98.66666666666669 98.66666666666669) scale(13.226666666666667)">
+  <g stroke-linecap="round" stroke-linejoin="round" fill="none">
+    <path d="M11 54 L19.5 14 L31 44 L38.5 16" stroke="#FFFFFF" stroke-width="7.5"/>
+    <path d="M35 40 C41 31 45 22 49 11" stroke="#1E6BF0" stroke-width="6.5"/>
+    <path d="M38.5 15 L50.5 8.5 L52 21.5" stroke="#1E6BF0" stroke-width="6.5"/>
+  </g></g>
 </svg>

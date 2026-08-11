@@ -8,7 +8,7 @@ import { space, radius, motion } from './layout.js';
 import { typeScale } from './typography.js';
 
 /**
- * Flattens the token set into `--pr-*` CSS custom properties.
+ * Flattens the token set into `--nms-*` CSS custom properties.
  * Used to generate `assets/tokens.css` and to inline theme overrides on web.
  */
 export function cssVariables(themeName: 'dark' | 'light'): Record<string, string> {
@@ -16,26 +16,26 @@ export function cssVariables(themeName: 'dark' | 'light'): Record<string, string
   const out: Record<string, string> = {};
 
   for (const [key, value] of Object.entries(colors)) {
-    out[`--pr-color-${kebab(key)}`] = value;
+    out[`--nms-color-${kebab(key)}`] = value;
   }
   for (const [key, value] of Object.entries(space)) {
-    out[`--pr-space-${key}`] = `${value}px`;
+    out[`--nms-space-${key}`] = `${value}px`;
   }
   for (const [key, value] of Object.entries(radius)) {
-    out[`--pr-radius-${kebab(key)}`] = typeof value === 'number' ? `${value}px` : String(value);
+    out[`--nms-radius-${kebab(key)}`] = typeof value === 'number' ? `${value}px` : String(value);
   }
   for (const [key, value] of Object.entries(typeScale)) {
     const k = kebab(key);
-    out[`--pr-font-${k}-size`] = `${value.size / 16}rem`;
-    out[`--pr-font-${k}-line`] = `${value.lineHeight / 16}rem`;
-    out[`--pr-font-${k}-weight`] = String(value.weight);
-    out[`--pr-font-${k}-tracking`] = `${value.tracking}em`;
+    out[`--nms-font-${k}-size`] = `${value.size / 16}rem`;
+    out[`--nms-font-${k}-line`] = `${value.lineHeight / 16}rem`;
+    out[`--nms-font-${k}-weight`] = String(value.weight);
+    out[`--nms-font-${k}-tracking`] = `${value.tracking}em`;
   }
   for (const [key, value] of Object.entries(motion.duration)) {
-    out[`--pr-duration-${kebab(key)}`] = `${value}ms`;
+    out[`--nms-duration-${kebab(key)}`] = `${value}ms`;
   }
   for (const [key, value] of Object.entries(motion.easing)) {
-    out[`--pr-ease-${kebab(key)}`] = value;
+    out[`--nms-ease-${kebab(key)}`] = value;
   }
   return out;
 }

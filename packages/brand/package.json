@@ -1,8 +1,8 @@
 {
-  "name": "@promoted/brand",
+  "name": "@nms/brand",
   "version": "0.1.0",
   "private": true,
-  "description": "Promoted design tokens, logo assets, and voice constants.",
+  "description": "New Manager Success design tokens, logo assets, and voice constants.",
   "type": "module",
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
@@ -14,10 +14,14 @@
     "./tokens.css": "./assets/tokens.css",
     "./assets/*": "./assets/*"
   },
-  "files": ["dist", "assets"],
+  "files": [
+    "dist",
+    "assets"
+  ],
   "scripts": {
-    "build": "tsc -p tsconfig.json && node scripts/gen-tokens.mjs",
-    "typecheck": "tsc -p tsconfig.json --noEmit"
+    "build": "tsc -p tsconfig.json && node scripts/gen-tokens.mjs && node scripts/check-tokens.mjs",
+    "typecheck": "tsc -p tsconfig.json --noEmit",
+    "check:tokens": "node scripts/check-tokens.mjs"
   },
   "devDependencies": {
     "typescript": "^5.6.3"

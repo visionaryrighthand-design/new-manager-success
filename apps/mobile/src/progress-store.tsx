@@ -6,7 +6,7 @@ import {
   recordQuizAttempt,
   type ActivityEvent,
   type LearnerProgress,
-} from '@promoted/core';
+} from '@nms/core';
 
 /**
  * Learner progress, persisted on device.
@@ -17,11 +17,11 @@ import {
  * dead connection, and a streak that resets because of a failed request is
  * worse than no streak at all.
  *
- * All the actual rules live in @promoted/core, so device and server compute
+ * All the actual rules live in @nms/core, so device and server compute
  * identical results from the same events. This file is storage and React glue.
  */
 
-const STORAGE_KEY = 'promoted.progress.v1';
+const STORAGE_KEY = 'nms.progress.v1';
 /** Stand-in until real accounts exist. */
 const LOCAL_ENROLLMENT_ID = 'local';
 

@@ -1,6 +1,6 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
-import { categoryLabels } from '@promoted/core';
+import { categoryLabels } from '@nms/core';
 import styles from './for-teams.module.css';
 
 export const metadata: Metadata = {
@@ -30,15 +30,15 @@ const STEPS = [
 
 export default function ForTeamsPage() {
   return (
-    <div className={`pr-shell ${styles.wrap}`}>
-      <p className="pr-eyebrow">For HR, L&amp;D, and owners</p>
+    <div className={`nms-shell ${styles.wrap}`}>
+      <p className="nms-eyebrow">For HR, L&amp;D, and owners</p>
       <h1 className={styles.title}>
         Your newest managers are learning on your customers right now.
       </h1>
       <p className={styles.lede}>
         The cost of an untrained first-time manager does not show up on a line item. It shows up in
         the people who leave, the problems that never got escalated, and the high performers who
-        quietly stopped trying. Promoted is the training that actually gets opened.
+        quietly stopped trying. New Manager Success is the training that actually gets opened.
       </p>
 
       <ol className={styles.steps}>
@@ -95,10 +95,10 @@ export default function ForTeamsPage() {
       </section>
 
       <div className={styles.cta}>
-        <Link href="/enroll" className="pr-btn pr-btn--volt">
+        <Link href="/enroll" className="nms-btn nms-btn--bright">
           Enroll a group
         </Link>
-        <Link href="/corner" className="pr-btn pr-btn--ghost">
+        <Link href="/corner" className="nms-btn nms-btn--ghost">
           See what you would receive
         </Link>
       </div>

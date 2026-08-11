@@ -1,14 +1,14 @@
 import Link from 'next/link';
-import { brand } from '@promoted/brand';
+import { brand } from '@nms/brand';
 import { LogoMark } from './Logo';
 import styles from './SiteFooter.module.css';
 
 export function SiteFooter() {
   return (
     <footer className={styles.footer}>
-      <div className={`pr-shell ${styles.inner}`}>
+      <div className={`nms-shell ${styles.inner}`}>
         <div className={styles.brandCol}>
-          <LogoMark size={30} title="Promoted" />
+          <LogoMark size={30} title="New Manager Success" />
           <p className={styles.tagline}>{brand.tagline}</p>
         </div>
 
@@ -21,7 +21,7 @@ export function SiteFooter() {
         </nav>
       </div>
 
-      <div className={`pr-shell ${styles.legal}`}>
+      <div className={`nms-shell ${styles.legal}`}>
         <p>
           Pilot build. Module 1 is complete; Modules 2–12 are scripted or outlined and land through
           the pilot.

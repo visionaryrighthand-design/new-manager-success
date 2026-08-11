@@ -1,4 +1,4 @@
-# Promoted MVP — what is built, what is decided, what is open
+# New Manager Success MVP — what is built, what is decided, what is open
 
 Module 1 as a shippable pilot. This document is the honest state of it: what
 works, what does not exist yet, and every decision made along the way that
@@ -196,7 +196,7 @@ Not done, and not doable from this repository alone:
 1. **Apple Developer** and **Google Play** accounts (~$99/yr and $25 one-time).
 2. **EAS Build** — `npx eas build --platform all`. Release builds need
    `hermesc`, which ships with the platform SDKs.
-3. **Bundle IDs are already set** to `app.getpromoted.mobile` in `app.json`.
+3. **Bundle IDs are already set** to `com.newmanagersuccess.app` in `app.json`.
    Change these before first submission if the name changes — they are permanent.
 4. **App Store review** will ask what the app does and who it is for. "Training
    for newly promoted managers" is a clean answer; avoid anything that reads as

@@ -1,5 +1,5 @@
 /**
- * Promoted — type system.
+ * New Manager Success — type system.
  *
  * Two families only.
  *
@@ -18,9 +18,17 @@
  */
 
 export const fontFamily = {
-  /** Wordmark, full-screen moments, headline numerals. */
+  /**
+   * Wordmark, full-screen moments, headline numerals.
+   *
+   * A heavy, slightly condensed grotesk, chosen to match the logo's own
+   * wordmark. Archivo is the licensed primary (open source, variable, has the
+   * weight range); Anton is the fallback for the very heaviest settings.
+   * Everything after those is a platform fallback so nothing depends on a
+   * webfont request.
+   */
   display:
-    "'Bricolage Grotesque', 'Space Grotesk', 'SF Pro Display', 'Segoe UI', system-ui, -apple-system, sans-serif",
+    "'Archivo', 'Anton', 'Helvetica Neue Condensed', 'SF Pro Display', 'Segoe UI', system-ui, -apple-system, sans-serif",
   /** Everything else. */
   text: "'Inter', 'SF Pro Text', 'Segoe UI', system-ui, -apple-system, Roboto, sans-serif",
   /** Scores, timers, streak counts — tabular so digits don't jitter. */

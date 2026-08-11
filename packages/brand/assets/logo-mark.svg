@@ -1,19 +1,29 @@
 <!--
-  Promoted — primary mark. "The Ascent."
+  New Manager Success — primary mark.
 
-  Two stacked chevrons. Read top-down it is a level-up indicator; read as a
-  silhouette it is a play button tipped on its side. Promotion + video, one
-  shape. Drawn on a 64pt grid with a 9pt stroke so it survives a 20px favicon.
+  A brush-drawn "N" with an arrow rising through it and breaking out top-right:
+  the letterform is where you are, the arrow is where the job is going.
 
-  Minimum size: 20px. Clear space: 1x the stroke width (9/64 of the mark) on
-  all sides. Never rotate, never add a third chevron, never outline.
+  ⚠ PROVISIONAL — a clean vector interpretation of the supplied artwork, not
+  the artwork itself. The original is brush-painted with dry-brush texture and
+  tapered strokes; that texture is deliberately NOT faked here, because a
+  hand-approximated brush reads worse than an honest clean version. Replace
+  this file with the source vector when it is available — everything
+  downstream (app icon, favicon, lockups, the inline React components in
+  apps/web/src/components/Logo.tsx and apps/mobile/src/components/Mark.tsx)
+  derives from this geometry and must be updated together.
+
+  Drawn on a 64pt grid. The 7pt stroke is what lets it survive a 20px favicon.
+  Minimum size 20px. Clear space: one stroke width on all sides.
 -->
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64" fill="none" role="img" aria-label="Promoted">
-  <title>Promoted</title>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64" fill="none" role="img" aria-label="New Manager Success">
+  <title>New Manager Success</title>
   <g stroke-linecap="round" stroke-linejoin="round" fill="none">
-    <!-- Leading chevron: Volt. The destination. -->
-    <path d="M15 35 L32 18 L49 35" stroke="#D8FF3E" stroke-width="9"/>
-    <!-- Trailing chevron: Cobalt. Where you are now. -->
-    <path d="M20 50 L32 38 L44 50" stroke="#3A63FF" stroke-width="8"/>
+    <!-- The N: up, down, up. Sharp peaks, matching the brush original. -->
+    <path d="M11 54 L19.5 14 L31 44 L38.5 16" stroke="#FFFFFF" stroke-width="7.5"/>
+    <!-- Arrow shaft, rising out of the N's right stroke. -->
+    <path d="M35 40 C41 31 45 22 49 11" stroke="#1E6BF0" stroke-width="6.5"/>
+    <!-- Arrowhead breaking out above the letterform, pointing up-right. -->
+    <path d="M38.5 15 L50.5 8.5 L52 21.5" stroke="#1E6BF0" stroke-width="6.5"/>
   </g>
 </svg>

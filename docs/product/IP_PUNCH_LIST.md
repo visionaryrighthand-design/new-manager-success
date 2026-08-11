@@ -49,7 +49,7 @@ is unchanged.
 | D6e | 1.6 | **No change made** — flagged for review (see below) |
 | D6f | 1.8 | Review recap line updated to match D6a |
 
-Run `npm run report:ip -w @promoted/content` for the full before/after text of
+Run `npm run report:ip -w @nms/content` for the full before/after text of
 each. A test asserts the term appears nowhere in shipped content.
 
 **D6e — the open question for counsel.** The four-level readiness ladder and
@@ -132,6 +132,6 @@ framework diagram or proprietary assessment reproduced. Ships as written.
 ## How to check the current state
 
 ```bash
-npm run report:ip -w @promoted/content        # every deviation, with sign-off owner
-npm test --workspace=@promoted/core           # asserts flagged terms are absent
+npm run report:ip -w @nms/content        # every deviation, with sign-off owner
+npm test --workspace=@nms/core           # asserts flagged terms are absent
 ```

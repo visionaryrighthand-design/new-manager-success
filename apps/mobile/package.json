@@ -1,5 +1,5 @@
 {
-  "name": "@promoted/mobile",
+  "name": "@nms/mobile",
   "version": "0.1.0",
   "private": true,
   "main": "expo-router/entry",
@@ -11,9 +11,9 @@
     "prebuild": "expo prebuild"
   },
   "dependencies": {
-    "@promoted/brand": "*",
-    "@promoted/content": "*",
-    "@promoted/core": "*",
+    "@nms/brand": "*",
+    "@nms/content": "*",
+    "@nms/core": "*",
     "@react-native-async-storage/async-storage": "2.1.0",
     "expo": "~52.0.20",
     "expo-asset": "~11.0.1",
