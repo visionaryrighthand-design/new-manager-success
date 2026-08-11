@@ -25,6 +25,11 @@ export const rep01: Rep = {
       direction: 'full screen, direct to camera',
       speech:
         "Congratulations on your promotion.\n\nYou've worked hard for this. You've been performing at a high level, and someone noticed. That's real, and it matters.\n\nBut here's what most people don't tell you when they hand you that new title:\n\nThe job you just accepted? Nobody actually trained you for it.",
+      // Rendered in Synthesia, hosted on Supabase public storage. The source
+      // filename is the working title of the clip, not the beat id — the id
+      // that matters is `m1-r1-b1` above, which is what the shot list tracks.
+      videoUrl:
+        'https://rhteswkgmndgijpllvjt.supabase.co/storage/v1/object/public/videos/New%20Manager%20Success/The%20Untold%20Truth%20About%20Your%20New%20Promotion.mp4',
     },
     {
       id: 'b2',
