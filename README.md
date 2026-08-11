@@ -55,6 +55,7 @@ docs/
   brand/BRAND_GUIDE.md          Name, mark, colour, type, voice
   product/MVP_SPEC.md           What is built, what is decided, what is open
   product/PILOT_PLAYBOOK.md     How to run the pilot and what to learn
+  product/AVATAR_PRODUCTION.md  How to shoot the avatar footage
   product/IP_PUNCH_LIST.md      Trademark items needing legal sign-off
   product/ROADMAP.md            Phase 2 and beyond
 ```
@@ -84,6 +85,7 @@ a scroll instead of a webinar.
 ```bash
 npm run report:content -w @nms/content   # per-Rep timing + validation
 npm run report:ip -w @nms/content        # every change from a locked script
+npm run shotlist -w @nms/content -- m1-r1  # avatar shot list for one Rep
 ```
 
 ## Two things to read before shipping

@@ -356,3 +356,27 @@
 .navBtn:disabled { opacity: 0.35; cursor: not-allowed; }
 
 .nextBtn { margin-inline-start: auto; min-width: 9rem; }
+
+/* ---- Avatar footage ----------------------------------------------------- */
+
+.video {
+  width: 100%;
+  aspect-ratio: 9 / 16;
+  max-height: 62vh;
+  object-fit: cover;
+  border-radius: var(--nms-radius-lg);
+  background: var(--nms-color-surface);
+  border: 1px solid var(--nms-color-border);
+}
+
+.transcript summary {
+  cursor: pointer;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--nms-color-fg-muted);
+  list-style: none;
+}
+.transcript summary::-webkit-details-marker { display: none; }
+.transcript summary::before { content: '▸ '; color: var(--nms-color-accent); }
+.transcript[open] summary::before { content: '▾ '; }
+.transcript > .speech { margin-top: var(--nms-space-3); font-size: 1rem; }

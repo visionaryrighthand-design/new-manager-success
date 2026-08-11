@@ -12,12 +12,15 @@
       "default": "./dist/index.js"
     }
   },
-  "files": ["dist"],
+  "files": [
+    "dist"
+  ],
   "scripts": {
     "build": "tsc -p tsconfig.json",
     "typecheck": "tsc -p tsconfig.json --noEmit",
     "report:ip": "node --experimental-strip-types scripts/ip-report.ts",
-    "report:content": "node --experimental-strip-types scripts/content-report.ts"
+    "report:content": "node --experimental-strip-types scripts/content-report.ts",
+    "shotlist": "node --experimental-strip-types scripts/shot-list.ts"
   },
   "devDependencies": {
     "typescript": "^5.6.3"

@@ -50,6 +50,21 @@ export interface Beat {
    * Derived from word count at ~150 wpm for `avatar`, fixed for the rest.
    */
   estimatedSeconds?: number;
+  /**
+   * Avatar footage for this beat, if it has been produced.
+   *
+   * One clip per beat — NOT one video per Rep. A single long video in a feed
+   * is just a video, and the format is the product: a card lands, you swipe,
+   * a Curveball interrupts. Beats without a clip render as text, so footage
+   * can land Rep by Rep without blocking anything.
+   *
+   * Must be a direct, streamable URL (MP4 or HLS). A Google Drive share link
+   * is not one — Drive throttles, wraps playback in its own chrome, and
+   * breaks when embedded.
+   */
+  videoUrl?: string;
+  /** Poster frame shown before playback. Falls back to a brand card. */
+  posterUrl?: string;
 }
 
 // ---------------------------------------------------------------------------

@@ -235,6 +235,36 @@ function CardView(props: CardViewProps) {
 }
 
 function BeatCard({ beat }: { beat: Beat }) {
+  // Avatar footage, when it exists for this beat. Beats without a clip render
+  // as text, so footage can land Rep by Rep without blocking anything — and
+  // the transcript stays underneath either way, because a manager doing a Rep
+  // on a shop floor or a ward often has the sound off.
+  if (beat.videoUrl) {
+    return (
+      <div className={styles.card}>
+        <video
+          className={styles.video}
+          src={beat.videoUrl}
+          poster={beat.posterUrl}
+          controls
+          playsInline
+          preload="metadata"
+        />
+        {beat.type === 'overlay' && beat.text ? (
+          <p className={styles.overlay}>{beat.text}</p>
+        ) : null}
+        <details className={styles.transcript}>
+          <summary>Transcript</summary>
+          {beat.speech?.split('\n\n').map((para, i) => (
+            <p key={i} className={styles.speech}>
+              {para}
+            </p>
+          ))}
+        </details>
+      </div>
+    );
+  }
+
   if (beat.type === 'moment') {
     return (
       <div className={styles.moment}>
