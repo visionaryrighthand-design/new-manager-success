@@ -54,9 +54,12 @@ narration.**
 
 **Decision needed.** Three options:
 
-1. **Accept it.** A four-minute video with three minutes of active decision-making
-   is arguably a *better* product than seven minutes of talking, and much closer
-   to the "TikTok meets Duolingo" brief. Recommended.
+1. **Accept it.** Four minutes of reading with three minutes of active
+   decision-making is arguably a *better* product than seven minutes of
+   talking, and much closer to the "TikTok meets Duolingo" brief. Recommended.
+   Note also that a card sets its own pace: a fast reader clears a Rep well
+   under the estimate and a careful one runs over, which a fixed-length video
+   never allowed.
 2. **Commission ~40% more script per section** to hit the stated word counts.
    Slower, and risks padding content that is currently tight.
 3. **Restate the target** as "7 minutes" measured the way the app measures it,
@@ -76,6 +79,15 @@ so.
 So the learner drives every advance, on web and native. The full-screen-moment
 hold duration exists in the motion tokens and is currently unused; if pilot
 telemetry shows people stalling, it is one flag away.
+
+**The advance is a scroll, not a button.** One full-screen card at a time,
+snapping into place, with `scroll-snap-stop: always` so a fast flick cannot
+skip three beats. Answers still gate: the feed renders only as far as the
+first unanswered Curveball or quiz question, so scrolling runs out of content
+until the learner responds — a gate made of absence rather than a disabled
+button. Cards hold their opening frame until they reach the middle of the
+screen and then compose themselves, which is what makes the feed feel built
+rather than merely long.
 
 **Watch in the pilot:** median time per beat card. If it is under two seconds,
 people are skimming, and the beats are too small.

@@ -209,32 +209,57 @@ describe('moment parsing', () => {
   });
 });
 
-describe('avatar footage', () => {
-  test('no two beats point at the same video file', () => {
+describe('media wiring', () => {
+  const mediaUrls = () =>
+    module01.reps.flatMap((rep) =>
+      rep.beats.flatMap((beat) =>
+        [beat.audioUrl, beat.videoUrl]
+          .filter((u): u is string => Boolean(u))
+          .map((url) => ({ where: `${rep.number}/${beat.id}`, url })),
+      ),
+    );
+
+  test('no two beats point at the same media file', () => {
     const owners = new Map<string, string>();
     const clashes: string[] = [];
-    for (const rep of module01.reps) {
-      for (const beat of rep.beats) {
-        if (!beat.videoUrl) continue;
-        const here = `${rep.number}/${beat.id}`;
-        const first = owners.get(beat.videoUrl);
-        if (first) clashes.push(`${here} duplicates ${first}`);
-        else owners.set(beat.videoUrl, here);
-      }
+    for (const { where, url } of mediaUrls()) {
+      const first = owners.get(url);
+      if (first) clashes.push(`${where} duplicates ${first}`);
+      else owners.set(url, where);
     }
     assert.deepEqual(clashes, []);
   });
 
-  test('every wired clip is a direct file URL, not a share page', () => {
+  test('every wired file is a direct URL, not a share page', () => {
+    for (const { where, url } of mediaUrls()) {
+      assert.match(
+        url,
+        /^https:\/\/\S+\.(mp3|m4a|aac|wav|ogg|mp4|m3u8)$/,
+        `${where}: not a direct media URL`,
+      );
+    }
+  });
+
+  test('a reading beat is never given a voiceover — it is silent by design', () => {
     for (const rep of module01.reps) {
       for (const beat of rep.beats) {
-        if (!beat.videoUrl) continue;
-        assert.match(
-          beat.videoUrl,
-          /^https:\/\/\S+\.(mp4|m3u8)$/,
-          `${rep.number}/${beat.id}: not a direct MP4 or HLS URL`,
+        if (beat.type !== 'reading') continue;
+        assert.equal(
+          beat.audioUrl,
+          undefined,
+          `${rep.number}/${beat.id}: reading cards are read, not narrated`,
         );
       }
     }
+  });
+
+  test('Module 1 ships no talking-head footage', () => {
+    // The pilot moved to cards with voiceover. If a video is ever wired back
+    // in it should be a deliberate choice with a note next to it, not a
+    // leftover — so this fails loudly rather than drifting.
+    const withVideo = module01.reps.flatMap((rep) =>
+      rep.beats.filter((b) => b.videoUrl).map((b) => `${rep.number}/${b.id}`),
+    );
+    assert.deepEqual(withVideo, []);
   });
 });

@@ -15,6 +15,7 @@ import {
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import * as Haptics from 'expo-haptics';
+import { Audio } from 'expo-av';
 import { estimateBeatSeconds, findRep, nextRep, splitListItem, splitMomentLines, type Beat, type Curveball, type CurveballVerdict, type QuizQuestion, type Rep } from '@nms/content';
 import { colors, radius, space, type } from '../../src/theme';
 import { useProgress } from '../../src/progress-store';
@@ -65,6 +66,9 @@ function RepFeed({ rep }: { rep: Rep }) {
   const [answers, setAnswers] = useState<Record<string, string>>({});
   const [choices, setChoices] = useState<Record<string, string>>({});
   const [fieldNote, setFieldNote] = useState('');
+  // Audio stays off until the learner starts a card themselves, then follows
+  // them down the feed. Same contract as the web player.
+  const [soundOn, setSoundOn] = useState(false);
   const listRef = useRef<FlatList<Card>>(null);
   const quizSubmitted = useRef(false);
 
@@ -152,11 +156,14 @@ function RepFeed({ rep }: { rep: Rep }) {
         viewabilityConfig={{ itemVisiblePercentThreshold: 60 }}
         getItemLayout={(_, i) => ({ length: height, offset: height * i, index: i })}
         keyboardShouldPersistTaps="handled"
-        renderItem={({ item }) => (
+        renderItem={({ item, index: i }) => (
           <View style={[styles.page, { height, paddingTop: insets.top + 72, paddingBottom: insets.bottom + 96 }]}>
             <CardView
               card={item}
               rep={rep}
+              isActive={i === index}
+              soundOn={soundOn}
+              onSoundOn={() => setSoundOn(true)}
               answers={answers}
               choices={choices}
               fieldNote={fieldNote}
@@ -273,6 +280,9 @@ interface CardViewProps {
   progressXp: number;
   onFinish: () => void;
   finishLabel: string;
+  isActive: boolean;
+  soundOn: boolean;
+  onSoundOn: () => void;
 }
 
 function CardView(props: CardViewProps) {
@@ -281,25 +291,14 @@ function CardView(props: CardViewProps) {
   if (card.kind === 'beat') {
     const { beat } = card;
 
-    if (beat.type === 'reading') {
-      const paragraphs = beat.speech?.split('\n\n').filter(Boolean) ?? [];
-      // The closing paragraph is the payoff; it is set apart rather than being
-      // the fourth identical block of grey text. Mirrors the web player.
-      const body = paragraphs.length > 1 ? paragraphs.slice(0, -1) : [];
-      const kicker = paragraphs[paragraphs.length - 1];
-
+    if (beat.type === 'reading' || beat.type === 'overlay' || beat.type === 'avatar') {
       return (
-        <View style={styles.card}>
-          <View style={styles.readingRule} />
-          {beat.text ? <Text style={styles.readingTitle}>{beat.text}</Text> : null}
-          <Text style={styles.readingMeta}>{estimateBeatSeconds(beat)} SEC READ</Text>
-          {body.map((para, i) => (
-            <Text key={i} style={styles.readingBody}>
-              {para}
-            </Text>
-          ))}
-          {kicker ? <Text style={styles.readingKicker}>{kicker}</Text> : null}
-        </View>
+        <ProseCard
+          beat={beat}
+          isActive={props.isActive}
+          soundOn={props.soundOn}
+          onSoundOn={props.onSoundOn}
+        />
       );
     }
 
@@ -325,14 +324,16 @@ function CardView(props: CardViewProps) {
     }
 
     if (beat.type === 'buildList') {
-      return <BuildList items={beat.items ?? []} />;
+      return (
+        <View style={styles.card}>
+          <BuildList items={beat.items ?? []} />
+          <Voiceover beat={beat} isActive={props.isActive} soundOn={props.soundOn} onSoundOn={props.onSoundOn} />
+        </View>
+      );
     }
 
     return (
       <View style={styles.card}>
-        {beat.type === 'overlay' && beat.text ? (
-          <Text style={styles.overlay}>{beat.text}</Text>
-        ) : null}
         {beat.speech?.split('\n\n').map((para, i) => (
           <Text key={i} style={styles.speech}>
             {para}
@@ -484,6 +485,140 @@ function CardView(props: CardViewProps) {
   );
 }
 
+
+
+/**
+ * Voiceover for one beat.
+ *
+ * Renders nothing when the beat has no audio, which is every beat until a
+ * recording is wired in — the card is the product and this rides on top.
+ *
+ * The visible card's audio plays automatically, but only after the learner has
+ * pressed play once. Unlike the web, native could autoplay from the first
+ * card; it does not, because a lesson that starts talking the moment it opens
+ * is the behaviour people mute an app for.
+ */
+function Voiceover({ beat, isActive, soundOn, onSoundOn }: BeatCardProps) {
+  const soundRef = useRef<Audio.Sound | null>(null);
+  const [playing, setPlaying] = useState(false);
+  const [pct, setPct] = useState(0);
+  const [remaining, setRemaining] = useState(estimateBeatSeconds(beat));
+
+  const url = beat.audioUrl;
+
+  // Load on mount, unload on unmount. The feed keeps a handful of pages alive
+  // at a time, so leaving sounds loaded would stack them up over a Rep.
+  useEffect(() => {
+    if (!url) return;
+    let cancelled = false;
+    void (async () => {
+      const { sound } = await Audio.Sound.createAsync({ uri: url }, { shouldPlay: false });
+      if (cancelled) {
+        void sound.unloadAsync();
+        return;
+      }
+      soundRef.current = sound;
+      sound.setOnPlaybackStatusUpdate((status) => {
+        if (!status.isLoaded) return;
+        setPlaying(status.isPlaying);
+        const total = status.durationMillis ?? 0;
+        if (total > 0) {
+          setPct((status.positionMillis / total) * 100);
+          setRemaining(Math.max(0, Math.round((total - status.positionMillis) / 1000)));
+        }
+        if (status.didJustFinish) setPlaying(false);
+      });
+    })();
+    return () => {
+      cancelled = true;
+      void soundRef.current?.unloadAsync();
+      soundRef.current = null;
+    };
+  }, [url]);
+
+  useEffect(() => {
+    const sound = soundRef.current;
+    if (!sound) return;
+    if (isActive && soundOn) void sound.playAsync();
+    else if (isActive) void sound.pauseAsync();
+    else void sound.stopAsync();
+  }, [isActive, soundOn]);
+
+  if (!url) return null;
+
+  const toggle = () => {
+    const sound = soundRef.current;
+    if (!sound) return;
+    if (playing) {
+      void sound.pauseAsync();
+    } else {
+      onSoundOn();
+      void sound.playAsync();
+    }
+  };
+
+  return (
+    <View style={styles.voiceover}>
+      <Pressable style={styles.voiceoverBtn} onPress={toggle} hitSlop={8}>
+        <Text style={styles.voiceoverIcon}>{playing ? '❙❙' : '▶'}</Text>
+      </Pressable>
+      <View style={styles.voiceoverTrack}>
+        <View style={[styles.voiceoverFill, { width: `${pct}%` }]} />
+      </View>
+      <Text style={styles.voiceoverTime}>
+        {Math.floor(remaining / 60)}:{String(remaining % 60).padStart(2, '0')}
+      </Text>
+    </View>
+  );
+}
+
+interface BeatCardProps {
+  beat: Beat;
+  isActive: boolean;
+  soundOn: boolean;
+  onSoundOn: () => void;
+}
+
+/**
+ * Every card that is mostly words: `avatar`, `overlay`, `reading`.
+ *
+ * They differ in production, not in reading — one has a voiceover, one has a
+ * title over the top of it, one is silent by design — so they share a shape:
+ *
+ *   anchor   the title where the beat has one, otherwise the opening paragraph
+ *   body     the middle
+ *   kicker   the closing paragraph, set apart at full contrast
+ *
+ * That structure is not imposed on the copy; the scripts are already written
+ * that way. Mirrors ProseCard in the web player.
+ */
+function ProseCard({ beat, isActive, soundOn, onSoundOn }: BeatCardProps) {
+  const paragraphs = (beat.speech ?? '').split('\n\n').map((p) => p.trim()).filter(Boolean);
+  const title = beat.text;
+  const lede = title ? undefined : paragraphs[0];
+  const rest = title ? paragraphs : paragraphs.slice(1);
+  const kicker = rest.length > 0 ? rest[rest.length - 1] : undefined;
+  const body = rest.slice(0, -1);
+
+  return (
+    <View style={styles.card}>
+      <View style={styles.readingRule} />
+      {title ? <Text style={styles.readingTitle}>{title}</Text> : null}
+      {lede ? <Text style={styles.readingLede}>{lede}</Text> : null}
+      {beat.type === 'reading' && !beat.audioUrl ? (
+        <Text style={styles.readingMeta}>{estimateBeatSeconds(beat)} SEC READ</Text>
+      ) : null}
+      <Voiceover beat={beat} isActive={isActive} soundOn={soundOn} onSoundOn={onSoundOn} />
+      {body.map((para, i) => (
+        <Text key={i} style={styles.readingBody}>
+          {para}
+        </Text>
+      ))}
+      {kicker ? <Text style={styles.readingKicker}>{kicker}</Text> : null}
+    </View>
+  );
+}
+
 /**
  * The build-list card.
  *
@@ -528,7 +663,7 @@ function BuildList({ items }: { items: string[] }) {
   }, [anim]);
 
   return (
-    <View style={styles.card}>
+    <View style={styles.buildList}>
       {items.map((item, i) => {
         const { label, body, quoted } = splitListItem(item);
         return (
@@ -588,6 +723,7 @@ const styles = StyleSheet.create({
   },
 
   readingRule: { width: 40, height: 2, borderRadius: 2, backgroundColor: colors.accent },
+  readingLede: { ...type.h2, color: colors.fg },
   readingTitle: { ...type.h1, color: colors.fg },
   readingMeta: { ...type.label, color: colors.fgSubtle },
   readingBody: { ...type.body, lineHeight: 27, color: colors.fgMuted },
@@ -632,10 +768,25 @@ const styles = StyleSheet.create({
   listContent: { flex: 1, gap: space[2] },
   listLabel: { ...type.label, color: colors.bright },
   listText: { ...type.item, fontSize: 17, lineHeight: 24, fontWeight: '600', color: colors.fg },
+  buildList: { gap: space[3] },
   listItemDense: { paddingVertical: space[3] },
   listTextDense: { fontSize: 15, lineHeight: 21 },
   listTextQuoted: { fontStyle: 'italic' },
   listQuoteMark: { color: colors.accent, fontStyle: 'normal', fontWeight: '800' },
+
+  voiceover: { flexDirection: 'row', alignItems: 'center', gap: space[3], marginVertical: space[2] },
+  voiceoverBtn: {
+    width: 36,
+    height: 36,
+    borderRadius: 18,
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: colors.accent,
+  },
+  voiceoverIcon: { color: colors.onAccent, fontSize: 11 },
+  voiceoverTrack: { flex: 1, height: 2, borderRadius: 2, backgroundColor: colors.border, overflow: 'hidden' },
+  voiceoverFill: { height: '100%', backgroundColor: colors.accent },
+  voiceoverTime: { ...type.numeric, fontSize: 11, color: colors.fgSubtle },
 
   curveballLabel: { ...type.label, color: colors.alert },
   quizLabel: { ...type.label, color: colors.accent },

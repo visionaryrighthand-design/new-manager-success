@@ -25,11 +25,6 @@ export const rep01: Rep = {
       direction: 'full screen, direct to camera',
       speech:
         "Congratulations on your promotion.\n\nYou've worked hard for this. You've been performing at a high level, and someone noticed. That's real, and it matters.\n\nBut here's what most people don't tell you when they hand you that new title:\n\nThe job you just accepted? Nobody actually trained you for it.",
-      // Rendered in Synthesia, hosted on Supabase public storage. The source
-      // filename is the working title of the clip, not the beat id — the id
-      // that matters is `m1-r1-b1` above, which is what the shot list tracks.
-      videoUrl:
-        'https://rhteswkgmndgijpllvjt.supabase.co/storage/v1/object/public/videos/New%20Manager%20Success/The%20Untold%20Truth%20About%20Your%20New%20Promotion.mp4',
     },
     {
       // A reading card by decision, not by omission — see the note on
@@ -48,8 +43,6 @@ export const rep01: Rep = {
       direction: 'full screen',
       speech:
         "Let's talk about what actually changed when you got promoted.\n\nBefore, your success depended almost entirely on you. Your effort, your skill, your output. You controlled it. If you worked harder or smarter, results improved. Simple equation.\n\nNow? Your success depends on a group of people — people with different strengths, different motivations, and different ideas about what a productive day looks like. You can't do the work for them. You have to lead them to do it well.\n\nThat's a fundamentally different challenge. And most new managers walk into it believing at least one of these three things.",
-      videoUrl:
-        'https://rhteswkgmndgijpllvjt.supabase.co/storage/v1/object/public/videos/New%20Manager%20Success/From%20Solo%20Star%20to%20Team%20Leader_%20Navigating%20Your%20First%20Promotion%20(1).mp4',
     },
     {
       id: 'b4',
@@ -68,10 +61,6 @@ export const rep01: Rep = {
       direction: 'full screen',
       speech:
         "All three of those will get you in trouble.\n\nYour old manager's style was built for their context — not yours. Your track record impresses leadership, not necessarily your team. And trying to do both jobs at once usually means doing neither one well.\n\nHere's what happens when a manager steps in without the right preparation.",
-      // Filename is b3's title — a Synthesia project duplicated rather than
-      // renamed. Content confirmed correct by the author.
-      videoUrl:
-        'https://rhteswkgmndgijpllvjt.supabase.co/storage/v1/object/public/videos/New%20Manager%20Success/Copy%20of%20From%20Solo%20Star%20to%20Team%20Leader_%20Navigating%20Your%20First%20Promotion.mp4',
     },
     {
       id: 'b7',
@@ -96,10 +85,6 @@ export const rep01: Rep = {
       direction: 'full screen',
       speech:
         "That's a significant responsibility. But it's also a significant opportunity — because when you get this right, you can build something remarkable.\n\nHere's the reframe this entire program is built on.\n\nYou were promoted because you were great at your job. That's your starting point — not your finish line. The skills that made you an exceptional doer are different from the skills that will make you an exceptional manager.",
-      // Filename is b3's title — a Synthesia project duplicated rather than
-      // renamed. Content confirmed correct by the author.
-      videoUrl:
-        'https://rhteswkgmndgijpllvjt.supabase.co/storage/v1/object/public/videos/New%20Manager%20Success/Copy%20of%20From%20Solo%20Star%20to%20Team%20Leader_%20Navigating%20Your%20First%20Promotion%20(1).mp4',
     },
     {
       id: 'b11',
@@ -107,8 +92,6 @@ export const rep01: Rep = {
       text: 'Those skills can be learned. That’s what this program is for.',
       speech:
         "You're not behind. You're not failing. You're at the beginning of a new game — and now you know the rules are different.",
-      videoUrl:
-        'https://rhteswkgmndgijpllvjt.supabase.co/storage/v1/object/public/videos/New%20Manager%20Success/Copy%20of%20From%20Solo%20Star%20to%20Team%20Leader_%20Navigating%20Your%20First%20Promotion%20(2).mp4',
     },
     {
       id: 'b12',
@@ -116,8 +99,6 @@ export const rep01: Rep = {
       direction: 'full screen, direct close',
       speech:
         "In the next section, we're going to dig into exactly why high performers often struggle the most when they step into management — and what the shift from doing to leading actually looks like in practice.\n\nLet's keep going.",
-      videoUrl:
-        'https://rhteswkgmndgijpllvjt.supabase.co/storage/v1/object/public/videos/New%20Manager%20Success/Copy%20of%20The%20Untold%20Truth%20About%20Your%20New%20Promotion.mp4',
     },
   ],
 

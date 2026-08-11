@@ -61,16 +61,31 @@ export interface Beat {
    */
   estimatedSeconds?: number;
   /**
-   * Avatar footage for this beat, if it has been produced.
+   * Voiceover for this beat.
    *
-   * One clip per beat — NOT one video per Rep. A single long video in a feed
-   * is just a video, and the format is the product: a card lands, you swipe,
-   * a Curveball interrupts. Beats without a clip render as text, so footage
-   * can land Rep by Rep without blocking anything.
+   * The card is the product; audio rides on top of it. That ordering is
+   * deliberate — a card has to work in silence, because a manager doing a Rep
+   * on a shop floor, a ward, or a train has the sound off. Audio deepens a
+   * card that already reads; it does not rescue one that does not.
    *
-   * Must be a direct, streamable URL (MP4 or HLS). A Google Drive share link
-   * is not one — Drive throttles, wraps playback in its own chrome, and
-   * breaks when embedded.
+   * One file per beat, not one per Rep. A Curveball interrupts between beats,
+   * and re-recording a single line is cheap where re-cutting a long track is
+   * not.
+   *
+   * Must be a direct, streamable URL — .mp3, .m4a, .aac, .wav or .ogg. A
+   * share page will not play in a bare <audio> element.
+   */
+  audioUrl?: string;
+  /**
+   * Talking-head footage, if any beat ever takes it.
+   *
+   * Nothing in Module 1 uses this: the pilot moved to cards with voiceover
+   * because a synthetic presenter undercuts material this personal, and
+   * because rendered video makes every copy edit cost a re-render. Kept
+   * because one place still earns a face — a real person, once, at the top of
+   * a module, establishing who is talking and why they know.
+   *
+   * Must be a direct, streamable URL (MP4 or HLS).
    */
   videoUrl?: string;
   /** Poster frame shown before playback. Falls back to a brand card. */

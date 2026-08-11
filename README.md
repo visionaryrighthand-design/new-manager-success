@@ -55,7 +55,7 @@ docs/
   brand/BRAND_GUIDE.md          Name, mark, colour, type, voice
   product/MVP_SPEC.md           What is built, what is decided, what is open
   product/PILOT_PLAYBOOK.md     How to run the pilot and what to learn
-  product/AVATAR_PRODUCTION.md  How to shoot the avatar footage
+  product/NARRATION_PRODUCTION.md  How to record and wire the voiceover
   product/IP_PUNCH_LIST.md      Trademark items needing legal sign-off
   product/ROADMAP.md            Phase 2 and beyond
 ```
@@ -82,10 +82,16 @@ already a storyboard, so the content package preserves it one-to-one and the
 feed renders one beat per card — which is what makes an hour of course feel like
 a scroll instead of a webinar.
 
+The lesson is **cards, scrolled** — no talking heads, no Next button. Voiceover
+rides on top of a card that already works in silence. The reasoning is in
+`docs/product/NARRATION_PRODUCTION.md`; the short version is that a synthetic
+presenter undercuts material this personal, rendered video makes every copy
+edit cost a re-render, and half the real usage has the sound off.
+
 ```bash
 npm run report:content -w @nms/content   # per-Rep timing + validation
 npm run report:ip -w @nms/content        # every change from a locked script
-npm run shotlist -w @nms/content -- m1-r1  # avatar shot list for one Rep
+npm run narration -w @nms/content -- m1-r1  # voiceover list for one Rep
 ```
 
 ## Two things to read before shipping

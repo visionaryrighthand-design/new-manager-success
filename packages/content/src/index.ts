@@ -141,14 +141,15 @@ export function splitMomentLines(text: string): string[] {
 }
 
 /**
- * Whether this beat needs avatar footage produced for it.
+ * Whether this beat needs a voiceover recorded for it.
  *
- * Narration is the signal — except on a `reading` beat, where the same field
- * holds body copy the learner reads. The shot list and the players both ask
- * this rather than testing `speech` themselves, so a beat can be switched to
- * reading in one place and drop out of production everywhere.
+ * `speech` is the signal — except on a `reading` beat, where the same field
+ * holds copy the learner is meant to read in silence. The narration list and
+ * the players both ask this rather than testing `speech` themselves, so a
+ * beat can be switched to reading in one place and drop out of production
+ * everywhere.
  */
-export function beatNeedsFootage(beat: Beat): boolean {
+export function beatNeedsVoiceover(beat: Beat): boolean {
   return beat.type !== 'reading' && Boolean(beat.speech);
 }
 
@@ -192,22 +193,24 @@ export function validateContent(): string[] {
   const problems: string[] = [];
 
   /*
-   * Two beats pointing at one video file. Nothing errors — the feed plays the
-   * same clip twice and the only symptom is a learner watching a repeat, so
-   * this is caught here rather than by anyone noticing. It happens easily:
-   * duplicating a project in a video tool produces "Copy of X", "Copy of X
-   * (1)", and picking the wrong one from that list is a single misclick.
+   * Two beats pointing at one media file. Nothing errors — the feed plays the
+   * same recording twice and the only symptom is a learner hearing a repeat,
+   * so this is caught here rather than by anyone noticing. It happens easily:
+   * duplicating a project in a production tool produces "Copy of X", "Copy of
+   * X (1)", and picking the wrong one from that list is a single misclick.
    */
-  const seenVideos = new Map<string, string>();
+  const seenMedia = new Map<string, string>();
   for (const rep of allReps()) {
     for (const beat of rep.beats) {
-      if (!beat.videoUrl) continue;
-      const owner = `${rep.number}/${beat.id}`;
-      const first = seenVideos.get(beat.videoUrl);
-      if (first) {
-        problems.push(`${owner}: shares its videoUrl with ${first} — one file on two beats`);
-      } else {
-        seenVideos.set(beat.videoUrl, owner);
+      for (const url of [beat.audioUrl, beat.videoUrl]) {
+        if (!url) continue;
+        const owner = `${rep.number}/${beat.id}`;
+        const first = seenMedia.get(url);
+        if (first) {
+          problems.push(`${owner}: shares a media URL with ${first} — one file on two beats`);
+        } else {
+          seenMedia.set(url, owner);
+        }
       }
     }
   }

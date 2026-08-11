@@ -1,23 +1,39 @@
 'use client';
 
-import { useCallback, useEffect, useMemo, useRef, useState, type CSSProperties } from 'react';
+import {
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+  type CSSProperties,
+} from 'react';
 import Link from 'next/link';
 import type { Beat, Curveball, CurveballVerdict, QuizQuestion, Rep } from '@nms/content';
 import { estimateBeatSeconds, splitListItem, splitMomentLines } from '@nms/content';
 import styles from './RepPlayer.module.css';
 
 /**
- * The feed player.
+ * The feed.
  *
- * One card per beat, advanced by swipe, arrow key, or tap — the TikTok half of
- * the DNA. The pacing decision that matters: cards do NOT auto-advance. A
- * social feed auto-plays because the goal is time-on-app; here the goal is that
- * a specific idea lands, and an idea that scrolls past on a timer while
- * somebody is thinking about their own team has failed. So the learner drives,
- * and the only thing the timer controls is when the "next" affordance appears.
+ * One full-screen card per beat, advanced by scrolling. There is no Next
+ * button: the learner scrolls, the same gesture they use everywhere else on a
+ * phone, and each card snaps into place on its own.
  *
- * Curveballs interrupt the run after their trigger beat. The quiz and Field
- * Note come last, as terminal cards.
+ * Cards do NOT auto-advance. A social feed auto-plays because the goal is
+ * time-on-app; here the goal is that a specific idea lands, and an idea that
+ * scrolls past on a timer while somebody is thinking about their own team has
+ * failed. The learner drives.
+ *
+ * Answers still gate. The feed renders only as far as the first unanswered
+ * Curveball or quiz question, so scrolling simply runs out of content until
+ * the learner responds — a gate made of absence rather than a disabled
+ * button. Answer, and the rest of the feed appears below.
+ *
+ * Every card reads in silence. Voiceover, where a beat has it, plays over the
+ * card rather than replacing it — a manager doing a Rep on a shop floor, a
+ * ward, or a train has the sound off, and a lesson that needs audio excludes
+ * them.
  */
 
 type Card =
@@ -33,51 +49,90 @@ export interface RepPlayerProps {
 }
 
 export function RepPlayer({ rep, nextRepId }: RepPlayerProps) {
-  const cards = useMemo(() => buildCards(rep), [rep]);
-  const [index, setIndex] = useState(0);
+  const allCards = useMemo(() => buildCards(rep), [rep]);
   const [answers, setAnswers] = useState<Record<string, string>>({});
   const [curveballChoices, setCurveballChoices] = useState<Record<string, string>>({});
   const [fieldNote, setFieldNote] = useState('');
+  const [active, setActive] = useState(0);
+  // Browsers block audio until a gesture, so sound stays off until the learner
+  // starts a card themselves. After that it follows them down the feed.
+  const [soundOn, setSoundOn] = useState(false);
+
+  const feedRef = useRef<HTMLDivElement>(null);
   const liveRef = useRef<HTMLParagraphElement>(null);
 
-  const card = cards[index]!;
-  const atEnd = index >= cards.length - 1;
-
-  const go = useCallback(
-    (delta: number) => {
-      setIndex((i) => Math.min(cards.length - 1, Math.max(0, i + delta)));
-    },
-    [cards.length],
+  const cards = useMemo(
+    () => allCards.slice(0, revealedCount(allCards, answers, curveballChoices)),
+    [allCards, answers, curveballChoices],
   );
 
-  // Keyboard: arrows and space. The feed has to work on a laptop too — pilot
-  // clients will demo this on a shared screen before anyone installs an app.
+  const hasAudio = useMemo(
+    () => allCards.some((c) => c.kind === 'beat' && Boolean(c.beat.audioUrl)),
+    [allCards],
+  );
+
+  const scrollTo = useCallback((i: number) => {
+    const feed = feedRef.current;
+    if (!feed) return;
+    const target = feed.children[i];
+    if (target instanceof HTMLElement) target.scrollIntoView({ behavior: 'smooth' });
+  }, []);
+
+  // Which card is on screen. Drives the progress bar, the entry animations,
+  // and which voiceover is playing.
+  useEffect(() => {
+    const feed = feedRef.current;
+    if (!feed) return;
+    const observer = new IntersectionObserver(
+      (entries) => {
+        for (const entry of entries) {
+          if (!entry.isIntersecting) continue;
+          const i = Number((entry.target as HTMLElement).dataset.index);
+          if (!Number.isNaN(i)) setActive(i);
+        }
+      },
+      // A band across the middle of the feed rather than a coverage ratio:
+      // Rep 1.8's recap card is taller than the viewport and would never
+      // reach a 55% threshold, so it would never become the active card.
+      { root: feed, rootMargin: '-45% 0px -45% 0px', threshold: 0 },
+    );
+    for (const child of Array.from(feed.children)) observer.observe(child);
+    return () => observer.disconnect();
+  }, [cards.length]);
+
+  // Arrows and space page the feed. Scrolling is the primary gesture, but the
+  // player has to work from a keyboard — pilot clients will demo this on a
+  // laptop before anyone installs an app.
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
       const target = e.target as HTMLElement | null;
       if (target && /^(INPUT|TEXTAREA)$/.test(target.tagName)) return;
       if (e.key === 'ArrowDown' || e.key === 'ArrowRight' || e.key === ' ') {
         e.preventDefault();
-        go(1);
+        scrollTo(Math.min(cards.length - 1, active + 1));
       } else if (e.key === 'ArrowUp' || e.key === 'ArrowLeft') {
         e.preventDefault();
-        go(-1);
+        scrollTo(Math.max(0, active - 1));
       }
     };
     window.addEventListener('keydown', onKey);
     return () => window.removeEventListener('keydown', onKey);
-  }, [go]);
+  }, [active, cards.length, scrollTo]);
 
   // Announce card changes so a screen-reader user is not left behind by a
   // visual-only transition.
   useEffect(() => {
-    if (liveRef.current) liveRef.current.textContent = `Card ${index + 1} of ${cards.length}`;
-  }, [index, cards.length]);
+    if (liveRef.current) {
+      liveRef.current.textContent = `Card ${active + 1} of ${allCards.length}`;
+    }
+  }, [active, allCards.length]);
 
   const correctCount = rep.quiz.filter((q) => {
     const chosen = q.options.find((o) => o.id === answers[q.id]);
     return chosen?.correct;
   }).length;
+
+  const gated = cards.length < allCards.length && active === cards.length - 1;
 
   return (
     <div className={styles.player} data-surface="feed">
@@ -89,16 +144,26 @@ export function RepPlayer({ rep, nextRepId }: RepPlayerProps) {
           <span className={styles.repNumber}>Rep {rep.number}</span>
           <span className={styles.repTitle}>{rep.title}</span>
         </div>
+        {hasAudio ? (
+          <button
+            type="button"
+            className={styles.soundBtn}
+            aria-pressed={soundOn}
+            onClick={() => setSoundOn((on) => !on)}
+          >
+            {soundOn ? 'Sound on' : 'Sound off'}
+          </button>
+        ) : null}
         <span className={styles.counter}>
-          {index + 1}/{cards.length}
+          {active + 1}/{allCards.length}
         </span>
       </header>
 
       <div className={styles.progress} aria-hidden>
-        {cards.map((c, i) => (
+        {allCards.map((c, i) => (
           <span
             key={i}
-            className={i < index ? styles.segDone : i === index ? styles.segNow : styles.seg}
+            className={i < active ? styles.segDone : i === active ? styles.segNow : styles.seg}
             data-kind={c.kind}
           />
         ))}
@@ -106,68 +171,88 @@ export function RepPlayer({ rep, nextRepId }: RepPlayerProps) {
 
       <p ref={liveRef} className="nms-visually-hidden" role="status" aria-live="polite" />
 
-      <div className={styles.stage}>
-        <CardView
-          card={card}
-          rep={rep}
-          answers={answers}
-          onAnswer={(qid, oid) => setAnswers((a) => ({ ...a, [qid]: oid }))}
-          curveballChoices={curveballChoices}
-          onCurveball={(cid, choiceId) =>
-            setCurveballChoices((c) => (c[cid] ? c : { ...c, [cid]: choiceId }))
-          }
-          fieldNote={fieldNote}
-          onFieldNote={setFieldNote}
-          correctCount={correctCount}
-          nextRepId={nextRepId}
-        />
+      <div className={styles.feed} ref={feedRef}>
+        {cards.map((card, i) => (
+          <section
+            key={cardKey(card, i)}
+            className={styles.page}
+            data-index={i}
+            data-visible={i === active}
+          >
+            <CardView
+              card={card}
+              rep={rep}
+              isActive={i === active}
+              soundOn={soundOn}
+              onSoundOn={() => setSoundOn(true)}
+              answers={answers}
+              onAnswer={(qid, oid) => setAnswers((a) => (a[qid] ? a : { ...a, [qid]: oid }))}
+              curveballChoices={curveballChoices}
+              onCurveball={(cid, choiceId) =>
+                setCurveballChoices((c) => (c[cid] ? c : { ...c, [cid]: choiceId }))
+              }
+              fieldNote={fieldNote}
+              onFieldNote={setFieldNote}
+              correctCount={correctCount}
+              nextRepId={nextRepId}
+            />
+          </section>
+        ))}
       </div>
 
-      <nav className={styles.controls} aria-label="Player controls">
-        <button
-          type="button"
-          className={styles.navBtn}
-          onClick={() => go(-1)}
-          disabled={index === 0}
-        >
-          Back
-        </button>
-        <button
-          type="button"
-          className={`nms-btn ${styles.nextBtn}`}
-          onClick={() => go(1)}
-          disabled={atEnd || !canAdvance(card, answers, curveballChoices)}
-        >
-          {nextLabel(card, atEnd)}
-        </button>
-      </nav>
+      {/* The affordance the Next button used to be. Hidden on the last card,
+          and while a gate is holding the feed — there is nothing below yet. */}
+      <button
+        type="button"
+        className={styles.scrollCue}
+        data-hidden={gated || active >= cards.length - 1}
+        onClick={() => scrollTo(active + 1)}
+        aria-label="Next card"
+      >
+        <span aria-hidden>↓</span>
+      </button>
     </div>
   );
 }
 
-/** Gate advancing only where an answer is the point of the card. */
-function canAdvance(
-  card: Card,
-  answers: Record<string, string>,
-  curveballs: Record<string, string>,
-): boolean {
-  if (card.kind === 'quiz') return Boolean(answers[card.question.id]);
-  if (card.kind === 'curveball') return Boolean(curveballs[card.curveball.id]);
-  return true;
+function cardKey(card: Card, i: number): string {
+  switch (card.kind) {
+    case 'beat':
+      return `b-${card.beat.id}`;
+    case 'curveball':
+      return `c-${card.curveball.id}`;
+    case 'quiz':
+      return `q-${card.question.id}`;
+    default:
+      return `${card.kind}-${i}`;
+  }
 }
 
-function nextLabel(card: Card, atEnd: boolean): string {
-  if (atEnd) return 'Done';
-  if (card.kind === 'fieldNote') return 'Save and continue';
-  if (card.kind === 'quiz') return 'Next question';
-  return 'Next';
+/**
+ * How much of the feed is reachable right now.
+ *
+ * A Curveball or a quiz question is the point of its card, so the feed stops
+ * at the first one that has no answer yet — that card is included, everything
+ * after it is not. Answering re-runs this and the feed grows.
+ */
+function revealedCount(
+  cards: Card[],
+  answers: Record<string, string>,
+  curveballs: Record<string, string>,
+): number {
+  for (let i = 0; i < cards.length; i++) {
+    const card = cards[i]!;
+    if (card.kind === 'quiz' && !answers[card.question.id]) return i + 1;
+    if (card.kind === 'curveball' && !curveballs[card.curveball.id]) return i + 1;
+  }
+  return cards.length;
 }
 
 function buildCards(rep: Rep): Card[] {
   const cards: Card[] = [];
   for (const beat of rep.beats) {
-    // A `hold` is a production direction for the video edit — the feed already
-    // holds indefinitely, because the learner controls the advance.
+    // A `hold` is a production direction for an edit — the feed already holds
+    // indefinitely, because the learner controls the advance.
     if (beat.type !== 'hold') cards.push({ kind: 'beat', beat });
     for (const curveball of rep.curveballs) {
       if (curveball.triggerAfterBeat === beat.id) cards.push({ kind: 'curveball', curveball });
@@ -186,6 +271,9 @@ function buildCards(rep: Rep): Card[] {
 interface CardViewProps {
   card: Card;
   rep: Rep;
+  isActive: boolean;
+  soundOn: boolean;
+  onSoundOn: () => void;
   answers: Record<string, string>;
   onAnswer: (questionId: string, optionId: string) => void;
   curveballChoices: Record<string, string>;
@@ -201,7 +289,14 @@ function CardView(props: CardViewProps) {
 
   switch (card.kind) {
     case 'beat':
-      return <BeatCard beat={card.beat} />;
+      return (
+        <BeatCard
+          beat={card.beat}
+          isActive={props.isActive}
+          soundOn={props.soundOn}
+          onSoundOn={props.onSoundOn}
+        />
+      );
     case 'curveball':
       return (
         <CurveballCard
@@ -235,62 +330,14 @@ function CardView(props: CardViewProps) {
   }
 }
 
-function BeatCard({ beat }: { beat: Beat }) {
-  // Avatar footage, when it exists for this beat. Beats without a clip render
-  // as text, so footage can land Rep by Rep without blocking anything — and
-  // the transcript stays underneath either way, because a manager doing a Rep
-  // on a shop floor or a ward often has the sound off.
-  if (beat.videoUrl) {
-    return (
-      <div className={styles.card}>
-        <video
-          className={styles.video}
-          src={beat.videoUrl}
-          poster={beat.posterUrl}
-          controls
-          playsInline
-          preload="metadata"
-        />
-        {beat.type === 'overlay' && beat.text ? (
-          <p className={styles.overlay}>{beat.text}</p>
-        ) : null}
-        <details className={styles.transcript}>
-          <summary>Transcript</summary>
-          {beat.speech?.split('\n\n').map((para, i) => (
-            <p key={i} className={styles.speech}>
-              {para}
-            </p>
-          ))}
-        </details>
-      </div>
-    );
-  }
+interface BeatCardProps {
+  beat: Beat;
+  isActive: boolean;
+  soundOn: boolean;
+  onSoundOn: () => void;
+}
 
-  if (beat.type === 'reading') {
-    const paragraphs = beat.speech?.split('\n\n').filter(Boolean) ?? [];
-    // The closing paragraph is the payoff in every reading card the scripts
-    // produce — the setup earns it, so it is set apart rather than being the
-    // fourth identical block of grey text.
-    const body = paragraphs.slice(0, -1);
-    const kicker = paragraphs.length > 1 ? paragraphs[paragraphs.length - 1] : undefined;
-    const solo = paragraphs.length === 1 ? paragraphs[0] : undefined;
-
-    return (
-      <article className={styles.reading}>
-        <span className={styles.readingRule} aria-hidden />
-        {beat.text ? <h2 className={styles.readingTitle}>{beat.text}</h2> : null}
-        <p className={styles.readingMeta}>{estimateBeatSeconds(beat)} sec read</p>
-        {solo ? <p className={styles.readingKicker}>{solo}</p> : null}
-        {body.map((para, i) => (
-          <p key={i} className={styles.readingBody}>
-            {para}
-          </p>
-        ))}
-        {kicker ? <p className={styles.readingKicker}>{kicker}</p> : null}
-      </article>
-    );
-  }
-
+function BeatCard({ beat, isActive, soundOn, onSoundOn }: BeatCardProps) {
   if (beat.type === 'moment') {
     const lines = splitMomentLines(beat.text ?? '');
     return (
@@ -310,6 +357,7 @@ function BeatCard({ beat }: { beat: Beat }) {
             </span>
           ))}
         </p>
+        <Voiceover beat={beat} isActive={isActive} soundOn={soundOn} onSoundOn={onSoundOn} />
       </div>
     );
   }
@@ -319,8 +367,7 @@ function BeatCard({ beat }: { beat: Beat }) {
     return (
       <div className={styles.card}>
         {/* Module 1's lists run from three items to seven. Past four they stop
-            fitting a phone at the airy size, so the whole card tightens rather
-            than letting the sticky controls sit on top of the last one. */}
+            fitting a phone at the airy size, so the whole card tightens. */}
         <ol className={styles.buildList} data-density={items.length >= 5 ? 'dense' : 'airy'}>
           {items.map((item, i) => {
             const { label, body, quoted } = splitListItem(item);
@@ -343,24 +390,137 @@ function BeatCard({ beat }: { beat: Beat }) {
             );
           })}
         </ol>
+        <Voiceover beat={beat} isActive={isActive} soundOn={soundOn} onSoundOn={onSoundOn} />
       </div>
     );
   }
 
+  return <ProseCard beat={beat} isActive={isActive} soundOn={soundOn} onSoundOn={onSoundOn} />;
+}
+
+/**
+ * Every card that is mostly words: `avatar`, `overlay`, `reading`.
+ *
+ * They differ in production, not in reading — one has a voiceover, one has a
+ * title over the top of it, one is silent by design — so they share a shape:
+ *
+ *   anchor   the title where the beat has one, otherwise the opening paragraph
+ *   body     the middle
+ *   kicker   the closing paragraph, set apart at full contrast
+ *
+ * That structure is not imposed on the copy; the scripts are already written
+ * that way. b1 opens "Congratulations on your promotion." and closes "The job
+ * you just accepted? Nobody actually trained you for it." Setting those two
+ * apart is typesetting what is already there — which is the difference
+ * between a card and a paragraph of grey text.
+ */
+function ProseCard({ beat, isActive, soundOn, onSoundOn }: BeatCardProps) {
+  const paragraphs = (beat.speech ?? '').split('\n\n').map((p) => p.trim()).filter(Boolean);
+  const title = beat.text;
+
+  // With a title, the whole speech is body-and-kicker. Without one, the
+  // opening paragraph is promoted to carry the card.
+  const lede = title ? undefined : paragraphs[0];
+  const rest = title ? paragraphs : paragraphs.slice(1);
+  const kicker = rest.length > 0 ? rest[rest.length - 1] : undefined;
+  const body = rest.slice(0, -1);
+
   return (
-    <div className={styles.card}>
-      {beat.type === 'overlay' && beat.text ? (
-        <p className={styles.overlay}>{beat.text}</p>
+    <article className={styles.reading}>
+      <span className={styles.readingRule} aria-hidden />
+      {title ? <h2 className={styles.readingTitle}>{title}</h2> : null}
+      {lede ? <p className={styles.readingLede}>{lede}</p> : null}
+      {beat.type === 'reading' && !beat.audioUrl ? (
+        <p className={styles.readingMeta}>{estimateBeatSeconds(beat)} sec read</p>
       ) : null}
-      {beat.speech
-        ?.split('\n\n')
-        .map((para, i) => (
-          <p key={i} className={styles.speech}>
-            {para}
-          </p>
-        ))}
+      <Voiceover beat={beat} isActive={isActive} soundOn={soundOn} onSoundOn={onSoundOn} />
+      {body.map((para, i) => (
+        <p key={i} className={styles.readingBody}>
+          {para}
+        </p>
+      ))}
+      {kicker ? <p className={styles.readingKicker}>{kicker}</p> : null}
+    </article>
+  );
+}
+
+/**
+ * Voiceover for one beat.
+ *
+ * Renders nothing when the beat has no audio, which is every beat until a
+ * recording is wired in — the card is the product and this rides on top.
+ *
+ * The visible card's audio plays automatically, but only after the learner has
+ * pressed play once. Browsers block sound before a gesture, and firing a
+ * silently-rejected play() on every scroll is worse than not trying.
+ */
+function Voiceover({ beat, isActive, soundOn, onSoundOn }: BeatCardProps) {
+  const ref = useRef<HTMLAudioElement>(null);
+  const [playing, setPlaying] = useState(false);
+  const [elapsed, setElapsed] = useState(0);
+  const [total, setTotal] = useState(0);
+
+  useEffect(() => {
+    const el = ref.current;
+    if (!el) return;
+    if (isActive && soundOn) {
+      // Rejects when the browser has not seen a gesture yet. That is expected,
+      // not an error — the learner presses play and it follows them after.
+      void el.play().catch(() => {});
+    } else {
+      el.pause();
+      if (!isActive) el.currentTime = 0;
+    }
+  }, [isActive, soundOn]);
+
+  if (!beat.audioUrl) return null;
+
+  const pct = total > 0 ? (elapsed / total) * 100 : 0;
+
+  const toggle = () => {
+    const el = ref.current;
+    if (!el) return;
+    if (el.paused) {
+      onSoundOn();
+      void el.play().catch(() => {});
+    } else {
+      el.pause();
+    }
+  };
+
+  return (
+    <div className={styles.voiceover}>
+      <button
+        type="button"
+        className={styles.voiceoverBtn}
+        onClick={toggle}
+        aria-label={playing ? 'Pause narration' : 'Play narration'}
+      >
+        <span aria-hidden>{playing ? '❙❙' : '▶'}</span>
+      </button>
+      <span className={styles.voiceoverTrack} aria-hidden>
+        <span className={styles.voiceoverFill} style={{ width: `${pct}%` }} />
+      </span>
+      <span className={styles.voiceoverTime} aria-hidden>
+        {formatTime(total > 0 ? total - elapsed : estimateBeatSeconds(beat))}
+      </span>
+      <audio
+        ref={ref}
+        src={beat.audioUrl}
+        preload="metadata"
+        onPlay={() => setPlaying(true)}
+        onPause={() => setPlaying(false)}
+        onEnded={() => setPlaying(false)}
+        onTimeUpdate={(e) => setElapsed(e.currentTarget.currentTime)}
+        onLoadedMetadata={(e) => setTotal(e.currentTarget.duration || 0)}
+      />
     </div>
   );
+}
+
+function formatTime(seconds: number): string {
+  const whole = Math.max(0, Math.round(seconds));
+  return `${Math.floor(whole / 60)}:${String(whole % 60).padStart(2, '0')}`;
 }
 
 const VERDICT_LABEL: Record<CurveballVerdict, string> = {

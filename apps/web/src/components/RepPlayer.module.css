@@ -4,13 +4,11 @@
  */
 
 /*
- * Fixed to the viewport, with the stage scrolling inside it. The page itself
- * never scrolls: Module 1's longest build-list is seven items and does not fit
- * a phone, and a sticky control bar over a scrolling page half-erases whatever
- * line it lands on. Scrolling the stage instead keeps the controls clear of
- * the content at every scroll position.
+ * Fixed to the viewport, with the feed scrolling inside it. The page itself
+ * never scrolls — the feed does, one card at a time, snapping into place.
  */
 .player {
+  position: relative;
   display: flex;
   flex-direction: column;
   height: 100dvh;
@@ -34,7 +32,7 @@
 }
 .back:hover { color: var(--nms-color-fg); }
 
-.headerText { display: flex; flex-direction: column; min-width: 0; }
+.headerText { display: flex; flex-direction: column; min-width: 0; margin-inline-end: auto; }
 
 .repNumber {
   font-family: var(--nms-font-mono);
@@ -54,7 +52,6 @@
 }
 
 .counter {
-  margin-inline-start: auto;
   font-family: var(--nms-font-mono);
   font-size: 0.75rem;
   color: var(--nms-color-fg-subtle);
@@ -80,20 +77,48 @@
 .seg[data-kind='curveball'], .segNow[data-kind='curveball'] { background: var(--nms-color-alert); }
 .seg[data-kind='curveball'] { opacity: 0.35; }
 
-.stage {
+.feed {
   flex: 1;
   min-height: 0;
-  overflow-y: auto;
-  overscroll-behavior: contain;
+  overflow-y: scroll;
+  overscroll-behavior-y: contain;
+  scroll-snap-type: y mandatory;
+  scrollbar-width: none;
+}
+.feed::-webkit-scrollbar { display: none; }
+
+/*
+ * One card, one screen. `always` stops a fast flick from skipping a card —
+ * every beat is meant to be seen, and momentum scrolling past three of them
+ * is the failure mode of a feed used for teaching.
+ *
+ * A card taller than the viewport (Rep 1.8's seven-item recap) is a snap area
+ * larger than the snapport, which the browser lets you scroll through freely
+ * rather than fighting. That is why `mandatory` is safe here.
+ */
+.page {
+  scroll-snap-align: start;
+  scroll-snap-stop: always;
+  min-height: 100%;
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: var(--nms-space-4) var(--nms-space-5);
+  padding: var(--nms-space-5) var(--nms-space-5) var(--nms-space-10);
 }
 
-/* Centred when it fits, top-aligned when it does not — otherwise a card taller
-   than the stage has its first item clipped above the scroll origin. */
-.stage > * { margin-block: auto; }
+/*
+ * Cards compose themselves as they arrive, not all at once on mount.
+ *
+ * Everything on a card animates with `both` fill, so holding the animation
+ * paused holds it at its opening frame — off-screen, faded out, rule not yet
+ * drawn. Scrolling a card into view is what starts it. That is the mechanic
+ * that makes the feed feel built rather than merely long.
+ */
+.page[data-visible='false'] *,
+.page[data-visible='false'] *::before,
+.page[data-visible='false'] *::after {
+  animation-play-state: paused;
+}
 
 .card {
   width: 100%;
@@ -170,6 +195,22 @@
   text-transform: uppercase;
   color: var(--nms-color-fg-subtle);
   margin: var(--nms-space-4) 0 var(--nms-space-5);
+}
+
+/*
+ * The opening paragraph, on a card that has no title. It is the anchor: the
+ * thing a learner reads in the first half-second that decides whether they
+ * keep going. Display face, near-headline size, full contrast.
+ */
+.readingLede {
+  font-family: var(--nms-font-display);
+  font-size: clamp(1.5rem, 1.15rem + 1.5vw, 1.85rem);
+  line-height: 1.18;
+  font-weight: 700;
+  letter-spacing: -0.03em;
+  color: var(--nms-color-fg);
+  margin: 0 0 var(--nms-space-5);
+  text-wrap: balance;
 }
 
 .readingBody {
@@ -570,28 +611,100 @@
 
 /* ---- Controls ---------------------------------------------------------- */
 
-.controls {
-  flex-shrink: 0;
+/*
+ * The affordance the Next button used to be. It does not advance the feed so
+ * much as say "there is more down there" — which a scroll feed has to state,
+ * because a full-screen card gives no visual hint that anything follows.
+ */
+.scrollCue {
+  position: absolute;
+  bottom: max(var(--nms-space-5), env(safe-area-inset-bottom));
+  left: 50%;
+  translate: -50% 0;
+  width: 2.75rem;
+  height: 2.75rem;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  border: 1px solid var(--nms-color-border-strong);
+  background: color-mix(in srgb, var(--nms-color-bg) 82%, transparent);
+  backdrop-filter: blur(6px);
+  color: var(--nms-color-fg-muted);
+  font-size: 1rem;
+  cursor: pointer;
+  animation: nudge 2.4s var(--nms-ease-standard) infinite;
+  transition: opacity var(--nms-duration-base) var(--nms-ease-standard);
+}
+.scrollCue:hover { color: var(--nms-color-fg); }
+.scrollCue[data-hidden='true'] { opacity: 0; pointer-events: none; }
+
+@keyframes nudge {
+  0%, 68%, 100% { transform: none; }
+  80% { transform: translateY(4px); }
+}
+
+/* The global sound switch. Audio follows the learner down the feed once on. */
+.soundBtn {
+  margin-inline-start: auto;
+  padding: var(--nms-space-1) var(--nms-space-3);
+  border-radius: var(--nms-radius-pill);
+  border: 1px solid var(--nms-color-border);
+  background: transparent;
+  font-family: var(--nms-font-mono);
+  font-size: 0.68rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--nms-color-fg-subtle);
+  cursor: pointer;
+}
+.soundBtn[aria-pressed='true'] {
+  color: var(--nms-color-accent);
+  border-color: color-mix(in srgb, var(--nms-color-accent) 45%, transparent);
+}
+
+/* ---- Voiceover --------------------------------------------------------- */
+
+.voiceover {
   display: flex;
   align-items: center;
   gap: var(--nms-space-3);
-  padding: var(--nms-space-5);
-  padding-bottom: max(var(--nms-space-5), env(safe-area-inset-bottom));
-  background: var(--nms-color-bg);
-  border-top: 1px solid var(--nms-color-border);
+  margin: var(--nms-space-4) 0 var(--nms-space-5);
 }
 
-.navBtn {
-  padding: var(--nms-space-3) var(--nms-space-5);
-  border-radius: var(--nms-radius-pill);
-  border: 1px solid var(--nms-color-border-strong);
-  background: transparent;
-  color: var(--nms-color-fg-muted);
+.voiceoverBtn {
+  flex-shrink: 0;
+  width: 2.25rem;
+  height: 2.25rem;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  border: none;
+  background: var(--nms-color-accent);
+  color: var(--nms-color-on-accent);
+  font-size: 0.7rem;
   cursor: pointer;
 }
-.navBtn:disabled { opacity: 0.35; cursor: not-allowed; }
 
-.nextBtn { margin-inline-start: auto; min-width: 9rem; }
+.voiceoverTrack {
+  flex: 1;
+  height: 2px;
+  border-radius: 2px;
+  background: var(--nms-color-border);
+  overflow: hidden;
+}
+
+.voiceoverFill {
+  display: block;
+  height: 100%;
+  background: var(--nms-color-accent);
+}
+
+.voiceoverTime {
+  font-family: var(--nms-font-mono);
+  font-size: 0.7rem;
+  font-variant-numeric: tabular-nums;
+  color: var(--nms-color-fg-subtle);
+}
 
 /* ---- Avatar footage ----------------------------------------------------- */
 
