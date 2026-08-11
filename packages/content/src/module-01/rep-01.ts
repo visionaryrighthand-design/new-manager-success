@@ -25,6 +25,11 @@ export const rep01: Rep = {
       direction: 'full screen, direct to camera',
       speech:
         "Congratulations on your promotion.\n\nYou've worked hard for this. You've been performing at a high level, and someone noticed. That's real, and it matters.\n\nBut here's what most people don't tell you when they hand you that new title:\n\nThe job you just accepted? Nobody actually trained you for it.",
+      // Signed URL against a private bucket. It works, but see the hosting
+      // note in NARRATION_PRODUCTION.md — every learner has to read this file
+      // anyway, so a public bucket is the simpler shape and drops the token.
+      audioUrl:
+        'https://rhteswkgmndgijpllvjt.supabase.co/storage/v1/object/sign/Audio/New%20Manager%20Success%20Module%201/m1-r1-b1.mp3?token=eyJraWQiOiJzdG9yYWdlLXVybC1zaWduaW5nLWtleV8wZTE3ZmRiMi02ZjYzLTQyOGUtODIxMS0wNjRiNTNhNzlkZDYiLCJhbGciOiJIUzI1NiJ9.eyJ1cmwiOiJBdWRpby9OZXcgTWFuYWdlciBTdWNjZXNzIE1vZHVsZSAxL20xLXIxLWIxLm1wMyIsInNjb3BlIjoiZG93bmxvYWQiLCJpYXQiOjE3ODY0NzE5NTMsImV4cCI6MjEwMTgzMTk1M30.6tUwWxPTz00KeoP6HlU6lLPOYLtRjQ2fBotDGHwwAO8',
     },
     {
       // A reading card by decision, not by omission — see the note on
@@ -43,6 +48,8 @@ export const rep01: Rep = {
       direction: 'full screen',
       speech:
         "Let's talk about what actually changed when you got promoted.\n\nBefore, your success depended almost entirely on you. Your effort, your skill, your output. You controlled it. If you worked harder or smarter, results improved. Simple equation.\n\nNow? Your success depends on a group of people — people with different strengths, different motivations, and different ideas about what a productive day looks like. You can't do the work for them. You have to lead them to do it well.\n\nThat's a fundamentally different challenge. And most new managers walk into it believing at least one of these three things.",
+      audioUrl:
+        'https://rhteswkgmndgijpllvjt.supabase.co/storage/v1/object/sign/Audio/New%20Manager%20Success%20Module%201/m1-r1-b3.mp3?token=eyJraWQiOiJzdG9yYWdlLXVybC1zaWduaW5nLWtleV8wZTE3ZmRiMi02ZjYzLTQyOGUtODIxMS0wNjRiNTNhNzlkZDYiLCJhbGciOiJIUzI1NiJ9.eyJ1cmwiOiJBdWRpby9OZXcgTWFuYWdlciBTdWNjZXNzIE1vZHVsZSAxL20xLXIxLWIzLm1wMyIsInNjb3BlIjoiZG93bmxvYWQiLCJpYXQiOjE3ODY0NzIwMzYsImV4cCI6MjEwMTgzMjAzNn0.Yu46sSwH1S25fqulTPCGygOJpkchf8qDZRvYyzVcZFA',
     },
     {
       id: 'b4',
@@ -61,6 +68,8 @@ export const rep01: Rep = {
       direction: 'full screen',
       speech:
         "All three of those will get you in trouble.\n\nYour old manager's style was built for their context — not yours. Your track record impresses leadership, not necessarily your team. And trying to do both jobs at once usually means doing neither one well.\n\nHere's what happens when a manager steps in without the right preparation.",
+      audioUrl:
+        'https://rhteswkgmndgijpllvjt.supabase.co/storage/v1/object/sign/Audio/New%20Manager%20Success%20Module%201/m1-r1-b6.mp3?token=eyJraWQiOiJzdG9yYWdlLXVybC1zaWduaW5nLWtleV8wZTE3ZmRiMi02ZjYzLTQyOGUtODIxMS0wNjRiNTNhNzlkZDYiLCJhbGciOiJIUzI1NiJ9.eyJ1cmwiOiJBdWRpby9OZXcgTWFuYWdlciBTdWNjZXNzIE1vZHVsZSAxL20xLXIxLWI2Lm1wMyIsInNjb3BlIjoiZG93bmxvYWQiLCJpYXQiOjE3ODY0NzIwNDksImV4cCI6MjEwMTgzMjA0OX0.GkexBiIs__7Qo2JptK0ngaoUvsmmrD0Eddu-e25rz0M',
     },
     {
       id: 'b7',
@@ -85,6 +94,8 @@ export const rep01: Rep = {
       direction: 'full screen',
       speech:
         "That's a significant responsibility. But it's also a significant opportunity — because when you get this right, you can build something remarkable.\n\nHere's the reframe this entire program is built on.\n\nYou were promoted because you were great at your job. That's your starting point — not your finish line. The skills that made you an exceptional doer are different from the skills that will make you an exceptional manager.",
+      audioUrl:
+        'https://rhteswkgmndgijpllvjt.supabase.co/storage/v1/object/sign/Audio/New%20Manager%20Success%20Module%201/m1-r1-b10.mp3?token=eyJraWQiOiJzdG9yYWdlLXVybC1zaWduaW5nLWtleV8wZTE3ZmRiMi02ZjYzLTQyOGUtODIxMS0wNjRiNTNhNzlkZDYiLCJhbGciOiJIUzI1NiJ9.eyJ1cmwiOiJBdWRpby9OZXcgTWFuYWdlciBTdWNjZXNzIE1vZHVsZSAxL20xLXIxLWIxMC5tcDMiLCJzY29wZSI6ImRvd25sb2FkIiwiaWF0IjoxNzg2NDcxOTc1LCJleHAiOjIxMDE4MzE5NzV9.zji5bXZ8j2S4vYPx4-PF4MBFcljm6IOD8WAaWb8URro',
     },
     {
       id: 'b11',
@@ -92,6 +103,8 @@ export const rep01: Rep = {
       text: 'Those skills can be learned. That’s what this program is for.',
       speech:
         "You're not behind. You're not failing. You're at the beginning of a new game — and now you know the rules are different.",
+      audioUrl:
+        'https://rhteswkgmndgijpllvjt.supabase.co/storage/v1/object/sign/Audio/New%20Manager%20Success%20Module%201/m1-r1-b11.mp3?token=eyJraWQiOiJzdG9yYWdlLXVybC1zaWduaW5nLWtleV8wZTE3ZmRiMi02ZjYzLTQyOGUtODIxMS0wNjRiNTNhNzlkZDYiLCJhbGciOiJIUzI1NiJ9.eyJ1cmwiOiJBdWRpby9OZXcgTWFuYWdlciBTdWNjZXNzIE1vZHVsZSAxL20xLXIxLWIxMS5tcDMiLCJzY29wZSI6ImRvd25sb2FkIiwiaWF0IjoxNzg2NDcxOTk4LCJleHAiOjIxMDE4MzE5OTh9.hVnM1g2Oik5Y3LLojYZ9JbjhrvkZUjFh-pvDvGdsW1Y',
     },
     {
       id: 'b12',
@@ -99,6 +112,8 @@ export const rep01: Rep = {
       direction: 'full screen, direct close',
       speech:
         "In the next section, we're going to dig into exactly why high performers often struggle the most when they step into management — and what the shift from doing to leading actually looks like in practice.\n\nLet's keep going.",
+      audioUrl:
+        'https://rhteswkgmndgijpllvjt.supabase.co/storage/v1/object/sign/Audio/New%20Manager%20Success%20Module%201/m1-r1-b12.mp3?token=eyJraWQiOiJzdG9yYWdlLXVybC1zaWduaW5nLWtleV8wZTE3ZmRiMi02ZjYzLTQyOGUtODIxMS0wNjRiNTNhNzlkZDYiLCJhbGciOiJIUzI1NiJ9.eyJ1cmwiOiJBdWRpby9OZXcgTWFuYWdlciBTdWNjZXNzIE1vZHVsZSAxL20xLXIxLWIxMi5tcDMiLCJzY29wZSI6ImRvd25sb2FkIiwiaWF0IjoxNzg2NDcyMDE0LCJleHAiOjIxMDE4MzIwMTR9.mbt10H91vhjmGyYxCygr1O-gz-wQ2wglpElAVGpf1_U',
     },
   ],
 

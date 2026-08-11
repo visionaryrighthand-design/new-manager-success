@@ -1,6 +1,6 @@
 # Voiceover list — New Manager Success, Module 1
 
-**57 takes · ~23 min of audio · 3493 words**
+**51 takes · ~21 min of audio · 3156 words**
 
 Record **one take per beat**, not one track per Rep. The app plays a card
 per beat and a Curveball interrupts between them, so a single long track
@@ -17,7 +17,7 @@ Lines are flattened to one paragraph and ready to read. Do not re-wrap them.
 
 ## Rep 1.1 — The Invisible Promotion
 
-6 takes · 135s · 337 words
+0 takes · 0s · 0 words
 
 
 ### `m1-r1-b1`  ·  ~20s  ·  50 words

@@ -236,11 +236,33 @@ describe('media wiring', () => {
 
   test('every wired file is a direct URL, not a share page', () => {
     for (const { where, url } of mediaUrls()) {
+      // The extension has to be read off the path, not the whole string: a
+      // signed URL carries the token in the query, so the last characters are
+      // never the file type. What this is actually rejecting is a link to a
+      // player page, which has no media extension in its path at all.
+      const path = new URL(url).pathname;
       assert.match(
-        url,
-        /^https:\/\/\S+\.(mp3|m4a|aac|wav|ogg|mp4|m3u8)$/,
+        path,
+        /\.(mp3|m4a|aac|wav|ogg|mp4|m3u8)$/,
         `${where}: not a direct media URL`,
       );
+    }
+  });
+
+  test('an audio file is named after the beat it plays on', () => {
+    // Four video files were once wired in named some variant of "From Solo
+    // Star to Team Leader," and picking the right one from that list was a
+    // coin flip. The take id is the filename; this keeps it that way.
+    for (const rep of module01.reps) {
+      for (const beat of rep.beats) {
+        if (!beat.audioUrl) continue;
+        const file = decodeURIComponent(new URL(beat.audioUrl).pathname).split('/').pop();
+        assert.equal(
+          file,
+          `${rep.id}-${beat.id}.mp3`,
+          `${rep.number}/${beat.id}: file is "${file}"`,
+        );
+      }
     }
   });
 

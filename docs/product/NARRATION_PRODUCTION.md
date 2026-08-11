@@ -87,7 +87,22 @@ The app needs a **direct, streamable URL** — `.mp3`, `.m4a`, `.aac`, `.wav` or
 `.ogg`. It has to load in a bare `<audio src="…">`. If it only works inside a
 vendor's own player page, it is not a direct URL, and a test will reject it.
 
-Supabase public storage works and is what Module 1's files sit on today.
+Supabase storage works and is where Module 1's files sit today.
+
+**Prefer a public bucket over signed URLs.** Module 1's audio currently lives
+in a private `Audio` bucket, reached by long-lived signed URLs. It works, but
+it is the wrong shape for this content: every learner has to be able to read
+these files anyway, so a private bucket buys no privacy — it just adds a token
+to every URL, which then lives in the repository and expires on a date nobody
+is tracking (currently 2036). A public bucket gives a shorter, stable URL and
+one less thing that can quietly stop working:
+
+```
+https://…/storage/v1/object/public/Audio/…/m1-r1-b1.mp3
+```
+
+Switching is a bucket setting plus re-pasting six URLs. Worth doing before
+there are fifty-seven.
 
 **Name the file after the beat.** `m1-r1-b6.mp3`, not the working title of the
 session. Four video files were once wired in named some variant of "From Solo
