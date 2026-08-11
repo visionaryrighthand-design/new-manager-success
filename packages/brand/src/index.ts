@@ -2,6 +2,7 @@ export * from './color.js';
 export * from './typography.js';
 export * from './layout.js';
 export * from './voice.js';
+export * from './mark.js';
 
 import { darkColors, lightColors } from './color.js';
 import { space, radius, motion } from './layout.js';

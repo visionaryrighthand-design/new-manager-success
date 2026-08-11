@@ -1,41 +1,31 @@
-import { brand } from '@nms/brand';
+import { brand, markViewBox, markTransform, markLetterPath, markArrowPath } from '@nms/brand';
 
 /**
  * The mark, inline.
  *
- * Inlined rather than loaded from the brand package as an <img> so it can take
- * colour from the theme and never shows a blank box on a cold cache. Geometry
- * is identical to `packages/brand/assets/logo-mark.svg` — if that file is
- * replaced with the source vector, replace these paths to match.
+ * Path data is traced from the real brush artwork and lives in
+ * `@nms/brand` (`packages/brand/src/mark.ts`), shared with the native app so
+ * the geometry has one definition. Inlined rather than an <img> so the
+ * letterform can take its colour from the theme — white on the dark feed, ink
+ * on the light marketing pages — and so the header never shows a blank box on
+ * a cold cache.
  */
 export function LogoMark({ size = 32, title }: { size?: number; title?: string }) {
   return (
     <svg
-      width={size}
+      width={(size * markViewBox.width) / markViewBox.height}
       height={size}
-      viewBox="0 0 64 64"
+      viewBox={`0 0 ${markViewBox.width} ${markViewBox.height}`}
       fill="none"
       role={title ? 'img' : 'presentation'}
       aria-hidden={title ? undefined : true}
       aria-label={title}
     >
       {title ? <title>{title}</title> : null}
-      <path
-        d="M13 56 L22 16 L34 50 L39 33"
-        stroke="var(--nms-color-fg)"
-        strokeWidth="10.5"
-        fill="none"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-      />
-      <path
-        d="M33 46 L47 19"
-        stroke="var(--nms-color-accent)"
-        strokeWidth="9"
-        fill="none"
-        strokeLinecap="round"
-      />
-      <path d="M55 6.5 L37 12 L46.5 19 L44 31 Z" fill="var(--nms-color-accent)" />
+      <g transform={markTransform}>
+        <path d={markLetterPath} fill="var(--nms-color-fg)" />
+        <path d={markArrowPath} fill="var(--nms-color-accent)" />
+      </g>
     </svg>
   );
 }

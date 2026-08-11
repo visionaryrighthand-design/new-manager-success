@@ -17,11 +17,15 @@
  */
 
 /**
- * ⚠ BLUE IS APPROXIMATE. #1E6BF0 is read off the supplied logo raster, not
- * sampled from source artwork. Replace with the exact value once the vector
- * lands — it is defined once, here, and everything else derives from it.
+ * Sampled from the supplied artwork: the single most common blue pixel value
+ * in packages/brand/assets/source/mark.png — the flat fill of the arrow,
+ * before anti-aliasing. A near-pure blue with almost no red in it.
+ *
+ * The mode rather than the median, deliberately: a median over all blue pixels
+ * gets dragged toward the edges, where the stroke blends into black. Defined
+ * once; the ramp below and every token derive from it.
  */
-export const BRAND_BLUE = '#1E6BF0';
+export const BRAND_BLUE = '#0163FA';
 
 /** Raw ramps. Do not consume directly in product code — use `theme`. */
 export const ramp = {
@@ -44,16 +48,16 @@ export const ramp = {
   },
   /** The brand blue and its ramp. */
   blue: {
-    900: '#0A1D4E',
-    800: '#0F2C7A',
-    700: '#143D9B',
-    600: '#1652CC',
-    500: '#1E6BF0',
-    400: '#4E8BFF',
-    300: '#86ADFF',
-    200: '#B5C9FF',
-    100: '#DAE5FF',
-    50: '#EEF3FF',
+    900: '#001C4E',
+    800: '#002B7C',
+    700: '#003CA5',
+    600: '#0B4FD1',
+    500: '#0163FA',
+    400: '#4287FF',
+    300: '#7FAAFF',
+    200: '#B2CBFF',
+    100: '#D8E5FF',
+    50: '#EDF3FF',
   },
   /**
    * Alert. NOT a brand colour — a functional one, used only where blue would
@@ -144,7 +148,7 @@ export const darkColors: ThemeColors = {
   onAccent: ramp.ink[0],
   accent: ramp.blue[500],
   accentHover: ramp.blue[400],
-  accentSoft: 'rgba(30, 107, 240, 0.18)',
+  accentSoft: 'rgba(1, 99, 250, 0.18)',
   bright: ramp.ink[0],
   onBright: ramp.ink[1000],
   alert: ramp.alert[500],
