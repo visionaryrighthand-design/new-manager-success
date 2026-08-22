@@ -179,55 +179,7 @@ export const rep06: Rep = {
     },
   ],
 
-  curveballs: [
-    {
-      id: 'm1-r6-cb1',
-      triggerAfterBeat: 'b8',
-      skill: 'Reading readiness on a specific task',
-      scenario:
-        'Your most reliable person (five years in the role, never needs chasing) is running her first client presentation on Thursday. She has asked you three clarifying questions today, which is three more than she normally asks in a month.',
-      prompt: 'Where is she, and what does she need?',
-      choices: [
-        {
-          id: 'a',
-          text: 'Level 4. She is your strongest performer. Give her autonomy and stay out of the way.',
-          verdict: 'costly',
-          response:
-            'This is the trap: reading the person instead of the task. She is a Level 4 on her usual work and something much lower on this. Autonomy right now reads as abandonment.',
-        },
-        {
-          id: 'b',
-          text: 'Somewhere around Level 2 on this task. Coach: explain the why, work the problem together, celebrate progress.',
-          verdict: 'best',
-          response:
-            'She did not get worse at her job. She moved to a new task. The questions are the signal, meet her where she is on this one thing, then dial back up.',
-        },
-        {
-          id: 'c',
-          text: 'Level 1. Write her a script and sit in on the rehearsal to correct her.',
-          verdict: 'costly',
-          response:
-            'Over-correcting is its own failure. She has the underlying skill and the motivation, treating her like a beginner will land as a loss of confidence in her.',
-        },
-        {
-          id: 'd',
-          text: 'Ask her directly how much involvement she wants from you this week.',
-          verdict: 'workable',
-          response:
-            'A genuinely good move and often underused. The limit: people low on confidence routinely under-ask. Take the answer as data, not as the final call.',
-        },
-      ],
-    },
-  ],
 
-  fieldNote: {
-    id: 'm1-r6-fn1',
-    topic: 'Readiness and adapting your style',
-    prompt:
-      'Pick one person on your team and one specific task they are working on right now. Where are they on the dial for that task, and are you managing them that way?',
-    placeholder: 'The second half of the question is the one that matters.',
-    suggestedMinChars: 90,
-  },
 
   quiz: [
     {

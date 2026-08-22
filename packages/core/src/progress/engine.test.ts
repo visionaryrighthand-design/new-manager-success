@@ -39,42 +39,6 @@ describe('applyActivity', () => {
     assert.equal(p.xp, XP.repCompleted);
   });
 
-  test('a costly Curveball choice still earns XP', () => {
-    // Deliberate: charging for a wrong call teaches learners to avoid hard ones.
-    let p = emptyProgress('e1', START);
-    p = applyActivity(
-      p,
-      event({
-        type: 'curveball-answered',
-        repId: 'm1-r1',
-        targetId: 'm1-r1-cb1',
-        verdict: 'costly',
-        at: at('2026-08-10'),
-      }),
-    );
-    assert.equal(p.xp, XP.curveball.costly);
-    assert.ok(XP.curveball.best > XP.curveball.costly, 'but the best call is still worth more');
-  });
-
-  test('judgment is weighted above recall', () => {
-    assert.ok(XP.curveball.best > XP.quizQuestionCorrect);
-    assert.ok(XP.fieldNoteSaved > XP.quizQuestionCorrect);
-  });
-
-  test('re-answering a Curveball does not farm XP', () => {
-    let p = emptyProgress('e1', START);
-    const e = event({
-      type: 'curveball-answered',
-      repId: 'm1-r1',
-      targetId: 'm1-r1-cb1',
-      verdict: 'best',
-      at: at('2026-08-10'),
-    });
-    p = applyActivity(p, e);
-    p = applyActivity(p, { ...e, id: 'again', verdict: 'workable' });
-    assert.equal(p.xp, XP.curveball.best);
-  });
-
   test('every activity type records an active date, not just completions', () => {
     // The inactivity spec is explicit that opening a section counts.
     let p = emptyProgress('e1', START);
@@ -93,17 +57,29 @@ describe('recordQuizAttempt', () => {
   test('scores a perfect attempt at 100 and passes it', () => {
     const { attempt } = recordQuizAttempt(emptyProgress('e1', START), 'm1-r1', allCorrect(), at('2026-08-10'));
     assert.equal(attempt.score, 100);
-    assert.equal(attempt.correctCount, 3);
+    // Derived, not hardcoded: the quiz grew from 3 questions to 10 when the
+    // approved quiz document landed, and it will grow again for 1.3 onward.
+    assert.equal(attempt.correctCount, module01.reps[0]!.quiz.length);
     assert.equal(attempt.passed, true);
   });
 
-  test('2 of 3 is 67% and fails the 85% threshold', () => {
+  test('one wrong answer is scored proportionally and can still pass', () => {
+    const total = module01.reps[0]!.quiz.length;
     const answers = allCorrect();
     const q = module01.reps[0]!.quiz[0]!;
     answers[0] = { questionId: q.id, optionId: q.options.find((o) => !o.correct)!.id };
-    const { attempt } = recordQuizAttempt(emptyProgress('e1', START), 'm1-r1', answers, at('2026-08-10'));
-    assert.equal(attempt.score, 67);
-    assert.equal(attempt.passed, false);
+
+    const { attempt } = recordQuizAttempt(
+      emptyProgress('e1', START),
+      'm1-r1',
+      answers,
+      at('2026-08-10'),
+    );
+    assert.equal(attempt.correctCount, total - 1);
+    assert.equal(attempt.score, Math.round(((total - 1) / total) * 100));
+    // 9 of 10 clears the 85% bar; 2 of 3 did not. The threshold did not move,
+    // the quiz got long enough for one mistake to stop being fatal.
+    assert.equal(attempt.passed, attempt.score >= 85);
   });
 
   test('unanswered questions count as wrong rather than throwing', () => {

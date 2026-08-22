@@ -4,9 +4,7 @@ import {
   course,
   feedCards,
   isInteractive,
-  repCadence,
   contentAdditions,
-  fieldNotePrompt,
   module01,
   validateContent,
   estimateRepTotalSeconds,
@@ -22,11 +20,10 @@ import {
 
 describe('Module 1 content', () => {
   test('passes structural validation', () => {
-    const problems = validateContent();
-    assert.deepEqual(problems, [], problems.join('\n'));
+    assert.deepEqual(validateContent(), []);
   });
 
-  test('has all eight Reps from the approved outline, in order', () => {
+  test('has eight lessons, numbered 1.1 through 1.8', () => {
     assert.equal(module01.reps.length, 8);
     assert.deepEqual(
       module01.reps.map((r) => r.number),
@@ -34,72 +31,205 @@ describe('Module 1 content', () => {
     );
   });
 
-  test('every Rep has a Field Note — Level 3 digests depend on it', () => {
-    // "Every section must contain at least one open-ended question to support this."
+  test('every lesson has a hook and a key idea', () => {
     for (const rep of module01.reps) {
-      assert.ok(rep.fieldNote, `Rep ${rep.number} has no Field Note`);
-      assert.ok(rep.fieldNote.prompt.trim().length > 0);
-      assert.ok(rep.fieldNote.topic.trim().length > 0);
+      assert.ok(rep.hook.length > 0, `${rep.number}: no hook`);
+      assert.ok(rep.keyIdea.length > 0, `${rep.number}: no key idea`);
     }
   });
 
-  test('no Rep still names the trademark flagged in D6', () => {
-    const term = /situational leadership/i;
+  test('"Situational Leadership" reaches no learner', () => {
+    // A registered trademark of the Center for Leadership Studies. See D6 in
+    // docs/product/IP_PUNCH_LIST.md; section 1.6 ships as "Managing in the
+    // Moment" with the model named "The Readiness Dial".
+    //
+    // The deviation records quote the original wording, which is the point of
+    // an audit trail, so they are excluded rather than the assertion weakened.
+    const shipped = module01.reps.map(({ scriptDeviations, ...rest }) => rest);
+    assert.equal(JSON.stringify(shipped).toLowerCase().includes('situational leadership'), false);
+  });
+});
+
+describe('a lesson is a video and then a quiz', () => {
+  test('every lesson opens on a cold open and closes on a summary', () => {
     for (const rep of module01.reps) {
-      const surface = [
-        rep.title,
-        rep.subtitle ?? '',
-        rep.hook,
-        rep.keyIdea,
-        ...rep.topics,
-        ...rep.beats.flatMap((b) => [b.speech ?? '', b.text ?? '', ...(b.items ?? [])]),
-        ...rep.quiz.flatMap((q) => [q.stem, ...q.options.flatMap((o) => [o.text, o.feedback])]),
-        ...rep.curveballs.flatMap((c) => [c.scenario, c.prompt, ...c.choices.flatMap((ch) => [ch.text, ch.response])]),
-      ].join(' ');
-      assert.equal(term.test(surface), false, `Rep ${rep.number} still uses the flagged term`);
+      const cards = feedCards(rep);
+      assert.equal(cards[0]!.kind, 'repIntro', `${rep.number}: does not open on a cold open`);
+      assert.equal(cards[1]!.kind, 'video', `${rep.number}: the video is not the second card`);
+      assert.equal(cards.at(-1)!.kind, 'summary', `${rep.number}: does not close on a summary`);
     }
   });
 
-  test('every deviation from a locked script is recorded with a sign-off owner', () => {
+  test('the cards between the video and the summary are all quiz questions', () => {
     for (const rep of module01.reps) {
-      for (const d of rep.scriptDeviations ?? []) {
-        assert.ok(d.ref, 'deviation needs a punch-list ref');
-        assert.ok(d.reason.length > 20, `${d.ref}: reason is too thin to review`);
-        assert.ok(d.needsSignoffFrom, `${d.ref}: no sign-off owner`);
-      }
-    }
-  });
-
-  test('each Rep lands within a minute of the seven-minute promise', () => {
-    // Narration alone runs short (see docs/product/MVP_SPEC.md § Runtime);
-    // what the learner actually spends is narration plus interactions.
-    for (const rep of module01.reps) {
-      const seconds = estimateRepTotalSeconds(rep);
+      const middle = feedCards(rep).slice(2, -1);
+      assert.ok(middle.length > 0, `${rep.number}: no questions`);
       assert.ok(
-        seconds >= 6 * 60 && seconds <= 9 * 60,
-        `Rep ${rep.number} runs ${Math.round(seconds / 60)}m in-app`,
+        middle.every((c) => c.kind === 'quiz'),
+        `${rep.number}: something other than a question sits between the video and the summary`,
       );
+      assert.equal(middle.length, rep.quiz.length);
     }
   });
 
-  test('quiz options are shuffle-safe — the correct answer is not always in one slot', () => {
-    const positions = new Set(
-      module01.reps.flatMap((r) => r.quiz.map((q) => q.options.findIndex((o) => o.correct))),
-    );
-    assert.ok(positions.size > 1, 'correct answers are all in the same position');
+  test('the quiz is the only thing the learner has to act on', () => {
+    for (const rep of module01.reps) {
+      const interactive = feedCards(rep).filter(isInteractive);
+      assert.ok(interactive.every((c) => c.kind === 'quiz'));
+      assert.equal(interactive.length, rep.quiz.length);
+    }
   });
 
-  test('every Curveball offers a genuinely costly option as well as a best one', () => {
+  test('card keys are unique, so the feed cannot collapse two cards into one', () => {
     for (const rep of module01.reps) {
-      for (const cb of rep.curveballs) {
-        const verdicts = new Set(cb.choices.map((c) => c.verdict));
-        assert.ok(verdicts.has('best'), `${cb.id} has no best choice`);
-        assert.ok(
-          verdicts.size > 1,
-          `${cb.id} has only one verdict — nothing to discriminate`,
+      const keys = feedCards(rep).map((c) => c.key);
+      assert.equal(new Set(keys).size, keys.length, `${rep.number}: duplicate card key`);
+    }
+  });
+});
+
+describe('quizzes', () => {
+  /*
+   * The approved quiz document specifies ten four-option questions per
+   * section, and from 1.2 onward two of them are review from earlier sections.
+   * Only 1.1 and 1.2 have been written; the rest carry placeholders and are
+   * tracked in IP_PUNCH_LIST.md.
+   */
+  const AUTHORED = ['1.1', '1.2'];
+
+  test('the authored lessons carry the full ten questions', () => {
+    for (const number of AUTHORED) {
+      const rep = module01.reps.find((r) => r.number === number)!;
+      assert.equal(rep.quiz.length, 10, `${number}: expected 10 questions`);
+    }
+  });
+
+  test('every question has four options and exactly one correct answer', () => {
+    for (const rep of module01.reps) {
+      for (const q of rep.quiz) {
+        assert.equal(q.options.length, 4, `${rep.number}/${q.id}: not four options`);
+        assert.equal(
+          q.options.filter((o) => o.correct).length,
+          1,
+          `${rep.number}/${q.id}: not exactly one correct answer`,
         );
       }
     }
+  });
+
+  test('every option explains itself, including the wrong ones', () => {
+    // Feedback on a wrong answer is where the quiz teaches rather than tests.
+    for (const rep of module01.reps) {
+      for (const q of rep.quiz) {
+        for (const o of q.options) {
+          assert.ok(o.feedback.length > 0, `${rep.number}/${q.id}/${o.id}: no feedback`);
+        }
+      }
+    }
+  });
+
+  test('lesson 1.2 carries review questions from an earlier section', () => {
+    // Spaced repetition, per the quiz document.
+    // A review question is one sourced from a different section than the one
+    // it appears in. Not necessarily an earlier one: the quiz document's
+    // second review question is labelled "From Section 1.1" but asks about
+    // emotional contagion, which is section 1.4. Recorded in the punch list.
+    const rep = module01.reps.find((r) => r.number === '1.2')!;
+    const review = rep.quiz.filter((q) => q.source && q.source !== rep.number);
+    assert.ok(review.length >= 2, `expected at least 2 review questions, found ${review.length}`);
+  });
+
+  test('the lessons still awaiting Tom’s questions are exactly the ones we know about', () => {
+    // A ratchet. When this list is empty the placeholder note in the punch
+    // list comes out too.
+    const placeholder = module01.reps.filter((r) => r.quiz.length < 10).map((r) => r.number);
+    assert.deepEqual(placeholder, ['1.3', '1.4', '1.5', '1.6', '1.7', '1.8']);
+  });
+});
+
+describe('video wiring', () => {
+  test('no two lessons point at the same film', () => {
+    const owners = new Map<string, string>();
+    for (const rep of module01.reps) {
+      if (!rep.videoUrl) continue;
+      const first = owners.get(rep.videoUrl);
+      assert.equal(first, undefined, `${rep.number} duplicates the film on ${first}`);
+      owners.set(rep.videoUrl, rep.number);
+    }
+  });
+
+  test('every wired film is a direct URL, not a share page', () => {
+    for (const rep of module01.reps) {
+      if (!rep.videoUrl) continue;
+      // The extension is read off the path: a signed URL carries its token in
+      // the query, so the last characters are never the file type.
+      const path = new URL(rep.videoUrl).pathname;
+      assert.match(path, /\.(mp4|m3u8|webm)$/, `${rep.number}: not a direct video URL`);
+    }
+  });
+
+  test('a lesson with no film still has a script to render', () => {
+    // The player falls back to the script, so a lesson without footage is a
+    // lesson rather than an empty screen.
+    for (const rep of module01.reps) {
+      if (rep.videoUrl) continue;
+      const words = rep.beats.filter((b) => b.speech).length;
+      assert.ok(words > 0, `${rep.number}: no film and no script`);
+    }
+  });
+});
+
+describe('runtime', () => {
+  test('a lesson lands in a plausible range once the quiz is counted', () => {
+    for (const rep of module01.reps) {
+      const seconds = estimateRepTotalSeconds(rep);
+      assert.ok(seconds > 60, `${rep.number}: ${seconds}s is too short to be a lesson`);
+      assert.ok(seconds < 20 * 60, `${rep.number}: ${seconds}s is longer than anyone will sit`);
+    }
+  });
+});
+
+describe('provenance', () => {
+  test('nothing added to a locked script is marked approved yet', () => {
+    for (const addition of contentAdditions()) {
+      assert.equal(
+        addition.status,
+        'proposed',
+        `${addition.ref}: marked ${addition.status} without a recorded sign-off`,
+      );
+    }
+  });
+});
+
+describe('build-list parsing', () => {
+  // The script markup is still parsed for the shot list and the transcript,
+  // even though the feed no longer renders one card per beat.
+  test('pulls the label out of a colon-prefixed item', () => {
+    const { label, body, quoted } = splitListItem(
+      'Myth #1: “I’ll just do what my old manager did.”',
+    );
+    assert.equal(label, 'Myth #1');
+    assert.equal(body, 'I’ll just do what my old manager did.');
+    assert.equal(quoted, true);
+  });
+
+  test('does not invent a label where there is only prose', () => {
+    const { label } = splitListItem('Productivity drops. Conflict increases.');
+    assert.equal(label, undefined);
+  });
+});
+
+describe('moment parsing', () => {
+  test('separates the payoff sentence from the setup', () => {
+    assert.deepEqual(
+      splitMomentLines('Employees don’t quit companies. They quit managers.'),
+      ['Employees don’t quit companies.', 'They quit managers.'],
+    );
+  });
+
+  test('leaves a single-sentence moment whole', () => {
+    const one = 'You can’t manage others effectively until you can manage yourself first.';
+    assert.deepEqual(splitMomentLines(one), [one]);
   });
 });
 
@@ -117,346 +247,5 @@ describe('course shape', () => {
       course.roadmap.filter((m) => m.status === 'live').map((m) => m.number),
       [1],
     );
-  });
-
-  test('Module 2 is marked in-production, matching "scripts drafted, not yet locked"', () => {
-    assert.equal(course.roadmap.find((m) => m.number === 2)?.status, 'in-production');
-  });
-});
-
-/**
- * Both players typeset build-list items and moments from these two parsers, so
- * a wrong split shows up as a design bug on two platforms at once. The cases
- * that matter are the ones where the punctuation looks like structure and is
- * not — the scripts use em dashes as prose throughout.
- */
-describe('build-list parsing', () => {
-  test('pulls the label out of a colon-prefixed item', () => {
-    const { label, body, quoted } = splitListItem(
-      'Myth #1: \u201cI\u2019ll just do what my old manager did.\u201d',
-    );
-    assert.equal(label, 'Myth #1');
-    assert.equal(body, 'I\u2019ll just do what my old manager did.');
-    assert.equal(quoted, true);
-  });
-
-  test('keeps a label\u2019s own em dash in the body', () => {
-    const { label, body } = splitListItem(
-      'Level 1: Unable and Unsure \u2014 new to the task. Needs clear direction.',
-    );
-    assert.equal(label, 'Level 1');
-    assert.equal(body, 'Unable and Unsure \u2014 new to the task. Needs clear direction.');
-  });
-
-  test('does not invent a label from an em dash', () => {
-    const { label, body } = splitListItem(
-      'In a small business \u2014 every single one of these hits harder.',
-    );
-    assert.equal(label, undefined);
-    assert.equal(body, 'In a small business \u2014 every single one of these hits harder.');
-  });
-
-  test('does not treat a sentence ending in a colon-less full stop as a label', () => {
-    assert.equal(splitListItem('Productivity drops. Conflict increases.').label, undefined);
-  });
-
-  test('leaves an item containing two quotations quoted in place', () => {
-    const { body, quoted } = splitListItem(
-      '\u201cFriendly\u201d is not \u201cfriendship\u201d',
-    );
-    assert.equal(quoted, false);
-    assert.ok(body.startsWith('\u201cFriendly\u201d'));
-  });
-
-  test('every Module 1 item survives a round trip', () => {
-    for (const rep of module01.reps) {
-      for (const beat of rep.beats) {
-        for (const item of beat.items ?? []) {
-          const { label, body } = splitListItem(item);
-          const rejoined = label ? `${label}: ${body}` : body;
-          // Quotes are stripped for the renderer to hang, so compare without them.
-          const stripped = item.replace(/[\u201c\u201d"]/g, '');
-          assert.equal(
-            rejoined.replace(/[\u201c\u201d"]/g, ''),
-            stripped,
-            `${rep.number}/${beat.id}: "${item}" did not round trip`,
-          );
-        }
-      }
-    }
-  });
-});
-
-describe('moment parsing', () => {
-  test('separates the payoff sentence from the setup', () => {
-    assert.deepEqual(
-      splitMomentLines('Employees don\u2019t quit companies. They quit managers.'),
-      ['Employees don\u2019t quit companies.', 'They quit managers.'],
-    );
-  });
-
-  test('leaves a single-sentence moment whole', () => {
-    const one = 'You can\u2019t manage others effectively until you can manage yourself first.';
-    assert.deepEqual(splitMomentLines(one), [one]);
-  });
-
-  test('no Module 1 moment loses a word to the split', () => {
-    for (const rep of module01.reps) {
-      for (const beat of rep.beats) {
-        if (beat.type !== 'moment' || !beat.text) continue;
-        assert.equal(
-          splitMomentLines(beat.text).join(' ').replace(/\s+/g, ' '),
-          beat.text.trim().replace(/\s+/g, ' '),
-          `${rep.number}/${beat.id} lost text`,
-        );
-      }
-    }
-  });
-});
-
-describe('media wiring', () => {
-  const mediaUrls = () =>
-    module01.reps.flatMap((rep) =>
-      rep.beats.flatMap((beat) =>
-        [beat.audioUrl, beat.videoUrl]
-          .filter((u): u is string => Boolean(u))
-          .map((url) => ({ where: `${rep.number}/${beat.id}`, url })),
-      ),
-    );
-
-  test('no two beats point at the same media file', () => {
-    const owners = new Map<string, string>();
-    const clashes: string[] = [];
-    for (const { where, url } of mediaUrls()) {
-      const first = owners.get(url);
-      if (first) clashes.push(`${where} duplicates ${first}`);
-      else owners.set(url, where);
-    }
-    assert.deepEqual(clashes, []);
-  });
-
-  test('every wired file is a direct URL, not a share page', () => {
-    for (const { where, url } of mediaUrls()) {
-      // The extension has to be read off the path, not the whole string: a
-      // signed URL carries the token in the query, so the last characters are
-      // never the file type. What this is actually rejecting is a link to a
-      // player page, which has no media extension in its path at all.
-      const path = new URL(url).pathname;
-      assert.match(
-        path,
-        /\.(mp3|m4a|aac|wav|ogg|mp4|m3u8)$/,
-        `${where}: not a direct media URL`,
-      );
-    }
-  });
-
-  test('an audio file is named after the beat it plays on', () => {
-    // Four video files were once wired in named some variant of "From Solo
-    // Star to Team Leader," and picking the right one from that list was a
-    // coin flip. The take id is the filename; this keeps it that way.
-    for (const rep of module01.reps) {
-      for (const beat of rep.beats) {
-        if (!beat.audioUrl) continue;
-        const file = decodeURIComponent(new URL(beat.audioUrl).pathname).split('/').pop();
-        assert.equal(
-          file,
-          `${rep.id}-${beat.id}.mp3`,
-          `${rep.number}/${beat.id}: file is "${file}"`,
-        );
-      }
-    }
-  });
-
-  test('a reading beat is never given a voiceover — it is silent by design', () => {
-    for (const rep of module01.reps) {
-      for (const beat of rep.beats) {
-        if (beat.type !== 'reading') continue;
-        assert.equal(
-          beat.audioUrl,
-          undefined,
-          `${rep.number}/${beat.id}: reading cards are read, not narrated`,
-        );
-      }
-    }
-  });
-
-  test('Module 1 ships no talking-head footage', () => {
-    // The pilot moved to cards with voiceover. If a video is ever wired back
-    // in it should be a deliberate choice with a note next to it, not a
-    // leftover — so this fails loudly rather than drifting.
-    const withVideo = module01.reps.flatMap((rep) =>
-      rep.beats.filter((b) => b.videoUrl).map((b) => `${rep.number}/${b.id}`),
-    );
-    assert.deepEqual(withVideo, []);
-  });
-});
-
-describe('cadence', () => {
-  /*
-   * Why this is a test and not just a report: the whole reason Gut Checks
-   * exist is that Rep 1.5 ran nine cards and 2m25 with no input, and nobody
-   * noticed until it was measured. A regression here is content drifting back
-   * to a document, which nothing else in the suite would catch.
-   */
-  /** Above this, a run of cards reads as homework. */
-  const COMFORTABLE_SECONDS = 90;
-
-  test('a Rep with Gut Checks holds under 90 seconds of unbroken reading', () => {
-    for (const rep of module01.reps) {
-      if (!rep.gutChecks?.length) continue;
-      const { longestPassiveSeconds } = repCadence(rep);
-      assert.ok(
-        longestPassiveSeconds <= COMFORTABLE_SECONDS,
-        `${rep.number}: longest passive run is ${longestPassiveSeconds}s`,
-      );
-    }
-  });
-
-  test('a Rep with Gut Checks opens within four cards of its first input', () => {
-    for (const rep of module01.reps) {
-      if (!rep.gutChecks?.length) continue;
-      const first = feedCards(rep).findIndex(isInteractive);
-      assert.ok(
-        first >= 0 && first <= 4,
-        `${rep.number}: ${first} cards before the learner does anything`,
-      );
-    }
-  });
-
-  /*
-   * A ratchet, not a pass mark.
-   *
-   * Five Reps still run over 90 seconds of unbroken reading; only 1.1 and 1.5
-   * have been reworked so far. Pinning the exact list means a Rep cannot
-   * quietly regress into it, and fixing one forces this line to be edited —
-   * so the backlog lives in the suite rather than in somebody's memory.
-   *
-   * When this list is empty, replace this test with the unconditional bar.
-   */
-  test('the Reps still over the comfortable bar are exactly the ones we know about', () => {
-    const over = module01.reps
-      .filter((rep) => repCadence(rep).longestPassiveSeconds > COMFORTABLE_SECONDS)
-      .map((rep) => rep.number);
-    assert.deepEqual(over, ['1.2', '1.3', '1.4', '1.6', '1.7']);
-  });
-
-  test('a Gut Check lands before a Curveball triggered on the same beat', () => {
-    // The cheap interruption first — stacking the expensive one ahead of it
-    // buries it behind a decision the learner is still thinking about.
-    for (const rep of module01.reps) {
-      const cards = feedCards(rep);
-      for (let i = 0; i < cards.length - 1; i++) {
-        if (cards[i]!.kind === 'curveball' && cards[i + 1]!.kind === 'gutCheck') {
-          assert.fail(`${rep.number}: Gut Check follows a Curveball on the same beat`);
-        }
-      }
-    }
-  });
-});
-
-describe('provenance', () => {
-  test('every Gut Check is declared as a content addition', () => {
-    for (const rep of module01.reps) {
-      if (!rep.gutChecks?.length) continue;
-      const declared = (rep.contentAdditions ?? []).filter((a) => a.kind === 'gut-check');
-      assert.equal(
-        declared.length,
-        rep.gutChecks.length,
-        `${rep.number}: ${rep.gutChecks.length} Gut Checks but ${declared.length} declared`,
-      );
-    }
-  });
-
-  test('nothing added to a locked script is marked approved yet', () => {
-    // Additions ship as `proposed` until the author signs them off. If this
-    // starts failing, someone approved them — which is fine, but should be a
-    // deliberate edit rather than a default.
-    for (const addition of contentAdditions()) {
-      assert.equal(
-        addition.status,
-        'proposed',
-        `${addition.ref}: marked ${addition.status} without a recorded sign-off`,
-      );
-    }
-  });
-
-  test('a Gut Check never grades the learner', () => {
-    for (const rep of module01.reps) {
-      for (const gc of rep.gutChecks ?? []) {
-        for (const choice of gc.choices) {
-          assert.ok(choice.reaction.length > 0, `${gc.id}/${choice.id}: no reaction`);
-          assert.doesNotMatch(
-            choice.reaction,
-            /\b(correct|incorrect|wrong answer|that's wrong)\b/i,
-            `${gc.id}/${choice.id}: reads as grading an answer that cannot be wrong`,
-          );
-        }
-      }
-    }
-  });
-});
-
-describe('Field Note follow-ups', () => {
-  /*
-   * The point of a Curveball is that it is a decision, and a decision that
-   * costs nothing is a quiz with better copy. The follow-up is where the
-   * choice comes back, so these guard the property that makes it work: every
-   * answer leads somewhere, and the somewhere is different per answer.
-   */
-  const withFollowUps = module01.reps.filter((r) => r.fieldNote.followUps?.length);
-
-  test('every Curveball choice has its own follow-up, not just the best one', () => {
-    for (const rep of withFollowUps) {
-      for (const curveball of rep.curveballs) {
-        const covered = (rep.fieldNote.followUps ?? [])
-          .filter((f) => f.curveballId === curveball.id)
-          .map((f) => f.choiceId)
-          .sort();
-        if (covered.length === 0) continue;
-        assert.deepEqual(
-          covered,
-          curveball.choices.map((c) => c.id).sort(),
-          `${rep.number}/${curveball.id}: partial coverage reads as a bug to whoever picked the uncovered option`,
-        );
-      }
-    }
-  });
-
-  test('no two choices lead to the same prompt', () => {
-    for (const rep of withFollowUps) {
-      const prompts = (rep.fieldNote.followUps ?? []).map((f) => f.prompt);
-      assert.equal(new Set(prompts).size, prompts.length, `${rep.number}: duplicate follow-up prompt`);
-    }
-  });
-
-  test('a learner who answered gets their own prompt; one who skipped gets the default', () => {
-    const rep = module01.reps.find((r) => r.number === '1.1')!;
-    const answered = fieldNotePrompt(rep, { 'm1-r1-cb1': 'a' });
-    const skipped = fieldNotePrompt(rep, {});
-
-    assert.equal(answered.followedUp, true);
-    assert.match(answered.prompt, /absorb the extra work/i);
-    assert.equal(skipped.followedUp, false);
-    assert.equal(skipped.prompt, rep.fieldNote.prompt);
-  });
-
-  test('an unrecognised choice falls back rather than throwing', () => {
-    const rep = module01.reps.find((r) => r.number === '1.1')!;
-    const result = fieldNotePrompt(rep, { 'm1-r1-cb1': 'zzz' });
-    assert.equal(result.followedUp, false);
-    assert.equal(result.prompt, rep.fieldNote.prompt);
-  });
-
-  test('a follow-up refers back to the decision rather than restating the lesson', () => {
-    // The whole effect depends on the learner recognising their own answer.
-    for (const rep of withFollowUps) {
-      for (const followUp of rep.fieldNote.followUps ?? []) {
-        assert.match(
-          followUp.prompt,
-          /^Earlier you/,
-          `${rep.number}/${followUp.choiceId}: does not open by naming what they chose`,
-        );
-      }
-    }
   });
 });

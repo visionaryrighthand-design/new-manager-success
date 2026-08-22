@@ -3,210 +3,162 @@ import { findRep } from '@nms/content';
 /**
  * Level 3 conversation prompts.
  *
- * The spec: "suggested 1:1 questions for the contact to ask the student —
- * generated from (a) the student's own open-ended/fill-in-the-blank answers
- * and (b) the content/topic of each section."
+ * The spec asked for "suggested 1:1 questions for the contact to ask the
+ * student, generated from (a) the student's own open-ended answers and (b) the
+ * content/topic of each section."
  *
- * ── The privacy problem this design solves ────────────────────────────────
+ * ── Why source (a) is gone ────────────────────────────────────────────────
  *
- * Source (a) is a learner's private written reflection. Several of Module 1's
- * Field Notes ask for genuinely sensitive material: 1.3 asks which working
- * relationship has changed most, 1.7 asks which standard they are failing to
- * hold themselves to. The contact receiving the Level 3 digest is frequently
- * that learner's own boss.
+ * Field Notes were removed when the lesson became a video and a quiz. That
+ * removes the privacy problem this module used to be built around — a boss
+ * reading a learner's private written reflection — and it removes half the
+ * generator's input with it.
  *
- * If a boss can read those answers verbatim, learners will work out within one
- * module that honest answers are career-limiting, and start writing for the
- * audience. The Field Notes stop being useful — which also breaks Level 3,
- * because the generator would then be working from performance rather than
- * reflection.
+ * What is left is source (b), plus one thing the old design did not have: the
+ * questions the learner got wrong. A contact who knows their manager missed
+ * the question about taking work back off the team can ask about exactly that,
+ * which is more useful than a generic topic prompt and still exposes nothing
+ * the learner wrote in confidence. Quiz scores already reach Level 2 contacts,
+ * so this introduces no new disclosure.
  *
- * So the guarantee is: the contact receives a *question to ask*, never the
- * answer. Generated prompts are built from the section topic and, at most,
- * short extracted subject phrases — bounded by MAX_ECHOED_WORDS and asserted
- * by a test that no long verbatim span from the learner's text can survive.
+ * ── Implementation ────────────────────────────────────────────────────────
  *
- * ── MVP implementation ────────────────────────────────────────────────────
- *
- * Deterministic templates. No model call: it is testable, free, instant, and
- * cannot leak the learner's text to a third-party API — which matters when the
- * pilot buyers are HR departments. `CoachingQuestionGenerator` is an interface
- * so a model-backed generator can replace it in V2 behind the same privacy
- * assertions. See docs/product/ROADMAP.md § Level 3 V2.
+ * Deterministic templates. No model call: testable, free, instant, and it
+ * cannot leak anything to a third-party API, which matters when the pilot
+ * buyers are HR departments. `CoachingQuestionGenerator` is an interface so a
+ * model-backed generator can replace it behind the same guarantees.
+ * See docs/product/ROADMAP.md § Level 3 V2.
  */
-
-/**
- * Longest run of consecutive words that may be echoed from a learner's answer.
- * Four is enough to name a subject ("the new scheduling process") and too few
- * to carry a confession.
- */
-export const MAX_ECHOED_WORDS = 4;
-
-export interface FieldNoteAnswer {
-  repId: string;
-  fieldNoteId: string;
-  topic: string;
-  text: string;
-  savedAt: Date;
-}
 
 export interface CoachingQuestion {
   /** The question the contact is invited to ask. */
   question: string;
   /** Why it is being suggested — shown in small type under the question. */
   rationale: string;
-  /** Rep this came from, e.g. '1.3'. */
+  /** Lesson this came from, e.g. '1.3'. */
   source: string;
-  /** 'answer' if shaped by what the learner wrote, 'topic' if from section content alone. */
-  basis: 'answer' | 'topic';
+  /** 'missed' if shaped by a question they got wrong, 'topic' if from the section alone. */
+  basis: 'missed' | 'topic';
 }
 
 export interface CoachingQuestionGenerator {
   generate(input: {
-    answers: readonly FieldNoteAnswer[];
     completedRepIds: readonly string[];
+    /** Quiz question ids the learner answered incorrectly, most recent first. */
+    missedQuestionIds?: readonly string[];
     max?: number;
   }): CoachingQuestion[];
 }
 
-/** Topic-only questions. Used when a Rep was completed but no Field Note was written. */
-const TOPIC_QUESTIONS: Record<string, string[]> = {
-  'The invisible promotion': [
+/**
+ * Two questions per lesson, keyed by lesson number.
+ *
+ * Keyed by number rather than by a topic string because the topic string used
+ * to live on the Field Note, and there is no longer a Field Note to hang it
+ * on. The number is the one identifier every document in the project agrees
+ * about.
+ */
+const LESSON_QUESTIONS: Record<string, string[]> = {
+  '1.1': [
     'What part of the manager job has turned out to be nothing like you expected?',
     'What is something about your new role that nobody explained to you?',
   ],
-  'The doer trap': [
+  '1.2': [
     'What are you still doing yourself that someone on your team could be doing?',
-    'When did you last take a task back off someone — and what happened after?',
+    'When did you last take a task back off someone, and what happened after?',
   ],
-  'Relationship reset': [
+  '1.3': [
     'Which working relationship has been hardest to renegotiate since the promotion?',
     'Where have you had to draw a line that you would not have had to draw a year ago?',
   ],
-  'Energy and presence': [
+  '1.4': [
     'What does your team see in you on a bad day?',
     'What do you do to reset before a difficult conversation?',
   ],
-  'Self-regulation and triggers': [
+  '1.5': [
     'What situation at work most reliably gets under your skin?',
     'Tell me about a time recently you paused instead of reacting. What did it change?',
   ],
-  'Readiness and adapting your style': [
+  '1.6': [
     'Who on your team needs a different level of involvement from you than they did six months ago?',
     'Where are you giving someone autonomy they have not asked for?',
   ],
-  'Leading by example and ownership': [
+  '1.7': [
     'What standard have you set for the team that you are finding hardest to hold yourself to?',
     'What have you let slide recently that you would not accept from someone else?',
   ],
-  'Module 1 commitment': [
-    'What is the one thing you decided to change — and has it actually happened yet?',
+  '1.8': [
+    'What is the one thing you decided to change, and has it actually happened yet?',
     'What would need to be true next month for you to say this course was worth the time?',
   ],
 };
 
-/** Fallback when a topic has no bespoke questions. */
-function genericForTopic(topic: string): string[] {
+/** Fallback for a lesson with no bespoke questions written yet. */
+function genericFor(title: string): string[] {
   return [
-    `What came up for you in the section on ${topic.toLowerCase()}?`,
-    `Where is ${topic.toLowerCase()} showing up in your week right now?`,
+    `What came up for you in the lesson on ${title.toLowerCase()}?`,
+    `Where is ${title.toLowerCase()} showing up in your week right now?`,
   ];
 }
 
-const STOP_WORDS = new Set([
-  'the', 'a', 'an', 'and', 'or', 'but', 'is', 'are', 'was', 'were', 'be', 'been', 'being',
-  'to', 'of', 'in', 'on', 'at', 'for', 'with', 'about', 'that', 'this', 'these', 'those',
-  'i', 'me', 'my', 'we', 'our', 'you', 'your', 'it', 'its', 'they', 'them', 'their',
-  'have', 'has', 'had', 'do', 'does', 'did', 'not', 'no', 'so', 'as', 'if', 'then',
-  'just', 'really', 'very', 'because', 'what', 'when', 'how', 'who', 'would', 'could',
-  'should', 'am', 'get', 'got', 'like', 'know', 'think', 'feel', 'one', 'thing', 'things',
-]);
-
 /**
- * Pulls short subject phrases out of a learner's answer.
+ * Turns a missed quiz question into something a contact can actually ask.
  *
- * Returns runs of at most MAX_ECHOED_WORDS content words. Anything that would
- * carry the learner's meaning across — a whole clause, a sentence — is by
- * construction too long to be returned.
+ * The stem is a test question and reads like one, so it is not repeated
+ * verbatim. What is passed on is the subject and an invitation to talk about
+ * it in the learner's own situation.
  */
-export function extractSubjectPhrases(text: string, limit = 2): string[] {
-  const phrases: string[] = [];
-  for (const sentence of text.split(/[.!?\n]+/)) {
-    let run: string[] = [];
-    for (const raw of sentence.split(/\s+/)) {
-      const word = raw.replace(/[^\p{L}\p{N}'-]/gu, '');
-      if (!word) continue;
-      if (STOP_WORDS.has(word.toLowerCase()) || word.length < 3) {
-        if (run.length >= 2) phrases.push(run.slice(0, MAX_ECHOED_WORDS).join(' '));
-        run = [];
-        continue;
-      }
-      run.push(word);
-      if (run.length === MAX_ECHOED_WORDS) {
-        phrases.push(run.join(' '));
-        run = [];
-      }
-    }
-    if (run.length >= 2) phrases.push(run.slice(0, MAX_ECHOED_WORDS).join(' '));
-  }
-  return phrases.map((p) => p.toLowerCase()).slice(0, limit);
+function fromMissed(stem: string, lessonNumber: string, lessonTitle: string): CoachingQuestion {
+  const subject = stem
+    .replace(/^(what|which|why|how|who|when)\b/i, '')
+    .replace(/\?$/, '')
+    .replace(/^(is|are|does|do|of the following|best describes)\b/i, '')
+    .trim();
+
+  return {
+    question: `In the ${lessonTitle.toLowerCase()} lesson, the question about ${lowerFirst(subject)} was the one that tripped you up. How does that play out on your team?`,
+    rationale: `Lesson ${lessonNumber}. Answered incorrectly on the first attempt.`,
+    source: lessonNumber,
+    basis: 'missed',
+  };
 }
 
-/**
- * The MVP generator. Deterministic, offline, and incapable of forwarding a
- * learner's words to anyone.
- */
+function lowerFirst(text: string): string {
+  return text.length > 0 ? text[0]!.toLowerCase() + text.slice(1) : text;
+}
+
 export const templateGenerator: CoachingQuestionGenerator = {
-  generate({ answers, completedRepIds, max = 3 }) {
+  generate({ completedRepIds, missedQuestionIds = [], max = 3 }) {
     const questions: CoachingQuestion[] = [];
     const seen = new Set<string>();
 
     const push = (q: CoachingQuestion) => {
-      const key = q.question.toLowerCase();
-      if (seen.has(key)) return;
-      seen.add(key);
+      if (seen.has(q.question)) return;
+      seen.add(q.question);
       questions.push(q);
     };
 
-    // Answered Field Notes first — they are the richer signal.
-    // Most recent first, so a digest reflects the week the contact just had.
-    const sorted = [...answers].sort((a, b) => b.savedAt.getTime() - a.savedAt.getTime());
-
-    for (const answer of sorted) {
-      const rep = findRep(answer.repId);
-      const source = rep?.number ?? answer.repId;
-      const pool = TOPIC_QUESTIONS[answer.topic] ?? genericForTopic(answer.topic);
-      const phrases = extractSubjectPhrases(answer.text);
-
-      if (phrases.length > 0 && phrases[0]) {
-        push({
-          question: `You mentioned ${phrases[0]} — talk me through where that stands now.`,
-          rationale: `They wrote about this in Rep ${source} (${answer.topic}). Their answer itself stays private.`,
-          source,
-          basis: 'answer',
-        });
-      }
-      if (pool[0]) {
-        push({
-          question: pool[0],
-          rationale: `Rep ${source} — ${answer.topic}. They completed the reflection for this section.`,
-          source,
-          basis: 'topic',
-        });
+    // A question they got wrong is the sharpest prompt available, so those
+    // come first and the topic prompts fill whatever room is left.
+    const missed = new Set(missedQuestionIds);
+    for (const repId of completedRepIds) {
+      const rep = findRep(repId);
+      if (!rep) continue;
+      for (const question of rep.quiz) {
+        if (!missed.has(question.id)) continue;
+        push(fromMissed(question.stem, rep.number, rep.title));
+        break; // At most one per lesson; a digest is not a report card.
       }
     }
 
-    // Then topic-only questions for Reps completed without a Field Note.
-    const answeredReps = new Set(answers.map((a) => a.repId));
     for (const repId of completedRepIds) {
-      if (answeredReps.has(repId)) continue;
       const rep = findRep(repId);
       if (!rep) continue;
-      const pool = TOPIC_QUESTIONS[rep.fieldNote.topic] ?? genericForTopic(rep.fieldNote.topic);
+      const pool = LESSON_QUESTIONS[rep.number] ?? genericFor(rep.title);
       if (pool[0]) {
         push({
           question: pool[0],
-          rationale: `Rep ${rep.number} — ${rep.title}.`,
+          rationale: `Lesson ${rep.number} — ${rep.title}.`,
           source: rep.number,
           basis: 'topic',
         });

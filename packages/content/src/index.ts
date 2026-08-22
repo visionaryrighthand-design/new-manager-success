@@ -7,9 +7,6 @@ import type {
   Beat,
   ContentAddition,
   CourseModule,
-  Curveball,
-  FieldNote,
-  GutCheck,
   QuizQuestion,
   Rep,
   ScriptDeviation,
@@ -53,12 +50,6 @@ export function estimateRepSeconds(rep: Rep): number {
 
 /** Median observed interaction costs, in seconds. Revisit with pilot telemetry. */
 const INTERACTION_SECONDS = {
-  /** Read the scenario, weigh four choices, read the response. */
-  curveball: 45,
-  /** Read one line, tap, read one line back. */
-  gutCheck: 8,
-  /** Read the prompt and type two or three sentences. */
-  fieldNote: 60,
   /** Per multiple-choice question, including reading the feedback. */
   quizQuestion: 30,
 } as const;
@@ -69,13 +60,7 @@ const INTERACTION_SECONDS = {
  * "7-minute lesson" promise against.
  */
 export function estimateRepTotalSeconds(rep: Rep): number {
-  return (
-    estimateRepSeconds(rep) +
-    rep.curveballs.length * INTERACTION_SECONDS.curveball +
-    (rep.gutChecks?.length ?? 0) * INTERACTION_SECONDS.gutCheck +
-    (rep.fieldNote ? INTERACTION_SECONDS.fieldNote : 0) +
-    rep.quiz.length * INTERACTION_SECONDS.quizQuestion
-  );
+  return estimateRepSeconds(rep) + rep.quiz.length * INTERACTION_SECONDS.quizQuestion;
 }
 
 /* ------------------------------------------------------------------------ *
@@ -166,33 +151,6 @@ export function beatNeedsVoiceover(beat: Beat): boolean {
   return beat.type !== 'reading' && Boolean(beat.speech);
 }
 
-/**
- * The Field Note prompt to show, given what the learner chose.
- *
- * `choices` maps a Curveball id to the choice id the learner picked. Falls
- * back to the Rep's default prompt when they skipped, or when no follow-up
- * was written for what they picked.
- */
-export function fieldNotePrompt(
-  rep: Rep,
-  choices: Record<string, string>,
-): { prompt: string; placeholder: string; followedUp: boolean } {
-  for (const followUp of rep.fieldNote.followUps ?? []) {
-    if (choices[followUp.curveballId] === followUp.choiceId) {
-      return {
-        prompt: followUp.prompt,
-        placeholder: followUp.placeholder ?? rep.fieldNote.placeholder,
-        followedUp: true,
-      };
-    }
-  }
-  return {
-    prompt: rep.fieldNote.prompt,
-    placeholder: rep.fieldNote.placeholder,
-    followedUp: false,
-  };
-}
-
 export function allReps(): Rep[] {
   return course.modules.flatMap((m) => m.reps);
 }
@@ -220,70 +178,36 @@ export function contentAdditions(): Array<ContentAddition & { repId: string; rep
 }
 
 /**
- * The cards a learner moves through, in order.
+ * The cards a learner swipes through in one lesson.
  *
- * Both players render this directly, and the cadence report measures it. One
- * definition — a feed order that lives in three places drifts, and the symptom
- * is a report that says the product is fine while the product is not.
+ * A lesson is a video and then its quiz. That is the whole shape: the section
+ * script is shot as one continuous two-to-three minute piece, the learner
+ * watches it, answers the ten questions, and moves to the next section.
+ *
+ * The beats are still in the content — they are the script, and the shot list
+ * is built from them — but the feed no longer renders one card per beat. The
+ * video is the beats.
+ *
+ * Both players render this directly, so the order lives in one place.
  */
 export type FeedCard =
-  /**
-   * The cold open. Rep number, hook, title, full bleed.
-   *
-   * Every Rep used to start on a paragraph, which meant all eight opened
-   * identically and the learner had no sense of having arrived somewhere new.
-   * The hook is already written for exactly this job — "three seconds to earn
-   * the swipe" — and was only being used on the Rep list.
-   */
+  /** Cold open. Rep number, hook, title, full bleed. */
   | { kind: 'repIntro'; key: string; rep: Rep; seconds: number }
-  | { kind: 'beat'; key: string; beat: Beat; seconds: number }
-  | { kind: 'curveball'; key: string; curveball: Curveball; seconds: number }
-  | { kind: 'gutCheck'; key: string; gutCheck: GutCheck; seconds: number }
-  | { kind: 'fieldNote'; key: string; fieldNote: FieldNote; seconds: number }
+  /** The lesson itself. Falls back to the script as text until the film exists. */
+  | { kind: 'video'; key: string; rep: Rep; seconds: number }
   | { kind: 'quiz'; key: string; question: QuizQuestion; index: number; total: number; seconds: number }
   | { kind: 'summary'; key: string; seconds: number };
 
-/** A card the learner must act on. These are what break up a passive run. */
+/** A card the learner must act on. */
 export function isInteractive(card: FeedCard): boolean {
-  return card.kind === 'curveball' || card.kind === 'gutCheck' || card.kind === 'quiz' || card.kind === 'fieldNote';
+  return card.kind === 'quiz';
 }
 
 export function feedCards(rep: Rep): FeedCard[] {
-  const cards: FeedCard[] = [{ kind: 'repIntro', key: `intro-${rep.id}`, rep, seconds: 4 }];
-  for (const beat of rep.beats) {
-    // A `hold` is a direction for an edit. The feed already holds indefinitely.
-    if (beat.type !== 'hold') {
-      cards.push({ kind: 'beat', key: `b-${beat.id}`, beat, seconds: estimateBeatSeconds(beat) });
-    }
-    // A Gut Check comes before a Curveball on the same beat: it is the cheap
-    // interruption, and stacking the expensive one first would bury it.
-    for (const gutCheck of rep.gutChecks ?? []) {
-      if (gutCheck.triggerAfterBeat === beat.id) {
-        cards.push({
-          kind: 'gutCheck',
-          key: `g-${gutCheck.id}`,
-          gutCheck,
-          seconds: INTERACTION_SECONDS.gutCheck,
-        });
-      }
-    }
-    for (const curveball of rep.curveballs) {
-      if (curveball.triggerAfterBeat === beat.id) {
-        cards.push({
-          kind: 'curveball',
-          key: `c-${curveball.id}`,
-          curveball,
-          seconds: INTERACTION_SECONDS.curveball,
-        });
-      }
-    }
-  }
-  cards.push({
-    kind: 'fieldNote',
-    key: `f-${rep.fieldNote.id}`,
-    fieldNote: rep.fieldNote,
-    seconds: INTERACTION_SECONDS.fieldNote,
-  });
+  const cards: FeedCard[] = [
+    { kind: 'repIntro', key: `intro-${rep.id}`, rep, seconds: 4 },
+    { kind: 'video', key: `video-${rep.id}`, rep, seconds: estimateRepSeconds(rep) },
+  ];
   rep.quiz.forEach((question, i) =>
     cards.push({
       kind: 'quiz',
@@ -294,52 +218,8 @@ export function feedCards(rep: Rep): FeedCard[] {
       seconds: INTERACTION_SECONDS.quizQuestion,
     }),
   );
-  cards.push({ kind: 'summary', key: 'summary', seconds: 0 });
+  cards.push({ kind: 'summary', key: `summary-${rep.id}`, seconds: 0 });
   return cards;
-}
-
-export interface Cadence {
-  cards: number;
-  interactions: number;
-  /** Most cards in a row with nothing for the learner to do. */
-  longestPassiveRun: number;
-  /** How long that run takes, in seconds. The number that actually matters. */
-  longestPassiveSeconds: number;
-}
-
-/**
- * How often a Rep asks the learner to do something.
- *
- * The product is benchmarked against Duolingo, which rarely leaves anyone more
- * than about twenty seconds without an input. A Rep that runs two and a half
- * minutes of scrolling between interactions has stopped being a lesson and
- * become a document, however well the cards are set.
- */
-export function repCadence(rep: Rep): Cadence {
-  const cards = feedCards(rep);
-  let run = 0;
-  let runSeconds = 0;
-  let longest = 0;
-  let longestSeconds = 0;
-  for (const card of cards) {
-    if (isInteractive(card)) {
-      run = 0;
-      runSeconds = 0;
-      continue;
-    }
-    run += 1;
-    runSeconds += card.seconds;
-    if (run > longest) {
-      longest = run;
-      longestSeconds = runSeconds;
-    }
-  }
-  return {
-    cards: cards.length,
-    interactions: cards.filter(isInteractive).length,
-    longestPassiveRun: longest,
-    longestPassiveSeconds: longestSeconds,
-  };
 }
 
 /** Every recorded difference between the approved scripts and what ships. */
@@ -363,39 +243,24 @@ export function validateContent(): string[] {
   const problems: string[] = [];
 
   /*
-   * Two beats pointing at one media file. Nothing errors — the feed plays the
-   * same recording twice and the only symptom is a learner hearing a repeat,
-   * so this is caught here rather than by anyone noticing. It happens easily:
-   * duplicating a project in a production tool produces "Copy of X", "Copy of
-   * X (1)", and picking the wrong one from that list is a single misclick.
+   * Two lessons pointing at one video file. Nothing errors — the feed plays
+   * the same film twice and the only symptom is a learner watching a repeat,
+   * so this is caught here rather than by anyone noticing.
    */
-  const seenMedia = new Map<string, string>();
+  const seenVideos = new Map<string, string>();
   for (const rep of allReps()) {
-    for (const beat of rep.beats) {
-      for (const url of [beat.audioUrl, beat.videoUrl]) {
-        if (!url) continue;
-        const owner = `${rep.number}/${beat.id}`;
-        const first = seenMedia.get(url);
-        if (first) {
-          problems.push(`${owner}: shares a media URL with ${first} — one file on two beats`);
-        } else {
-          seenMedia.set(url, owner);
-        }
-      }
+    if (!rep.videoUrl) continue;
+    const first = seenVideos.get(rep.videoUrl);
+    if (first) {
+      problems.push(`${rep.number}: shares its video with ${first} — one file on two lessons`);
+    } else {
+      seenVideos.set(rep.videoUrl, rep.number);
     }
   }
 
   for (const rep of allReps()) {
-    const beatIds = new Set(rep.beats.map((b) => b.id));
-
-    if (!rep.fieldNote) {
-      problems.push(`${rep.number}: missing Field Note (required for Level 3 digests)`);
-    }
     if (rep.quiz.length === 0) {
-      problems.push(`${rep.number}: has no quiz questions`);
-    }
-    if (rep.curveballs.length === 0) {
-      problems.push(`${rep.number}: has no Curveballs`);
+      problems.push(`${rep.number}: has no quiz, and a lesson is a video and a quiz`);
     }
 
     const seenBeatIds = new Set<string>();
@@ -405,73 +270,25 @@ export function validateContent(): string[] {
       if (beat.type === 'buildList' && !beat.items?.length) {
         problems.push(`${rep.number}/${beat.id}: buildList beat has no items`);
       }
-      if (beat.type === 'reading' && !beat.speech) {
-        problems.push(`${rep.number}/${beat.id}: reading beat has no body copy`);
-      }
       if (beat.type === 'moment' && !beat.text) {
         problems.push(`${rep.number}/${beat.id}: moment beat has no text`);
       }
     }
 
+    const seenQuizIds = new Set<string>();
     for (const q of rep.quiz) {
+      if (seenQuizIds.has(q.id)) problems.push(`${rep.number}: duplicate question id "${q.id}"`);
+      seenQuizIds.add(q.id);
+
       const correct = q.options.filter((o) => o.correct).length;
       if (correct !== 1) {
         problems.push(`${rep.number}/${q.id}: expected exactly 1 correct option, found ${correct}`);
       }
-      if (q.options.length < 2) {
-        problems.push(`${rep.number}/${q.id}: needs at least 2 options`);
+      if (q.options.length !== 4) {
+        problems.push(`${rep.number}/${q.id}: the quiz document specifies four options, found ${q.options.length}`);
       }
       for (const o of q.options) {
         if (!o.feedback) problems.push(`${rep.number}/${q.id}/${o.id}: option has no feedback`);
-      }
-    }
-
-    for (const gc of rep.gutChecks ?? []) {
-      if (!beatIds.has(gc.triggerAfterBeat)) {
-        problems.push(
-          `${rep.number}/${gc.id}: triggerAfterBeat "${gc.triggerAfterBeat}" is not a beat in this Rep`,
-        );
-      }
-      if (gc.choices.length < 2) {
-        problems.push(`${rep.number}/${gc.id}: a Gut Check needs at least 2 options`);
-      }
-      for (const c of gc.choices) {
-        if (!c.reaction) problems.push(`${rep.number}/${gc.id}/${c.id}: option has no reaction`);
-      }
-      // Nothing reaches a learner without being in the deviation list or the
-      // additions list. A Gut Check is not in the approved script, so it has
-      // to be declared.
-      const declared = (rep.contentAdditions ?? []).some((a) => a.kind === 'gut-check');
-      if (!declared) {
-        problems.push(`${rep.number}: has Gut Checks but no contentAdditions entry declaring them`);
-      }
-    }
-
-    for (const cb of rep.curveballs) {
-      if (!beatIds.has(cb.triggerAfterBeat)) {
-        problems.push(
-          `${rep.number}/${cb.id}: triggerAfterBeat "${cb.triggerAfterBeat}" is not a beat in this Rep`,
-        );
-      }
-      const followUps = (rep.fieldNote.followUps ?? []).filter((f) => f.curveballId === cb.id);
-      if (followUps.length > 0 && followUps.length !== cb.choices.length) {
-        // A partial set is the bad case: the learner who picked the covered
-        // option gets a consequence, the one who picked the other gets a
-        // generic prompt, and the difference reads as a bug.
-        problems.push(
-          `${rep.number}/${cb.id}: ${followUps.length} Field Note follow-ups for ${cb.choices.length} choices — cover all or none`,
-        );
-      }
-      for (const f of followUps) {
-        if (!cb.choices.some((c) => c.id === f.choiceId)) {
-          problems.push(`${rep.number}/${cb.id}: follow-up points at missing choice "${f.choiceId}"`);
-        }
-      }
-      if (!cb.choices.some((c) => c.verdict === 'best')) {
-        problems.push(`${rep.number}/${cb.id}: no choice marked "best"`);
-      }
-      for (const c of cb.choices) {
-        if (!c.response) problems.push(`${rep.number}/${cb.id}/${c.id}: choice has no response`);
       }
     }
   }

@@ -136,9 +136,7 @@ export default function HomePage() {
                   <span className={styles.repTitle}>{rep.title}</span>
                   <span className={styles.repHook}>{rep.hook}</span>
                 </span>
-                <span className={styles.repMeta}>
-                  {rep.curveballs.length} Curveball{rep.curveballs.length === 1 ? '' : 's'}
-                </span>
+                <span className={styles.repMeta}>{rep.quiz.length} questions</span>
               </Link>
             </li>
           ))}

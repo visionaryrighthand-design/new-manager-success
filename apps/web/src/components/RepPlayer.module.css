@@ -1044,11 +1044,17 @@
 
 /* ---- Avatar footage ----------------------------------------------------- */
 
+/*
+ * Sized from the file. The aspect ratio here is only the placeholder held
+ * before metadata arrives; the real one is set inline once the browser knows
+ * it, so a landscape lesson film is not letterboxed into a portrait box.
+ */
 .video {
   width: 100%;
-  aspect-ratio: 9 / 16;
-  max-height: 62vh;
-  object-fit: cover;
+  aspect-ratio: 16 / 9;
+  max-height: 68vh;
+  object-fit: contain;
+  background: #000;
   border-radius: var(--nms-radius-lg);
   background: var(--nms-color-surface);
   border: 1px solid var(--nms-color-border);

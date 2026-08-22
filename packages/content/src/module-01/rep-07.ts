@@ -111,55 +111,7 @@ export const rep07: Rep = {
     },
   ],
 
-  curveballs: [
-    {
-      id: 'm1-r7-cb1',
-      triggerAfterBeat: 'b7',
-      skill: 'Consistency between what you say and what you do',
-      scenario:
-        'Three weeks ago you told the team that nobody skips the two-person review before anything goes to a client. This morning you are behind, the client is waiting, and the document is fine.',
-      prompt: 'What do you do?',
-      choices: [
-        {
-          id: 'a',
-          text: 'Send it. You wrote the rule, you understand when it does not apply, and the document is genuinely fine.',
-          verdict: 'costly',
-          response:
-            'Nobody sees your reasoning. They see the rule applying to them and not to you. The process is now optional, and you are the one who made it optional.',
-        },
-        {
-          id: 'b',
-          text: 'Grab whoever is free for a four-minute review, then send.',
-          verdict: 'best',
-          response:
-            'The standard survives contact with a bad morning, which is the only test that counts. Consistency is showing up the same way on a tough Tuesday as on a great Friday.',
-        },
-        {
-          id: 'c',
-          text: 'Send it, then tell the team you skipped review and why.',
-          verdict: 'workable',
-          response:
-            'Honest, and much better than doing it silently. But repeated twice it becomes a script for exemptions rather than an exception. Use it once, then fix the rule if the rule is wrong.',
-        },
-        {
-          id: 'd',
-          text: 'Send it and quietly drop the rule, since it clearly does not survive real deadlines.',
-          verdict: 'costly',
-          response:
-            'If the rule is wrong, change it openly and say why. Letting it decay teaches the team that your standards expire when they become inconvenient.',
-        },
-      ],
-    },
-  ],
 
-  fieldNote: {
-    id: 'm1-r7-fn1',
-    topic: 'Leading by example and ownership',
-    prompt:
-      'What is one standard you have asked of your team that you are not currently holding yourself to?',
-    placeholder: 'Everyone has one. Writing it down is most of the fix.',
-    suggestedMinChars: 60,
-  },
 
   quiz: [
     {

@@ -107,88 +107,38 @@ export const rep02: Rep = {
     },
   ],
 
-  curveballs: [
-    {
-      id: 'm1-r2-cb1',
-      triggerAfterBeat: 'b7',
-      skill: 'Resisting the doer trap under time pressure',
-      scenario:
-        'A client deliverable is due at 5pm. Your newest team member has been working on it for two days and it is about sixty percent of the quality you would produce. It is 2pm.',
-      prompt: 'What do you do?',
-      choices: [
-        {
-          id: 'a',
-          text: 'Take it back and finish it yourself. The client deadline is real.',
-          verdict: 'costly',
-          response:
-            'The deliverable ships and you have taught them that struggling gets the work removed. Do this three times and you own every hard task on the team permanently. This is the bottleneck forming in real time.',
-        },
-        {
-          id: 'b',
-          text: 'Sit with them for thirty minutes, name the two specific gaps, and let them close them.',
-          verdict: 'best',
-          response:
-            'You protect the deadline and the development at once. Naming two specific gaps, not twelve, is what makes this fit in the time you actually have.',
-        },
-        {
-          id: 'c',
-          text: 'Send it as-is. They will learn from the client feedback.',
-          verdict: 'costly',
-          response:
-            'Letting someone fail in front of a client is not coaching, it is abdication. Your job is to remove obstacles, and “I did not know what good looked like” is an obstacle you could have removed.',
-        },
-        {
-          id: 'd',
-          text: 'Ask the client for a one-day extension so they can finish it properly.',
-          verdict: 'workable',
-          response:
-            'Sometimes right, often overused. Buying time is a real tool, but if it becomes your default the team never learns to work to a deadline. Ask yourself whether the extra day teaches anything the extra thirty minutes would not.',
-        },
-      ],
-    },
-  ],
 
-  fieldNote: {
-    id: 'm1-r2-fn1',
-    topic: 'The doer trap',
-    prompt:
-      'Name one task you are still doing yourself that somebody on your team could be doing. What is actually stopping you from handing it over?',
-    placeholder: 'Be honest about the second part. That is where the useful answer is.',
-    suggestedMinChars: 80,
-  },
 
   quiz: [
     {
       id: 'm1-r2-q1',
       kind: 'recall',
       source: '1.2',
-      stem: 'What is the difference between task leadership and people leadership?',
+      stem: "What is the main difference between a “doer” and a “leader”?",
       options: [
         {
           id: 'a',
-          text: 'Task leadership is for junior staff; people leadership is for senior staff.',
+          text: "A leader works fewer hours",
           correct: false,
-          feedback: 'It is not a seniority distinction. It is a measurement distinction.',
+          feedback: "Rarely true, and never the distinction.",
         },
         {
           id: 'b',
-          text: 'In task leadership you are measured by what you produce; in people leadership you are measured by what your team produces.',
-          correct: true,
-          feedback:
-            'That single change in what gets measured is the whole transition.',
+          text: "A doer gives feedback",
+          correct: false,
+          feedback: "Anyone can give feedback. It is not what separates the two roles.",
         },
         {
           id: 'c',
-          text: 'Task leadership is about processes; people leadership is about being liked.',
-          correct: false,
-          feedback:
-            'Being liked is explicitly not the goal, section 1.3 takes that apart.',
+          text: "A leader enables others to succeed",
+          correct: true,
+          feedback: "Yes. A doer produces the work; a leader produces the conditions for it.",
         },
         {
           id: 'd',
-          text: 'They are two names for the same thing.',
+          text: "A doer delegates everything",
           correct: false,
-          feedback: 'They are different jobs measured in different ways.',
+          feedback: "Delegating is the leader’s tool, and doing it wholesale is its own failure.",
         },
       ],
     },
@@ -196,67 +146,287 @@ export const rep02: Rep = {
       id: 'm1-r2-q2',
       kind: 'recall',
       source: '1.2',
-      stem: 'Which is NOT one of the three problems the doer trap creates?',
+      stem: "Why can being a top performer sometimes hurt a new manager?",
       options: [
         {
           id: 'a',
-          text: 'It creates a bottleneck, everything runs through you.',
+          text: "They’re not trusted by others",
           correct: false,
-          feedback: 'That is problem 1.',
+          feedback: "Their track record usually buys them trust at the start. What it does not buy is patience.",
         },
         {
           id: 'b',
-          text: 'It stunts your team’s growth.',
-          correct: false,
-          feedback: 'That is problem 2.',
+          text: "They may not relate to team struggles",
+          correct: true,
+          feedback: "Yes. What came easily to you is invisible to you, which makes it hard to coach.",
         },
         {
           id: 'c',
-          text: 'It signals you don’t trust them.',
+          text: "They’re used to working alone",
           correct: false,
-          feedback: 'That is problem 3.',
+          feedback: "Often true, but the deeper problem is the empathy gap rather than the habit.",
         },
         {
           id: 'd',
-          text: 'It makes the work take longer overall.',
-          correct: true,
-          feedback:
-            'Correct, and note that in the short term the doer trap often makes work faster. That is exactly why it is a trap.',
+          text: "They prefer big-picture thinking",
+          correct: false,
+          feedback: "Top performers usually skew to detail. Either way it is not the trap here.",
         },
       ],
     },
     {
       id: 'm1-r2-q3',
-      kind: 'scenario',
+      kind: 'recall',
       source: '1.2',
-      stem: 'You end a day having personally fixed three problems your team brought you. Every one is now resolved. How should you read that day?',
+      stem: "Which lens should a leader begin using?",
       options: [
         {
           id: 'a',
-          text: 'A strong day. Three problems solved is three problems solved.',
+          text: "Task-only lens",
           correct: false,
-          feedback:
-            'It felt like a strong day. That is the pull of the doer trap. Look at what your team learned from those three problems.',
+          feedback: "That is the lens you already have. It is the one that stops working.",
         },
         {
           id: 'b',
-          text: 'A warning sign. Three problems came to you rather than being solved by the people who own them.',
-          correct: true,
-          feedback:
-            'The question is not whether the problems got solved. It is whether the next three will need you too.',
+          text: "Control lens",
+          correct: false,
+          feedback: "Control is what a manager reaches for when the people lens is missing.",
         },
         {
           id: 'c',
-          text: 'Neutral. Problem-solving is a core manager responsibility.',
-          correct: false,
-          feedback:
-            'Deciding is a core responsibility. Doing the fixing yourself, repeatedly, is the bottleneck.',
+          text: "People lens",
+          correct: true,
+          feedback: "Yes. The work still matters; it now arrives through people.",
         },
         {
           id: 'd',
-          text: 'A strong day, as long as you documented the fixes.',
+          text: "Financial lens",
           correct: false,
-          feedback: 'Documentation helps, but it does not address who is doing the solving.',
+          feedback: "Useful later, and not the shift this section is about.",
+        },
+      ],
+    },
+    {
+      id: 'm1-r2-q4',
+      kind: 'recall',
+      source: '1.2',
+      stem: "A common temptation for new managers is to:",
+      options: [
+        {
+          id: 'a',
+          text: "Avoid team members",
+          correct: false,
+          feedback: "It happens under pressure, but it is not the reflex most people fall into.",
+        },
+        {
+          id: 'b',
+          text: "Revert to doing the work themselves",
+          correct: true,
+          feedback: "Yes. It is faster, it is familiar, and it quietly teaches the team not to grow.",
+        },
+        {
+          id: 'c',
+          text: "Spend all day in meetings",
+          correct: false,
+          feedback: "A real hazard, and usually a symptom rather than the temptation itself.",
+        },
+        {
+          id: 'd',
+          text: "Take extra time off",
+          correct: false,
+          feedback: "Almost nobody’s first instinct in a new management role.",
+        },
+      ],
+    },
+    {
+      id: 'm1-r2-q5',
+      kind: 'recall',
+      source: '1.2',
+      stem: "The best managers focus on:",
+      options: [
+        {
+          id: 'a',
+          text: "Micromanagement",
+          correct: false,
+          feedback: "The opposite. Micromanagement is what fills the gap when trust has not been built.",
+        },
+        {
+          id: 'b',
+          text: "Controlling every outcome",
+          correct: false,
+          feedback: "You cannot control outcomes you do not personally produce.",
+        },
+        {
+          id: 'c',
+          text: "Coaching, building trust, and setting goals",
+          correct: true,
+          feedback: "Yes. All three produce results through other people rather than around them.",
+        },
+        {
+          id: 'd',
+          text: "Handling customer service directly",
+          correct: false,
+          feedback: "That is doing the work again, with a different label on it.",
+        },
+      ],
+    },
+    {
+      id: 'm1-r2-q6',
+      kind: 'recall',
+      source: '1.2',
+      stem: "“Letting go” means:",
+      options: [
+        {
+          id: 'a',
+          text: "Avoiding conflict",
+          correct: false,
+          feedback: "Avoidance is not letting go. It is postponing.",
+        },
+        {
+          id: 'b',
+          text: "Giving up leadership authority",
+          correct: false,
+          feedback: "You keep the accountability. What you hand over is the execution.",
+        },
+        {
+          id: 'c',
+          text: "Enabling others to own outcomes",
+          correct: true,
+          feedback: "Yes. Ownership is the thing being transferred, not just the task.",
+        },
+        {
+          id: 'd',
+          text: "Ignoring details",
+          correct: false,
+          feedback: "Letting go of the doing is not the same as losing track of the work.",
+        },
+      ],
+    },
+    {
+      id: 'm1-r2-q7',
+      kind: 'recall',
+      source: '1.1',
+      stem: "From Section 1.1: What hasn’t changed when you become a manager?",
+      options: [
+        {
+          id: 'a',
+          text: "Your ability to delegate",
+          correct: false,
+          feedback: "Delegation is a new demand, not a constant.",
+        },
+        {
+          id: 'b',
+          text: "Your team dynamics",
+          correct: false,
+          feedback: "These change the day the title does.",
+        },
+        {
+          id: 'c',
+          text: "Your standards and example",
+          correct: true,
+          feedback: "Yes. What you model still sets the bar, exactly as it did before.",
+        },
+        {
+          id: 'd',
+          text: "The size of your workload",
+          correct: false,
+          feedback: "It changes, and usually in both directions at once.",
+        },
+      ],
+    },
+    {
+      id: 'm1-r2-q8',
+      kind: 'recall',
+      source: '1.4',
+      stem: "From Section 1.1: What is emotional contagion?",
+      options: [
+        {
+          id: 'a',
+          text: "Burnout",
+          correct: false,
+          feedback: "Related, and a consequence rather than a definition.",
+        },
+        {
+          id: 'b',
+          text: "Motivation by praise",
+          correct: false,
+          feedback: "Praise is a tool. Contagion is not about tools.",
+        },
+        {
+          id: 'c',
+          text: "How your energy affects the team",
+          correct: true,
+          feedback: "Yes. Your mood transmits, whether or not you intend it to.",
+        },
+        {
+          id: 'd',
+          text: "Stress contagion only",
+          correct: false,
+          feedback: "It runs both ways. Calm is as catching as stress.",
+        },
+      ],
+    },
+    {
+      id: 'm1-r2-q9',
+      kind: 'recall',
+      source: '1.2',
+      stem: "One of the biggest shifts in management is:",
+      options: [
+        {
+          id: 'a',
+          text: "Losing job security",
+          correct: false,
+          feedback: "Not a shift the role introduces.",
+        },
+        {
+          id: 'b',
+          text: "Owning team outcomes",
+          correct: true,
+          feedback: "Yes. You are accountable for results you no longer personally produce.",
+        },
+        {
+          id: 'c',
+          text: "Gaining more independence",
+          correct: false,
+          feedback: "The job is more interdependent, not less.",
+        },
+        {
+          id: 'd',
+          text: "Decreasing task load",
+          correct: false,
+          feedback: "The task load usually rises before it changes shape.",
+        },
+      ],
+    },
+    {
+      id: 'm1-r2-q10',
+      kind: 'scenario',
+      source: '1.2',
+      stem: "Why is it important for managers to shift from task-focused to people-focused thinking?",
+      options: [
+        {
+          id: 'a',
+          text: "It increases their own productivity",
+          correct: false,
+          feedback: "Your own productivity is no longer the number that matters.",
+        },
+        {
+          id: 'b',
+          text: "It helps build a capable, independent team",
+          correct: true,
+          feedback: "Yes. A team that can operate without you is the actual output of the job.",
+        },
+        {
+          id: 'c',
+          text: "It saves time in meetings",
+          correct: false,
+          feedback: "A side effect at best, and not the reason.",
+        },
+        {
+          id: 'd',
+          text: "It reduces the need for accountability",
+          correct: false,
+          feedback: "It raises it. You are now accountable for other people’s results.",
         },
       ],
     },

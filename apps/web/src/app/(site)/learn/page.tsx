@@ -21,7 +21,7 @@ export default function LearnPage() {
       <div className={styles.meta}>
         <span>{module01.reps.length} Reps</span>
         <span>{module01.reps.reduce((n, r) => n + r.quiz.length, 0)} questions</span>
-        <span>{module01.reps.reduce((n, r) => n + r.curveballs.length, 0)} Curveballs</span>
+        <span>{module01.reps.length} videos</span>
         <span>{module01.passingScore}% to pass</span>
       </div>
 
@@ -37,10 +37,7 @@ export default function LearnPage() {
                 <span className={styles.repTags}>
                   <span>{Math.round(estimateRepTotalSeconds(rep) / 60)} min</span>
                   <span>{rep.quiz.length} questions</span>
-                  <span>
-                    {rep.curveballs.length} Curveball{rep.curveballs.length === 1 ? '' : 's'}
-                  </span>
-                  <span>1 Field Note</span>
+                  <span>{rep.videoUrl ? 'Video ready' : 'Script only'}</span>
                 </span>
               </span>
               <span className={styles.chevron} aria-hidden>

@@ -9,47 +9,24 @@ import {
   type CSSProperties,
 } from 'react';
 import Link from 'next/link';
-import type {
-  Beat,
-  Curveball,
-  CurveballVerdict,
-  FeedCard,
-  GutCheck,
-  QuizQuestion,
-  Rep,
-} from '@nms/content';
-import {
-  estimateBeatSeconds,
-  estimateRepTotalSeconds,
-  feedCards,
-  fieldNotePrompt,
-  splitListItem,
-  splitMomentLines,
-} from '@nms/content';
+import type { FeedCard, QuizQuestion, Rep } from '@nms/content';
+import { estimateRepTotalSeconds, feedCards } from '@nms/content';
 import { XP } from '@nms/core';
 import styles from './RepPlayer.module.css';
 
 /**
- * The feed.
+ * The lesson.
  *
- * One full-screen card per beat, advanced by scrolling. There is no Next
- * button: the learner scrolls, the same gesture they use everywhere else on a
- * phone, and each card snaps into place on its own.
+ * A lesson is a video and then its quiz. The section script is shot as one
+ * continuous two-to-three minute piece, the learner watches it, answers the
+ * questions, and swipes on to the next section.
  *
- * Cards do NOT auto-advance. A social feed auto-plays because the goal is
- * time-on-app; here the goal is that a specific idea lands, and an idea that
- * scrolls past on a timer while somebody is thinking about their own team has
- * failed. The learner drives.
+ * It is still a feed: full-screen cards, vertical snap, one thing on screen at
+ * a time. That is the format, and it survives the content getting simpler.
  *
- * Answers still gate. The feed renders only as far as the first unanswered
- * Curveball or quiz question, so scrolling simply runs out of content until
- * the learner responds — a gate made of absence rather than a disabled
- * button. Answer, and the rest of the feed appears below.
- *
- * Every card reads in silence. Voiceover, where a beat has it, plays over the
- * card rather than replacing it — a manager doing a Rep on a shop floor, a
- * ward, or a train has the sound off, and a lesson that needs audio excludes
- * them.
+ * The quiz gates. The feed renders only as far as the first unanswered
+ * question, so scrolling runs out of content until the learner answers — a
+ * gate made of absence rather than a disabled button.
  */
 
 type Card = FeedCard;
@@ -62,15 +39,13 @@ export interface RepPlayerProps {
 export function RepPlayer({ rep, nextRepId }: RepPlayerProps) {
   const allCards = useMemo(() => feedCards(rep), [rep]);
   const [answers, setAnswers] = useState<Record<string, string>>({});
-  const [curveballChoices, setCurveballChoices] = useState<Record<string, string>>({});
-  const [fieldNote, setFieldNote] = useState('');
   const [active, setActive] = useState(0);
-  // Scoring is real — the rules live in @nms/core and the Corner digests use
-  // them. It was simply never shown in the feed, which threw away the half of
-  // the DNA that makes a lesson feel like progress rather than reading.
   const [xp, setXp] = useState(0);
   const [award, setAward] = useState<{ amount: number; key: number } | null>(null);
   const awardKey = useRef(0);
+
+  const feedRef = useRef<HTMLDivElement>(null);
+  const liveRef = useRef<HTMLParagraphElement>(null);
 
   const earn = useCallback((amount: number) => {
     if (amount <= 0) return;
@@ -78,21 +53,10 @@ export function RepPlayer({ rep, nextRepId }: RepPlayerProps) {
     awardKey.current += 1;
     setAward({ amount, key: awardKey.current });
   }, []);
-  // Browsers block audio until a gesture, so sound stays off until the learner
-  // starts a card themselves. After that it follows them down the feed.
-  const [soundOn, setSoundOn] = useState(false);
-
-  const feedRef = useRef<HTMLDivElement>(null);
-  const liveRef = useRef<HTMLParagraphElement>(null);
 
   const cards = useMemo(
-    () => allCards.slice(0, revealedCount(allCards, answers, curveballChoices)),
-    [allCards, answers, curveballChoices],
-  );
-
-  const hasAudio = useMemo(
-    () => allCards.some((c) => c.kind === 'beat' && Boolean(c.beat.audioUrl)),
-    [allCards],
+    () => allCards.slice(0, revealedCount(allCards, answers)),
+    [allCards, answers],
   );
 
   const scrollTo = useCallback((i: number) => {
@@ -102,8 +66,8 @@ export function RepPlayer({ rep, nextRepId }: RepPlayerProps) {
     if (target instanceof HTMLElement) target.scrollIntoView({ behavior: 'smooth' });
   }, []);
 
-  // Which card is on screen. Drives the progress bar, the entry animations,
-  // and which voiceover is playing.
+  // Which card is on screen. Drives the progress bar, the wash and the entry
+  // animations.
   useEffect(() => {
     const feed = feedRef.current;
     if (!feed) return;
@@ -115,18 +79,16 @@ export function RepPlayer({ rep, nextRepId }: RepPlayerProps) {
           if (!Number.isNaN(i)) setActive(i);
         }
       },
-      // A band across the middle of the feed rather than a coverage ratio:
-      // Rep 1.8's recap card is taller than the viewport and would never
-      // reach a 55% threshold, so it would never become the active card.
+      // A band across the middle rather than a coverage ratio: a card taller
+      // than the viewport would never reach a percentage threshold.
       { root: feed, rootMargin: '-45% 0px -45% 0px', threshold: 0 },
     );
     for (const child of Array.from(feed.children)) observer.observe(child);
     return () => observer.disconnect();
   }, [cards.length]);
 
-  // Arrows and space page the feed. Scrolling is the primary gesture, but the
-  // player has to work from a keyboard — pilot clients will demo this on a
-  // laptop before anyone installs an app.
+  // Scrolling is the primary gesture, but the player has to work from a
+  // keyboard: pilot clients demo this on a laptop before anyone installs it.
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
       const target = e.target as HTMLElement | null;
@@ -143,15 +105,13 @@ export function RepPlayer({ rep, nextRepId }: RepPlayerProps) {
     return () => window.removeEventListener('keydown', onKey);
   }, [active, cards.length, scrollTo]);
 
-  // Announce card changes so a screen-reader user is not left behind by a
-  // visual-only transition.
   useEffect(() => {
     if (liveRef.current) {
       liveRef.current.textContent = `Card ${active + 1} of ${allCards.length}`;
     }
   }, [active, allCards.length]);
 
-  // Finishing the Rep is worth more than any single card in it.
+  // Finishing the lesson is worth more than any single question in it.
   const scored = useRef(false);
   useEffect(() => {
     if (cards[active]?.kind !== 'summary' || scored.current) return;
@@ -164,43 +124,37 @@ export function RepPlayer({ rep, nextRepId }: RepPlayerProps) {
     return chosen?.correct;
   }).length;
 
+  const onAnswer = useCallback(
+    (questionId: string, optionId: string) => {
+      if (answers[questionId]) return;
+      setAnswers((a) => ({ ...a, [questionId]: optionId }));
+      const correct = rep.quiz
+        .find((q) => q.id === questionId)
+        ?.options.find((o) => o.id === optionId)?.correct;
+      if (correct) earn(XP.quizQuestionCorrect);
+    },
+    [answers, rep.quiz, earn],
+  );
+
   const gated = cards.length < allCards.length && active === cards.length - 1;
 
   return (
     <div
       className={styles.player}
       data-surface="feed"
-      // The wash belongs to the whole screen, not to the card. Scoped to the
-      // card it left a seam at the header, and half the effect is the chrome
-      // changing colour with the content.
-      data-card={cards[active]?.kind ?? 'beat'}
-      // Eight Reps used to be lit identically. The index seeds the angle and
-      // the height of the wash, so 1.3 does not look like 1.1 even on the same
-      // kind of card, without introducing a colour the brand does not own.
+      // The wash is keyed to the card on screen, and seeded by the lesson
+      // index so consecutive lessons are lit from different sides.
+      data-card={cards[active]?.kind ?? 'repIntro'}
       style={{ '--rep-seed': rep.index } as CSSProperties}
-      data-moment={cards[active]?.kind === 'beat' && cards[active]?.beat.type === 'moment'}
     >
       <header className={styles.header}>
         <Link href="/learn" className={styles.back} aria-label="Back to Module 1">
           ←
         </Link>
         <div className={styles.headerText}>
-          <span className={styles.repNumber}>Rep {rep.number}</span>
+          <span className={styles.repNumber}>Lesson {rep.number}</span>
           <span className={styles.repTitle}>{rep.title}</span>
         </div>
-        {hasAudio ? (
-          <button
-            type="button"
-            className={styles.soundBtn}
-            aria-pressed={soundOn}
-            aria-label={soundOn ? 'Turn sound off' : 'Turn sound on'}
-            onClick={() => setSoundOn((on) => !on)}
-          >
-            <SpeakerIcon on={soundOn} />
-          </button>
-        ) : null}
-        {/* No card counter: the progress bar directly below already says where
-            the learner is, and on a 430px header something had to go. */}
         <span className={styles.xpCounter} aria-label={`${xp} XP earned`}>
           {xp}
           <span aria-hidden> XP</span>
@@ -210,7 +164,7 @@ export function RepPlayer({ rep, nextRepId }: RepPlayerProps) {
       <div className={styles.progress} aria-hidden>
         {allCards.map((c, i) => (
           <span
-            key={i}
+            key={c.key}
             className={i < active ? styles.segDone : i === active ? styles.segNow : styles.seg}
             data-kind={c.kind}
           />
@@ -231,32 +185,8 @@ export function RepPlayer({ rep, nextRepId }: RepPlayerProps) {
               card={card}
               rep={rep}
               isActive={i === active}
-              soundOn={soundOn}
-              onSoundOn={() => setSoundOn(true)}
               answers={answers}
-              onAnswer={(qid, oid) => {
-                if (answers[qid]) return;
-                setAnswers((a) => ({ ...a, [qid]: oid }));
-                const correct = rep.quiz
-                  .find((q) => q.id === qid)
-                  ?.options.find((o) => o.id === oid)?.correct;
-                if (correct) earn(XP.quizQuestionCorrect);
-              }}
-              curveballChoices={curveballChoices}
-              onCurveball={(cid, choiceId) => {
-                if (curveballChoices[cid]) return;
-                setCurveballChoices((c) => ({ ...c, [cid]: choiceId }));
-                // A costly call still scores. Getting a hard one wrong in an
-                // app and reading why is the behaviour we want; charging for
-                // it teaches people to avoid the hard ones. See XP in core.
-                const verdict = rep.curveballs
-                  .find((c) => c.id === cid)
-                  ?.choices.find((ch) => ch.id === choiceId)?.verdict;
-                if (verdict) earn(XP.curveball[verdict]);
-              }}
-              fieldNote={fieldNote}
-              onFieldNote={setFieldNote}
-              onFieldNoteSaved={() => earn(XP.fieldNoteSaved)}
+              onAnswer={onAnswer}
               correctCount={correctCount}
               nextRepId={nextRepId}
             />
@@ -264,8 +194,6 @@ export function RepPlayer({ rep, nextRepId }: RepPlayerProps) {
         ))}
       </div>
 
-      {/* Rises off the counter and fades. Keyed so a second award restarts the
-          animation rather than joining the first one already in flight. */}
       {award ? (
         <span
           key={award.key}
@@ -277,8 +205,6 @@ export function RepPlayer({ rep, nextRepId }: RepPlayerProps) {
         </span>
       ) : null}
 
-      {/* The affordance the Next button used to be. Hidden on the last card,
-          and while a gate is holding the feed. There is nothing below yet. */}
       <button
         type="button"
         className={styles.scrollCue}
@@ -293,22 +219,15 @@ export function RepPlayer({ rep, nextRepId }: RepPlayerProps) {
 }
 
 /**
- * How much of the feed is reachable right now.
+ * How much of the lesson is reachable right now.
  *
- * A Curveball or a quiz question is the point of its card, so the feed stops
- * at the first one that has no answer yet — that card is included, everything
- * after it is not. Answering re-runs this and the feed grows.
+ * The feed stops at the first question with no answer. That card is included;
+ * everything after it is not. Answering re-runs this and the feed grows.
  */
-function revealedCount(
-  cards: Card[],
-  answers: Record<string, string>,
-  curveballs: Record<string, string>,
-): number {
+function revealedCount(cards: Card[], answers: Record<string, string>): number {
   for (let i = 0; i < cards.length; i++) {
     const card = cards[i]!;
     if (card.kind === 'quiz' && !answers[card.question.id]) return i + 1;
-    if (card.kind === 'curveball' && !curveballs[card.curveball.id]) return i + 1;
-    if (card.kind === 'gutCheck' && !curveballs[card.gutCheck.id]) return i + 1;
   }
   return cards.length;
 }
@@ -319,15 +238,8 @@ interface CardViewProps {
   card: Card;
   rep: Rep;
   isActive: boolean;
-  soundOn: boolean;
-  onSoundOn: () => void;
   answers: Record<string, string>;
   onAnswer: (questionId: string, optionId: string) => void;
-  curveballChoices: Record<string, string>;
-  onCurveball: (id: string, choiceId: string) => void;
-  fieldNote: string;
-  onFieldNote: (value: string) => void;
-  onFieldNoteSaved: () => void;
   correctCount: number;
   nextRepId?: string;
 }
@@ -338,41 +250,8 @@ function CardView(props: CardViewProps) {
   switch (card.kind) {
     case 'repIntro':
       return <RepIntroCard rep={card.rep} />;
-    case 'beat':
-      return (
-        <BeatCard
-          beat={card.beat}
-          isActive={props.isActive}
-          soundOn={props.soundOn}
-          onSoundOn={props.onSoundOn}
-        />
-      );
-    case 'gutCheck':
-      return (
-        <GutCheckCard
-          gutCheck={card.gutCheck}
-          chosen={props.curveballChoices[card.gutCheck.id]}
-          onChoose={(choiceId) => props.onCurveball(card.gutCheck.id, choiceId)}
-        />
-      );
-    case 'curveball':
-      return (
-        <CurveballCard
-          curveball={card.curveball}
-          chosen={props.curveballChoices[card.curveball.id]}
-          onChoose={(choiceId) => props.onCurveball(card.curveball.id, choiceId)}
-        />
-      );
-    case 'fieldNote':
-      return (
-        <FieldNoteCard
-          rep={props.rep}
-          value={props.fieldNote}
-          onChange={props.onFieldNote}
-          curveballChoices={props.curveballChoices}
-          onSaved={props.onFieldNoteSaved}
-        />
-      );
+    case 'video':
+      return <VideoCard rep={card.rep} isActive={props.isActive} />;
     case 'quiz':
       return (
         <QuizCard
@@ -385,11 +264,7 @@ function CardView(props: CardViewProps) {
       );
     case 'summary':
       return (
-        <SummaryCard
-          rep={props.rep}
-          correctCount={props.correctCount}
-          nextRepId={props.nextRepId}
-        />
+        <SummaryCard rep={props.rep} correctCount={props.correctCount} nextRepId={props.nextRepId} />
       );
   }
 }
@@ -397,10 +272,10 @@ function CardView(props: CardViewProps) {
 /**
  * The cold open.
  *
- * The Rep number set enormous and nearly transparent behind the hook, which is
- * the one line already written to earn a swipe in three seconds. Every Rep now
- * opens on a different sentence at display scale rather than on a paragraph,
- * which is most of what makes eight Reps feel like eight things.
+ * The lesson number set enormous and nearly transparent behind the hook, which
+ * is the one line already written to earn a swipe in three seconds. Every
+ * lesson opens on a different sentence at display scale, which is most of what
+ * makes eight of them feel like eight things rather than one long thing.
  */
 function RepIntroCard({ rep }: { rep: Rep }) {
   return (
@@ -409,508 +284,83 @@ function RepIntroCard({ rep }: { rep: Rep }) {
         {rep.number}
       </span>
       <span className={styles.introEyebrow}>
-        Rep {rep.number} · {rep.title}
+        Lesson {rep.number} · {rep.title}
       </span>
       <p className={styles.introHook}>{rep.hook}</p>
       <span className={styles.introMeta}>
-        {Math.round(estimateRepTotalSeconds(rep) / 60)} min · {rep.curveballs.length} Curveball
-        {rep.curveballs.length === 1 ? '' : 's'} · {rep.quiz.length} questions
+        {Math.max(1, Math.round(estimateRepTotalSeconds(rep) / 60))} min · {rep.quiz.length} questions
       </span>
     </div>
   );
 }
 
-interface BeatCardProps {
-  beat: Beat;
-  isActive: boolean;
-  soundOn: boolean;
-  onSoundOn: () => void;
-}
-
-function BeatCard({ beat, isActive, soundOn, onSoundOn }: BeatCardProps) {
-  const vo = useVoiceover(beat, isActive, soundOn);
-  const transport = beat.audioUrl ? (
-    <>
-      <Transport
-        playing={vo.playing}
-        total={vo.total}
-        elapsed={vo.elapsed}
-        fallbackSeconds={estimateBeatSeconds(beat)}
-        onToggle={vo.toggle}
-        onSoundOn={onSoundOn}
-      />
-      {vo.audio}
-    </>
-  ) : null;
-
-  if (beat.type === 'moment') {
-    const lines = splitMomentLines(beat.text ?? '');
-    return (
-      <div className={styles.moment}>
-        <span className={styles.momentRule} aria-hidden />
-        <p className={styles.momentText}>
-          {lines.map((line, i) => (
-            // The last sentence is the one the learner is meant to keep. It
-            // gets its own line, its own colour, and it arrives last.
-            <span
-              key={i}
-              className={styles.momentLine}
-              data-punchline={i === lines.length - 1}
-              style={{ '--d': `${0.12 + i * 0.5}s` } as CSSProperties}
-            >
-              {line}
-            </span>
-          ))}
-        </p>
-        {transport}
-      </div>
-    );
-  }
-
-  if (beat.type === 'buildList') {
-    const items = beat.items ?? [];
-    return (
-      <div className={styles.card}>
-        {/* Module 1's lists run from three items to seven. Past four they stop
-            fitting a phone at the airy size, so the whole card tightens. */}
-        <ol className={styles.buildList} data-density={items.length >= 5 ? 'dense' : 'airy'}>
-          {items.map((item, i) => {
-            const { label, body, quoted } = splitListItem(item);
-            return (
-              <li
-                key={i}
-                className={styles.buildItem}
-                style={{ '--d': `${i * 0.16}s` } as CSSProperties}
-              >
-                <span className={styles.buildOrdinal} aria-hidden>
-                  {String(i + 1).padStart(2, '0')}
-                </span>
-                <span className={styles.buildContent}>
-                  {label ? <span className={styles.buildLabel}>{label}</span> : null}
-                  <span className={styles.buildBody} data-quoted={quoted}>
-                    {body}
-                  </span>
-                </span>
-              </li>
-            );
-          })}
-        </ol>
-        {transport}
-      </div>
-    );
-  }
-
-  return <ProseCard beat={beat} progress={vo.progress} transport={transport} />;
-}
-
 /**
- * Every card that is mostly words: `avatar`, `overlay`, `reading`.
+ * The lesson video.
  *
- * They differ in production, not in reading — one has a voiceover, one has a
- * title over the top of it, one is silent by design — so they share a shape:
- *
- *   anchor   the title where the beat has one, otherwise the opening paragraph
- *   body     the middle
- *   kicker   the closing paragraph, set apart at full contrast
- *
- * That structure is not imposed on the copy; the scripts are already written
- * that way. b1 opens "Congratulations on your promotion." and closes "The job
- * you just accepted? Nobody actually trained you for it." Setting those two
- * apart is typesetting what is already there — which is the difference
- * between a card and a paragraph of grey text.
+ * Falls back to the script as a readable transcript until the film exists, so
+ * a lesson with no footage is a lesson rather than an empty screen. The
+ * transcript stays available under the video once it does: a manager doing
+ * this on a shop floor or a train often has the sound off.
  */
-function ProseCard({
-  beat,
-  progress,
-  transport,
-}: {
-  beat: Beat;
-  progress: number | null;
-  transport: React.ReactNode;
-}) {
-  const paragraphs = (beat.speech ?? '').split('\n\n').map((p) => p.trim()).filter(Boolean);
-  const title = beat.text;
+function VideoCard({ rep, isActive }: { rep: Rep; isActive: boolean }) {
+  const ref = useRef<HTMLVideoElement>(null);
+  // Read off the file rather than assumed. The per-beat clips were shot 9:16
+  // for a feed; a lesson film may well be 16:9, and guessing wrong letterboxes
+  // every lesson until somebody notices.
+  const [ratio, setRatio] = useState<number | null>(null);
 
-  // With a title, the whole speech is body-and-kicker. Without one, the
-  // opening paragraph is promoted to carry the card.
-  const lede = title ? undefined : paragraphs[0];
-  const rest = title ? paragraphs : paragraphs.slice(1);
-  const kicker = rest.length > 0 ? rest[rest.length - 1] : undefined;
-  const body = rest.slice(0, -1);
-
-  // One running offset across every paragraph, so the highlight travels down
-  // the card the way the voice does.
-  const totalWords = paragraphs.reduce((n, para) => n + wordCount(para), 0);
-  let cursor = 0;
-  const at = (text: string) => {
-    const start = cursor;
-    cursor += wordCount(text);
-    return start;
-  };
-  const ledeOffset = lede === undefined ? 0 : at(lede);
-  const bodyOffsets = body.map((para) => at(para));
-  const kickerOffset = kicker === undefined ? 0 : at(kicker);
-
-  return (
-    <article className={styles.reading}>
-      <span className={styles.readingRule} aria-hidden />
-      {title ? <h2 className={styles.readingTitle}>{title}</h2> : null}
-      {lede ? (
-        <SpokenText
-          text={lede}
-          progress={progress}
-          className={styles.readingLede}
-          offset={ledeOffset}
-          total={totalWords}
-        />
-      ) : null}
-      {beat.type === 'reading' && !beat.audioUrl ? (
-        <p className={styles.readingMeta}>{estimateBeatSeconds(beat)} sec read</p>
-      ) : null}
-      {transport}
-      {body.map((para, i) => (
-        <SpokenText
-          key={i}
-          text={para}
-          progress={progress}
-          className={styles.readingBody}
-          offset={bodyOffsets[i]!}
-          total={totalWords}
-        />
-      ))}
-      {kicker ? (
-        <SpokenText
-          text={kicker}
-          progress={progress}
-          className={styles.readingKicker}
-          offset={kickerOffset}
-          total={totalWords}
-        />
-      ) : null}
-    </article>
-  );
-}
-
-
-/**
- * Playback for one beat's voiceover.
- *
- * Owned here rather than inside the transport because the text needs it too:
- * the card lights up word by word as the line is spoken, which is the single
- * mechanic that makes social video feel alive and is the reason a caption is
- * worth watching with the sound off.
- *
- * The word position is interpolated from elapsed/duration rather than from
- * real timings. Per-word timestamps would need a forced aligner and a build
- * step; a linear map is wrong in the middle of a sentence by a fraction of a
- * word and exactly right at both ends, which is where the eye checks.
- */
-function useVoiceover(beat: Beat, isActive: boolean, soundOn: boolean) {
-  const ref = useRef<HTMLAudioElement>(null);
-  const [playing, setPlaying] = useState(false);
-  const [elapsed, setElapsed] = useState(0);
-  const [total, setTotal] = useState(0);
-
+  // Leaving the card stops the video. Two lessons talking at once is the
+  // fastest way to make somebody close the app.
   useEffect(() => {
     const el = ref.current;
-    if (!el) return;
-    if (isActive && soundOn) {
-      // Rejects until the browser has seen a gesture. Expected, not an error.
-      void el.play().catch(() => {});
-    } else {
-      el.pause();
-      if (!isActive) {
-        el.currentTime = 0;
-        setElapsed(0);
-      }
-    }
-  }, [isActive, soundOn]);
+    if (!el || isActive) return;
+    el.pause();
+  }, [isActive]);
 
-  const toggle = useCallback(() => {
-    const el = ref.current;
-    if (!el) return;
-    if (el.paused) void el.play().catch(() => {});
-    else el.pause();
-  }, []);
+  const script = rep.beats
+    .flatMap((beat) => (beat.speech ? beat.speech.split('\n\n') : []))
+    .map((para) => para.trim())
+    .filter(Boolean);
 
-  const audio = beat.audioUrl ? (
-    <audio
-      ref={ref}
-      src={beat.audioUrl}
-      preload="metadata"
-      onPlay={() => setPlaying(true)}
-      onPause={() => setPlaying(false)}
-      onEnded={() => setPlaying(false)}
-      // Duration is read on every tick, not only on loadedmetadata. With
-      // preload="metadata" the browser can resolve it before React attaches
-      // the handler, and a missed loadedmetadata left `total` at 0 — which
-      // silently disabled the word highlighting and pinned the countdown to
-      // its estimate.
-      onTimeUpdate={(e) => {
-        setElapsed(e.currentTarget.currentTime);
-        const d = e.currentTarget.duration;
-        if (Number.isFinite(d) && d > 0) setTotal(d);
-      }}
-      onDurationChange={(e) => {
-        const d = e.currentTarget.duration;
-        if (Number.isFinite(d) && d > 0) setTotal(d);
-      }}
-      onLoadedMetadata={(e) => setTotal(e.currentTarget.duration || 0)}
-    />
-  ) : null;
-
-  return {
-    audio,
-    toggle,
-    playing,
-    total,
-    elapsed,
-    /** 0 to 1, or null when this beat has no audio or has not started. */
-    progress: beat.audioUrl && total > 0 && elapsed > 0 ? elapsed / total : null,
-  };
-}
-
-/**
- * Text that lights up as it is spoken.
- *
- * With no playback it renders as ordinary type at full contrast — a card must
- * never be left dimmed because the learner has the sound off.
- */
-function SpokenText({
-  text,
-  progress,
-  className,
-  offset,
-  total,
-}: {
-  text: string;
-  progress: number | null;
-  className: string;
-  offset: number;
-  total: number;
-}) {
-  if (progress === null || total === 0) return <p className={className}>{text}</p>;
-
-  // Position within the whole beat, not within this paragraph. With
-  // per-paragraph progress every paragraph lit at the same fraction at once,
-  // which reads as a rendering fault rather than a voice moving down a page.
-  const spokenGlobal = progress * total;
-  const parts = text.split(/(\s+)/);
-  let seen = 0;
+  if (!rep.videoUrl) {
+    return (
+      <article className={styles.reading}>
+        <span className={styles.readingRule} aria-hidden />
+        <h2 className={styles.readingTitle}>{rep.title}</h2>
+        <p className={styles.readingMeta}>Script · film not shot yet</p>
+        {script.map((para, i) => (
+          <p key={i} className={styles.readingBody}>
+            {para}
+          </p>
+        ))}
+      </article>
+    );
+  }
 
   return (
-    <p className={className} data-kinetic="true">
-      {parts.map((part, i) => {
-        if (!part.trim()) return part;
-        seen += 1;
-        return (
-          <span key={i} className={styles.word} data-spoken={offset + seen <= spokenGlobal}>
-            {part}
-          </span>
-        );
-      })}
-    </p>
-  );
-}
-
-/** Word count, matching how SpokenText splits. */
-function wordCount(text: string): number {
-  return text.split(/\s+/).filter(Boolean).length;
-}
-
-/**
- * Voiceover for one beat.
- *
- * Renders nothing when the beat has no audio, which is every beat until a
- * recording is wired in — the card is the product and this rides on top.
- *
- * The visible card's audio plays automatically, but only after the learner has
- * pressed play once. Browsers block sound before a gesture, and firing a
- * silently-rejected play() on every scroll is worse than not trying.
- */
-interface TransportProps {
-  playing: boolean;
-  total: number;
-  elapsed: number;
-  fallbackSeconds: number;
-  onToggle: () => void;
-  onSoundOn: () => void;
-}
-
-/** The transport under a card. Renders nothing when the beat has no audio. */
-function Transport({ playing, total, elapsed, fallbackSeconds, onToggle, onSoundOn }: TransportProps) {
-  const pct = total > 0 ? (elapsed / total) * 100 : 0;
-
-  return (
-    <div className={styles.voiceover}>
-      <button
-        type="button"
-        className={styles.voiceoverBtn}
-        onClick={() => {
-          onSoundOn();
-          onToggle();
+    <div className={styles.card}>
+      <video
+        ref={ref}
+        className={styles.video}
+        style={ratio ? ({ aspectRatio: String(ratio) } as CSSProperties) : undefined}
+        src={rep.videoUrl}
+        poster={rep.posterUrl}
+        controls
+        playsInline
+        preload="metadata"
+        onLoadedMetadata={(e) => {
+          const { videoWidth, videoHeight } = e.currentTarget;
+          if (videoWidth > 0 && videoHeight > 0) setRatio(videoWidth / videoHeight);
         }}
-        aria-label={playing ? 'Pause narration' : 'Play narration'}
-      >
-        <span aria-hidden>{playing ? '❙❙' : '▶'}</span>
-      </button>
-      <span className={styles.voiceoverTrack} aria-hidden>
-        <span className={styles.voiceoverFill} style={{ width: `${pct}%` }} />
-      </span>
-      <span className={styles.voiceoverTime} aria-hidden>
-        {formatTime(total > 0 ? total - elapsed : fallbackSeconds)}
-      </span>
-    </div>
-  );
-}
-
-function SpeakerIcon({ on }: { on: boolean }) {
-  return (
-    <svg viewBox="0 0 16 16" width="15" height="15" fill="none" aria-hidden focusable="false">
-      <path
-        d="M3 6h2.2L8.5 3.3v9.4L5.2 10H3z"
-        fill="currentColor"
-        stroke="currentColor"
-        strokeWidth="1.1"
-        strokeLinejoin="round"
       />
-      {on ? (
-        <>
-          <path d="M11 5.6a3.2 3.2 0 0 1 0 4.8" stroke="currentColor" strokeWidth="1.3" strokeLinecap="round" />
-          <path d="M12.8 3.8a5.8 5.8 0 0 1 0 8.4" stroke="currentColor" strokeWidth="1.3" strokeLinecap="round" />
-        </>
-      ) : (
-        <path d="M11 6.2l3.4 3.6M14.4 6.2L11 9.8" stroke="currentColor" strokeWidth="1.3" strokeLinecap="round" />
-      )}
-    </svg>
-  );
-}
-
-/** Trimmed length, so whitespace does not earn anything. */
-function e_len(value: string): number {
-  return value.trim().length;
-}
-
-function formatTime(seconds: number): string {
-  const whole = Math.max(0, Math.round(seconds));
-  return `${Math.floor(whole / 60)}:${String(whole % 60).padStart(2, '0')}`;
-}
-
-
-/**
- * A Gut Check.
- *
- * Deliberately small: one line, a few options, one line back. It has to read
- * as five seconds of work — if it looked like a Curveball, the learner would
- * brace for one, and the point is to interrupt a run of reading without
- * costing them anything.
- *
- * No verdict colours. There is no right answer to a question about the
- * learner's own experience, and grading one would be a lie.
- */
-function GutCheckCard({
-  gutCheck,
-  chosen,
-  onChoose,
-}: {
-  gutCheck: GutCheck;
-  chosen?: string;
-  onChoose: (choiceId: string) => void;
-}) {
-  const chosenChoice = gutCheck.choices.find((c) => c.id === chosen);
-
-  return (
-    <div className={styles.card}>
-      <p className={styles.gutCheckLabel}>Gut check</p>
-      <p className={styles.gutCheckPrompt}>{gutCheck.prompt}</p>
-
-      <ul className={styles.options} role="radiogroup" aria-label={gutCheck.prompt}>
-        {gutCheck.choices.map((choice) => {
-          const isChosen = choice.id === chosen;
-          return (
-            <li key={choice.id}>
-              <button
-                type="button"
-                role="radio"
-                aria-checked={isChosen}
-                disabled={Boolean(chosen) && !isChosen}
-                className={`${styles.option} ${styles.gutCheckOption}`}
-                data-state={!chosen ? 'idle' : isChosen ? 'chosen-gut' : 'dimmed'}
-                onClick={() => onChoose(choice.id)}
-              >
-                <span>{choice.text}</span>
-              </button>
-            </li>
-          );
-        })}
-      </ul>
-
-      {chosenChoice ? (
-        <p className={styles.gutCheckReaction}>{chosenChoice.reaction}</p>
-      ) : null}
-    </div>
-  );
-}
-
-const VERDICT_LABEL: Record<CurveballVerdict, string> = {
-  best: 'Strongest call',
-  workable: 'Workable',
-  costly: 'This one costs you',
-};
-
-function CurveballCard({
-  curveball,
-  chosen,
-  onChoose,
-}: {
-  curveball: Curveball;
-  chosen?: string;
-  onChoose: (choiceId: string) => void;
-}) {
-  const chosenChoice = curveball.choices.find((c) => c.id === chosen);
-
-  return (
-    <div className={styles.card}>
-      <p className={styles.curveballLabel}>Curveball · {curveball.skill}</p>
-      <p className={styles.scenario}>{curveball.scenario}</p>
-      <p className={styles.prompt}>{curveball.prompt}</p>
-
-      <ul className={styles.options} role="radiogroup" aria-label={curveball.prompt}>
-        {curveball.choices.map((choice, i) => {
-          const isChosen = choice.id === chosen;
-          return (
-            <li key={choice.id}>
-              <button
-                type="button"
-                role="radio"
-                aria-checked={isChosen}
-                disabled={Boolean(chosen) && !isChosen}
-                className={styles.option}
-                data-state={
-                  !chosen ? 'idle' : isChosen ? `chosen-${choice.verdict}` : 'dimmed'
-                }
-                onClick={() => onChoose(choice.id)}
-              >
-                <span className={styles.optionKey}>{String.fromCharCode(65 + i)}</span>
-                <span>{choice.text}</span>
-              </button>
-            </li>
-          );
-        })}
-      </ul>
-
-      {chosenChoice ? (
-        <div className={styles.response} data-verdict={chosenChoice.verdict}>
-          <p className={styles.verdict}>{VERDICT_LABEL[chosenChoice.verdict]}</p>
-          <p>{chosenChoice.response}</p>
-          {chosenChoice.verdict !== 'best' ? (
-            <details className={styles.reveal}>
-              <summary>What the strongest call was</summary>
-              <p>{curveball.choices.find((c) => c.verdict === 'best')?.response}</p>
-            </details>
-          ) : null}
-        </div>
-      ) : null}
+      <details className={styles.transcript}>
+        <summary>Transcript</summary>
+        {script.map((para, i) => (
+          <p key={i} className={styles.readingBody}>
+            {para}
+          </p>
+        ))}
+      </details>
     </div>
   );
 }
@@ -933,7 +383,8 @@ function QuizCard({
   return (
     <div className={styles.card}>
       <p className={styles.quizLabel}>
-        Question {index + 1} of {total} · from {question.source}
+        Question {index + 1} of {total}
+        {question.source ? ` · from ${question.source}` : ''}
       </p>
       <p className={styles.prompt}>{question.stem}</p>
 
@@ -971,69 +422,12 @@ function QuizCard({
 
       {chosenOption ? (
         <div className={styles.response} data-verdict={chosenOption.correct ? 'best' : 'costly'}>
-          <p className={styles.verdict}>{chosenOption.correct ? 'Locked in.' : 'Not yet, worth another look.'}</p>
+          <p className={styles.verdict}>
+            {chosenOption.correct ? 'Locked in.' : 'Not yet. Worth another look.'}
+          </p>
           <p>{chosenOption.feedback}</p>
         </div>
       ) : null}
-    </div>
-  );
-}
-
-function FieldNoteCard({
-  rep,
-  value,
-  onChange,
-  curveballChoices,
-  onSaved,
-}: {
-  rep: Rep;
-  value: string;
-  onChange: (v: string) => void;
-  curveballChoices: Record<string, string>;
-  onSaved: () => void;
-}) {
-  const scored = useRef(false);
-  const short = value.trim().length > 0 && value.trim().length < rep.fieldNote.suggestedMinChars;
-  // The Curveball answer comes back here. It is the only place in a Rep where
-  // a decision has a consequence, so the card says so rather than quietly
-  // swapping the question.
-  const { prompt, placeholder, followedUp } = fieldNotePrompt(rep, curveballChoices);
-
-  return (
-    <div className={styles.card}>
-      <p className={styles.fieldNoteLabel}>
-        Field Note · {followedUp ? 'your call, revisited' : rep.fieldNote.topic}
-      </p>
-      <p className={styles.prompt}>{prompt}</p>
-
-      <label htmlFor="field-note" className="nms-visually-hidden">
-        {prompt}
-      </label>
-      <textarea
-        id="field-note"
-        className={styles.textarea}
-        rows={6}
-        value={value}
-        placeholder={placeholder}
-        onChange={(e) => onChange(e.target.value)}
-        onBlur={() => {
-          // Scored once, on leaving the field with something written. Scoring
-          // per keystroke would make the counter meaningless.
-          if (scored.current || e_len(value) < rep.fieldNote.suggestedMinChars) return;
-          scored.current = true;
-          onSaved();
-        }}
-      />
-
-      <p className={styles.fieldNoteHint}>
-        {short
-          ? 'A bit more would help, but you can move on whenever you like.'
-          : 'No wrong answers here. This one is for you.'}
-      </p>
-      <p className={styles.privacy}>
-        If someone in your Corner is on Level 3, they get a question to ask you, never your actual
-        words.
-      </p>
     </div>
   );
 }
@@ -1053,7 +447,7 @@ function SummaryCard({
 
   return (
     <div className={styles.card}>
-      <p className={styles.quizLabel}>Rep {rep.number} complete</p>
+      <p className={styles.quizLabel}>Lesson {rep.number} complete</p>
       <p className={styles.summaryScore}>
         {correctCount}
         <span>/{total}</span>
@@ -1061,12 +455,12 @@ function SummaryCard({
       <p className={styles.prompt}>
         {passed ? 'Locked in.' : 'Worth running back before you move on.'}
       </p>
-      <p className={styles.speech}>{rep.keyIdea}</p>
+      <p className={styles.readingBody}>{rep.keyIdea}</p>
 
       <div className={styles.summaryActions}>
         {nextRepId ? (
           <Link href={`/learn/${nextRepId}`} className="nms-btn nms-btn--bright">
-            Next Rep
+            Next lesson
           </Link>
         ) : (
           <Link href="/learn" className="nms-btn nms-btn--bright">
@@ -1074,7 +468,7 @@ function SummaryCard({
           </Link>
         )}
         <Link href="/learn" className={`nms-btn nms-btn--ghost ${styles.ghostOnDark}`}>
-          All Reps
+          All lessons
         </Link>
       </div>
 

@@ -163,3 +163,33 @@ npm run report:cadence -w @nms/content   # what these are fixing, measured
 seconds with no input; 1.3 is the worst at 2m36. That list is pinned in the
 test suite, so a Rep cannot quietly join it and fixing one forces the list to
 be updated.
+
+
+---
+
+## Quiz coverage
+
+The approved quiz document (`SSMT Quizzes – Module 1`) specifies **ten
+four-option questions per section**, and from 1.2 onward two of them are review
+from earlier sections. Sections **1.1 and 1.2 are written**; the document ends
+"More quizzes will be added as Module 1 develops."
+
+| Section | Status |
+|---|---|
+| 1.1 | Ten approved questions, shipped verbatim |
+| 1.2 | Ten approved questions, shipped verbatim |
+| 1.3 – 1.8 | Placeholder questions written for the build. Replace when the document is extended |
+
+The stems and options are the document's. The per-option **feedback is ours** —
+the document specifies only which letter is correct, and a quiz with no
+explanation of a wrong answer tests rather than teaches. A test asserts every
+option has feedback.
+
+**One thing to check with the author.** Section 1.2, question 8 is labelled
+"From Section 1.1: What is emotional contagion?" — emotional contagion is
+section **1.4**, not 1.1. The question ships as written and is tagged to 1.4 so
+the review-question logic is right; the label in the source document is what
+needs correcting.
+
+A test pins the list of sections still on placeholders, so one cannot quietly
+join it and filling one in forces the list to be edited.

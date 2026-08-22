@@ -1,5 +1,4 @@
 import { findRep, module01 } from '@nms/content';
-import type { CurveballVerdict } from '@nms/content';
 import { addCalendarDays, toCalendarDate } from '../time/business-days.js';
 import type {
   ActivityEvent,
@@ -25,8 +24,6 @@ export const XP = {
   repCompleted: 50,
   quizQuestionCorrect: 10,
   quizPassed: 40,
-  curveball: { best: 25, workable: 15, costly: 10 } satisfies Record<CurveballVerdict, number>,
-  fieldNoteSaved: 30,
   moduleCompleted: 250,
 } as const;
 
@@ -47,7 +44,7 @@ export function emptyProgress(enrollmentId: string, startedAt: Date): LearnerPro
 function ensureRep(progress: LearnerProgress, repId: string): RepProgress {
   const existing = progress.reps[repId];
   if (existing) return existing;
-  const created: RepProgress = { repId, attempts: [], curveballVerdicts: {} };
+  const created: RepProgress = { repId, attempts: [] };
   progress.reps[repId] = created;
   return created;
 }
@@ -78,24 +75,11 @@ export function applyActivity(
 
   if (event.repId) {
     const rep = { ...ensureRep(next, event.repId) };
-    rep.curveballVerdicts = { ...rep.curveballVerdicts };
     next.reps[event.repId] = rep;
 
     switch (event.type) {
       case 'rep-opened':
         rep.openedAt ??= event.at;
-        break;
-      case 'field-note-saved':
-        if (!rep.fieldNoteSavedAt) {
-          rep.fieldNoteSavedAt = event.at;
-          next.xp += XP.fieldNoteSaved;
-        }
-        break;
-      case 'curveball-answered':
-        if (event.targetId && event.verdict && !(event.targetId in rep.curveballVerdicts)) {
-          rep.curveballVerdicts[event.targetId] = event.verdict;
-          next.xp += XP.curveball[event.verdict];
-        }
         break;
       case 'rep-completed':
         if (!rep.completedAt) {

@@ -70,7 +70,7 @@ export default function HomeScreen() {
               {Math.round(estimateRepTotalSeconds(upNext) / 60)} min
             </Text>
             <Text style={styles.upNextMetaText}>
-              {upNext.curveballs.length} Curveball{upNext.curveballs.length === 1 ? '' : 's'}
+              {upNext.quiz.length} questions
             </Text>
           </View>
         </Pressable>

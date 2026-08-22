@@ -1,4 +1,3 @@
-import type { CurveballVerdict } from '@nms/content';
 
 /**
  * Activity types.
@@ -11,9 +10,7 @@ import type { CurveballVerdict } from '@nms/content';
 export type ActivityType =
   | 'rep-opened'
   | 'beat-viewed'
-  | 'curveball-answered'
   | 'quiz-answered'
-  | 'field-note-saved'
   | 'rep-completed'
   | 'module-completed';
 
@@ -21,9 +18,7 @@ export type ActivityType =
 export const RESETS_INACTIVITY: readonly ActivityType[] = [
   'rep-opened',
   'beat-viewed',
-  'curveball-answered',
   'quiz-answered',
-  'field-note-saved',
   'rep-completed',
   'module-completed',
 ];
@@ -38,8 +33,6 @@ export interface ActivityEvent {
   targetId?: string;
   /** For `quiz-answered`. */
   correct?: boolean;
-  /** For `curveball-answered`. */
-  verdict?: CurveballVerdict;
 }
 
 export interface QuizAttempt {
@@ -61,7 +54,6 @@ export interface RepProgress {
   attempts: QuizAttempt[];
   fieldNoteSavedAt?: Date;
   /** Curveball id → verdict of the choice the learner picked. */
-  curveballVerdicts: Record<string, CurveballVerdict>;
 }
 
 export interface StreakState {

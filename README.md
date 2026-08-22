@@ -55,7 +55,6 @@ docs/
   brand/BRAND_GUIDE.md          Name, mark, colour, type, voice
   product/MVP_SPEC.md           What is built, what is decided, what is open
   product/PILOT_PLAYBOOK.md     How to run the pilot and what to learn
-  product/NARRATION_PRODUCTION.md  How to record and wire the voiceover
   product/IP_PUNCH_LIST.md      Trademark items needing legal sign-off
   product/ROADMAP.md            Phase 2 and beyond
 ```
@@ -67,15 +66,14 @@ streaks, and colour have exactly one definition each.
 
 | Term | What it is |
 |---|---|
-| **Rep** | One ~7-minute lesson |
-| **Curveball** | A scenario that interrupts the feed. Four plausible moves, graded best/workable/costly — never right/wrong |
-| **Gut Check** | A five-second tap that interrupts a run of reading. No score, no wrong answer |
-| **Field Note** | The open-ended written reflection at the end of each Rep |
+| **Lesson** | One section: a two-to-three minute video and its ten-question quiz |
 | **Your Corner** | The people who receive your progress updates, at a level you choose |
 
 ## Module 1 — the MVP
 
-8 Reps · 26 quiz questions · 10 Curveballs · 4 Gut Checks · 8 Field Notes · ~59 minutes.
+8 lessons. Each is a video and then a quiz, and you swipe from one to the
+next. Lessons 1.1 and 1.2 carry the ten approved questions each; 1.3 to 1.8
+are placeholders until the rest of the quiz document lands.
 
 All eight sections come from the approved and locked April 2026 script. The
 script's own `[AVATAR]` / `[BUILD LIST]` / `[FULL SCREEN MOMENT]` markup is
@@ -83,18 +81,17 @@ already a storyboard, so the content package preserves it one-to-one and the
 feed renders one beat per card — which is what makes an hour of course feel like
 a scroll instead of a webinar.
 
-The lesson is **cards, scrolled** — no talking heads, no Next button. Voiceover
-rides on top of a card that already works in silence. The reasoning is in
-`docs/product/NARRATION_PRODUCTION.md`; the short version is that a synthetic
-presenter undercuts material this personal, rendered video makes every copy
-edit cost a re-render, and half the real usage has the sound off.
+The format is a **feed**: full-screen cards, vertical snap, one thing on screen
+at a time. What is on the cards is now simple — a cold open, the video, the
+questions, a summary — but the swipe is the product and that has not changed.
+
+The beats are still in the content. They are the script the video is shot
+from, and the player falls back to them as a readable transcript for any
+lesson whose film has not been made yet.
 
 ```bash
 npm run report:content -w @nms/content   # per-Rep timing + validation
 npm run report:ip -w @nms/content        # every change from a locked script
-npm run report:cadence -w @nms/content   # how long a learner goes with nothing to do
-npm run narration -w @nms/content -- m1-r1  # voiceover list for one Rep
-npm run narration -w @nms/content -- --index # every take id, for naming audio files
 ```
 
 ## Two things to read before shipping
@@ -109,10 +106,9 @@ counsel's view before public launch.
 
 **`docs/product/MVP_SPEC.md § Runtime` — the scripts are shorter than they say.**
 The approved scripts contain ~4,500 words against the ~6,200 their own headers
-claim, so narration runs ~30 minutes for Module 1 rather than 60. Counting
-Curveballs, Field Notes and quizzes, in-app time is 58m35 — the seven-minute Rep
-holds, but on interaction rather than narration. There is a decision to make
-about which number is the real target.
+claim, so the eight films run about 30 minutes in total rather than 60. With
+the quizzes counted, a lesson lands at roughly six minutes in the app. There is
+a decision to make about which number is the real target.
 
 ## What is not built
 

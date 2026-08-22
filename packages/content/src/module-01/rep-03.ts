@@ -117,55 +117,7 @@ export const rep03: Rep = {
     },
   ],
 
-  curveballs: [
-    {
-      id: 'm1-r3-cb1',
-      triggerAfterBeat: 'b7',
-      skill: 'Resetting a peer relationship',
-      scenario:
-        'Thursday, 5:30pm. The group chat you have been in for two years lights up. Someone you now manage posts a complaint about a decision leadership made this week, a decision you were in the room for and cannot discuss.',
-      prompt: 'What do you do?',
-      choices: [
-        {
-          id: 'a',
-          text: 'Reply with a laughing emoji. Staying in it keeps things normal.',
-          verdict: 'costly',
-          response:
-            'Normal is exactly what has ended. Signalling agreement with a complaint about a decision you helped make is the blurred line, and the first time you have to enforce something it will cost you.',
-        },
-        {
-          id: 'b',
-          text: 'Say nothing and quietly leave the chat.',
-          verdict: 'workable',
-          response:
-            'The instinct to step back is right. Leaving silently is not, people notice, and they will fill the silence with a worse story than the truth. Leave, but say why first.',
-        },
-        {
-          id: 'c',
-          text: 'Say something in the chat about keeping work talk professional.',
-          verdict: 'costly',
-          response:
-            'Correcting former peers in a group setting is the fastest way to turn a small awkwardness into a public one. The reset conversation is a one-on-one conversation.',
-        },
-        {
-          id: 'd',
-          text: 'Say nothing tonight. Tomorrow, talk to them one-on-one: acknowledge the friendship, be clear about what has changed, and explain what you can and cannot be part of now.',
-          verdict: 'best',
-          response:
-            'Directly, warmly, and early, before a situation forces it to happen in a harder way. Note that you are the one who resets it. That responsibility came with the title.',
-        },
-      ],
-    },
-  ],
 
-  fieldNote: {
-    id: 'm1-r3-fn1',
-    topic: 'Relationship reset',
-    prompt:
-      'Which relationship on your team has changed the most since your promotion, and have you actually acknowledged that change out loud with that person yet?',
-    placeholder: 'You do not have to name them. Describe the situation.',
-    suggestedMinChars: 80,
-  },
 
   quiz: [
     {

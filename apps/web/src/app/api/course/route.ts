@@ -34,7 +34,7 @@ export function GET() {
         counts: {
           beats: rep.beats.length,
           quiz: rep.quiz.length,
-          curveballs: rep.curveballs.length,
+          hasVideo: Boolean(rep.videoUrl),
         },
       })),
     })),

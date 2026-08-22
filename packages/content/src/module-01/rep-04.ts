@@ -99,55 +99,7 @@ export const rep04: Rep = {
     },
   ],
 
-  curveballs: [
-    {
-      id: 'm1-r4-cb1',
-      triggerAfterBeat: 'b6',
-      skill: 'Managing your own state before it becomes the team’s',
-      scenario:
-        'You just got off a call where your boss questioned your team’s numbers in front of two other managers. Your next meeting starts in four minutes. It is your team’s weekly stand-up.',
-      prompt: 'What do you do with those four minutes?',
-      choices: [
-        {
-          id: 'a',
-          text: 'Walk in and tell the team exactly what was said. They deserve transparency.',
-          verdict: 'workable',
-          response:
-            'Transparency matters and Module 2 builds on it. But raw transmission is not transparency. It is contagion with a justification. Process it first, then decide what the team actually needs to know and when.',
-        },
-        {
-          id: 'b',
-          text: 'Pause. Name what you are carrying, decide what stays outside the room, and set an intention for the stand-up.',
-          verdict: 'best',
-          response:
-            'Two minutes, four steps. Note what you did not do: you did not pretend the call went well. Intentional is not the same as fake.',
-        },
-        {
-          id: 'c',
-          text: 'Push through. Being visibly stressed shows the team you are human.',
-          verdict: 'costly',
-          response:
-            'The team will not read it as human, they will read it as danger, and questions go unasked. You are the most contagious person in the room whether you intend to be or not.',
-        },
-        {
-          id: 'd',
-          text: 'Cancel the stand-up and reschedule for tomorrow.',
-          verdict: 'workable',
-          response:
-            'Occasionally the right call, and better than showing up hot. But if it becomes the pattern, your team learns that your bad days cost them their access to you.',
-        },
-      ],
-    },
-  ],
 
-  fieldNote: {
-    id: 'm1-r4-fn1',
-    topic: 'Energy and presence',
-    prompt:
-      'Think about the last time you brought a bad mood into work. What did your team do differently that day?',
-    placeholder: 'If you are not sure they noticed. That is worth writing down too.',
-    suggestedMinChars: 70,
-  },
 
   quiz: [
     {

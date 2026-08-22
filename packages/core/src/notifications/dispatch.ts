@@ -8,7 +8,6 @@ import {
   templateGenerator,
   type CoachingQuestion,
   type CoachingQuestionGenerator,
-  type FieldNoteAnswer,
 } from './coaching-questions.js';
 
 /**
@@ -84,8 +83,8 @@ export interface WeeklyDigestInput {
   weekStart: Date;
   /** Exclusive end of the digest week. */
   weekEnd: Date;
-  /** Field Note answers saved during the week. Level 3 only. */
-  fieldNoteAnswers: readonly FieldNoteAnswer[];
+  /** Quiz questions answered incorrectly this week. Level 3 only. */
+  missedQuestionIds?: readonly string[];
   generator?: CoachingQuestionGenerator;
 }
 
@@ -97,7 +96,7 @@ export interface WeeklyDigestInput {
  * digest templates that will drift apart by the third sprint.
  */
 export function weeklyDigestNotifications(input: WeeklyDigestInput): Notification[] {
-  const { enrollment, progress, weekStart, weekEnd, fieldNoteAnswers } = input;
+  const { enrollment, progress, weekStart, weekEnd, missedQuestionIds = [] } = input;
   const generator = input.generator ?? templateGenerator;
   const recipients = contactsAtOrAbove(enrollment, 2);
   if (recipients.length === 0) return [];
@@ -158,15 +157,15 @@ export function weeklyDigestNotifications(input: WeeklyDigestInput): Notificatio
 
     if (contact.level === 3) {
       const questions = generator.generate({
-        answers: fieldNoteAnswers,
         completedRepIds: completedThisWeek.map((r) => r.repId),
+        missedQuestionIds,
         max: 3,
       });
       if (questions.length > 0) {
         body.push({ type: 'questions', title: `Worth asking ${name} this week`, questions });
         body.push({
           type: 'note',
-          text: `These are generated from ${name}’s written reflections and the sections they covered. You are seeing the questions, not their answers — that is deliberate, and it is what keeps the reflections honest.`,
+          text: `These come from the lessons ${name} covered this week and the questions they got wrong. Ask them as openers, not as a test.`,
         });
       }
     }

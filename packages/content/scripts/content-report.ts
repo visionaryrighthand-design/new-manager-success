@@ -10,7 +10,7 @@
  *           would run, and the number to compare against the script header's
  *           "Target Duration: 7 minutes".
  *   TOTAL — what the Rep actually costs a learner in the app, including
- *           Curveballs, the Field Note, and the quiz. This is the number the
+ *           video and the quiz. This is the number the
  *           "7-minute lesson" promise should be held to.
  *
  * Exits non-zero on validation problems so this can gate CI.
@@ -52,7 +52,7 @@ for (const mod of course.modules) {
         fmt(inApp).padStart(7),
         String(rep.beats.length).padStart(6),
         String(rep.quiz.length).padStart(3),
-        String(rep.curveballs.length).padStart(3),
+        rep.videoUrl ? ' ✓ ' : '  ·',
       ].join(' '),
     );
   }
@@ -63,8 +63,7 @@ for (const mod of course.modules) {
   );
   console.log(
     `         Reps ${mod.reps.length} · questions ${mod.reps.reduce((n, r) => n + r.quiz.length, 0)}` +
-      ` · Curveballs ${mod.reps.reduce((n, r) => n + r.curveballs.length, 0)}` +
-      ` · Field Notes ${mod.reps.filter((r) => r.fieldNote).length}`,
+      ` · films ${mod.reps.filter((r) => r.videoUrl).length}/${mod.reps.length}`,
   );
 
   const shortfall = totalTarget - totalNarration;

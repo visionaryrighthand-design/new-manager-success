@@ -68,9 +68,6 @@ export interface Beat {
    * on a shop floor, a ward, or a train has the sound off. Audio deepens a
    * card that already reads; it does not rescue one that does not.
    *
-   * One file per beat, not one per Rep. A Curveball interrupts between beats,
-   * and re-recording a single line is cheap where re-cutting a long track is
-   * not.
    *
    * Must be a direct, streamable URL — .mp3, .m4a, .aac, .wav or .ogg. A
    * share page will not play in a bare <audio> element.
@@ -114,108 +111,12 @@ export interface QuizQuestion {
   source: string;
 }
 
-/**
- * A Curveball is the pop-up challenge that interrupts the feed. It is
- * deliberately NOT pass/fail: management calls are rarely binary, and a
- * right/wrong buzzer teaches the wrong lesson. Each choice is graded on how
- * costly it is, and every choice gets a real answer.
- */
-export type CurveballVerdict = 'best' | 'workable' | 'costly';
-
-export interface CurveballChoice {
-  id: string;
-  text: string;
-  verdict: CurveballVerdict;
-  /** The coaching response for this specific choice. Always shown. */
-  response: string;
-}
-
-export interface Curveball {
-  id: string;
-  /** Beat id after which this Curveball interrupts the feed. */
-  triggerAfterBeat: string;
-  /** The setup. Second person, present tense. */
-  scenario: string;
-  /** The question put to the learner. */
-  prompt: string;
-  choices: CurveballChoice[];
-  /** Short label for the judgment being exercised. Feeds the Corner digest. */
-  skill: string;
-}
 
 /**
  * Open-ended written reflection. Every Rep must have at least one — this is a
  * hard requirement from the Registration & Progress Communications spec,
  * because Level 3 contacts receive 1:1 questions generated from these answers.
  */
-export interface FieldNote {
-  id: string;
-  /** Asked when the learner skipped every Curveball, or none has a follow-up. */
-  prompt: string;
-  placeholder: string;
-  /** Below this, the UI nudges for more. Never blocks submission. */
-  suggestedMinChars: number;
-  /** Topic tag consumed by the 1:1 question generator. */
-  topic: string;
-  /**
-   * Prompts that depend on what the learner actually chose earlier.
-   *
-   * This is the only place in a Rep where a decision has a consequence. A
-   * Curveball currently costs nothing: you pick, you read why, you scroll on.
-   * Here the choice comes back and asks the learner to live with it — "you
-   * said you would absorb the extra work; it is Friday, what slipped?" — which
-   * is the difference between a quiz about management and a rehearsal of it.
-   *
-   * First match in declaration order wins, so the author controls priority
-   * when a Rep has more than one Curveball.
-   */
-  followUps?: FieldNoteFollowUp[];
-}
-
-export interface FieldNoteFollowUp {
-  curveballId: string;
-  choiceId: string;
-  /** Replaces `FieldNote.prompt` entirely when this choice was made. */
-  prompt: string;
-  /** Replaces `FieldNote.placeholder`, where the follow-up wants a different shape of answer. */
-  placeholder?: string;
-}
-
-/**
- * A Gut Check.
- *
- * A five-second tap that interrupts a run of cards the learner would otherwise
- * only read. Not a quiz and not a Curveball: there is no correct answer and
- * nothing is scored. Every option is a real answer somebody would give, and
- * each one gets a single line back that reframes it or names what is common.
- *
- * It exists because of cadence. Rep 1.5 ran nine cards and two and a half
- * minutes with nothing for the learner to do, which is how a lesson stops
- * being a lesson and becomes a document. The measurement is in
- * `npm run report:cadence`.
- *
- * Gut Checks are NOT in the approved April 2026 scripts. Each one is recorded
- * in `Rep.contentAdditions` so it can be approved or cut without hunting.
- */
-export interface GutCheck {
-  id: string;
-  /** Beat id this lands after, matching the Curveball convention. */
-  triggerAfterBeat: string;
-  /** One line. If it needs a scenario paragraph, it is a Curveball. */
-  prompt: string;
-  choices: GutCheckChoice[];
-}
-
-export interface GutCheckChoice {
-  id: string;
-  text: string;
-  /**
-   * One line back. Never "correct" or "incorrect" — this is a question about
-   * the learner's own experience, and there is no version of it they can get
-   * wrong.
-   */
-  reaction: string;
-}
 
 // ---------------------------------------------------------------------------
 // Provenance
@@ -290,12 +191,23 @@ export interface Rep {
   /** Topic tags. Drive the Level 3 question generator and search. */
   topics: string[];
   beats: Beat[];
-  curveballs: Curveball[];
-  /** Five-second taps that break up long passive runs. Not in the scripts. */
-  gutChecks?: GutCheck[];
-  fieldNote: FieldNote;
-  /** Rep-level check. The module-level exam lives on the Module. */
+  /**
+   * The lesson's quiz. Ten questions, per the approved quiz document; from
+   * section 1.2 onward two of them are review from earlier sections, which is
+   * the spaced repetition the document specifies.
+   */
   quiz: QuizQuestion[];
+  /**
+   * The lesson video: this section's script, start to finish, as one file.
+   *
+   * A lesson is a video and then its quiz. The script for each section is
+   * written as one continuous piece of narration, and that is what gets shot.
+   *
+   * Must be a direct, streamable URL (MP4 or HLS). A share page is not one.
+   */
+  videoUrl?: string;
+  /** Poster frame shown before playback. */
+  posterUrl?: string;
   scriptDeviations?: ScriptDeviation[];
   /** Everything in this Rep that the approved script does not contain. */
   contentAdditions?: ContentAddition[];

@@ -94,22 +94,10 @@ function buildDemo() {
     progress,
     weekStart: week.start,
     weekEnd: week.end,
-    fieldNoteAnswers: [
-      {
-        repId: 'm1-r2',
-        fieldNoteId: 'm1-r2-fn1',
-        topic: 'The doer trap',
-        text: 'I am still building the weekly client report myself. Priya could do it but the last version she sent had errors and I did not want to have that conversation.',
-        savedAt: new Date('2026-08-12T11:00:00Z'),
-      },
-      {
-        repId: 'm1-r3',
-        fieldNoteId: 'm1-r3-fn1',
-        topic: 'Relationship reset',
-        text: 'Marcus and I used to complain about management together. Now I am management and he has basically stopped talking to me.',
-        savedAt: new Date('2026-08-13T11:00:00Z'),
-      },
-    ],
+    // Level 3 prompts now come from the lessons covered and the questions
+    // missed, since Field Notes were removed when a lesson became a video and
+    // a quiz. Two misses, so the demo shows the sharper kind of prompt.
+    missedQuestionIds: ['m1-r2-q2', 'm1-r2-q4'],
   });
 
   const inactivity = inactivityNotifications({

@@ -1,7 +1,8 @@
 import { test, describe } from 'node:test';
 import assert from 'node:assert/strict';
 import { sectionCompleteNotifications, weeklyDigestNotifications } from './dispatch.js';
-import { extractSubjectPhrases, MAX_ECHOED_WORDS, templateGenerator } from './coaching-questions.js';
+import { templateGenerator } from './coaching-questions.js';
+import { module01 } from '@nms/content';
 import type { Enrollment } from '../registration/types.js';
 import { emptyProgress, recordQuizAttempt, applyActivity } from '../progress/engine.js';
 
@@ -58,14 +59,16 @@ describe('Level 2 and 3 — weekly digest', () => {
         at: new Date('2026-08-12T10:00:00Z'),
       });
     }
+    // Answers derived from the content rather than listed: the quiz went from
+    // three questions to ten when the approved document landed, and hardcoded
+    // option ids quietly turned a perfect run into a 10% one.
     p = recordQuizAttempt(
       p,
       'm1-r1',
-      [
-        { questionId: 'm1-r1-q1', optionId: 'b' },
-        { questionId: 'm1-r1-q2', optionId: 'a' },
-        { questionId: 'm1-r1-q3', optionId: 'b' },
-      ],
+      module01.reps[0]!.quiz.map((q) => ({
+        questionId: q.id,
+        optionId: q.options.find((o) => o.correct)!.id,
+      })),
       new Date('2026-08-12T10:05:00Z'),
     ).progress;
     return p;
@@ -77,7 +80,6 @@ describe('Level 2 and 3 — weekly digest', () => {
       progress: progressWithAWeek(),
       weekStart: WEEK_START,
       weekEnd: WEEK_END,
-      fieldNoteAnswers: [],
     });
     assert.deepEqual(notes.map((n) => n.to.id).sort(), ['c2', 'c3']);
   });
@@ -88,7 +90,6 @@ describe('Level 2 and 3 — weekly digest', () => {
       progress: progressWithAWeek(),
       weekStart: WEEK_START,
       weekEnd: WEEK_END,
-      fieldNoteAnswers: [],
     });
     const level2 = notes.find((n) => n.to.level === 2)!;
     const titles = level2.body.flatMap((b) => (b.type === 'list' ? [b.title] : []));
@@ -106,11 +107,12 @@ describe('Level 2 and 3 — weekly digest', () => {
       progress: progressWithAWeek(),
       weekStart: WEEK_START,
       weekEnd: WEEK_END,
-      fieldNoteAnswers: [],
     });
     const scores = notes[0]!.body.find((b) => b.type === 'list' && b.title === 'Quiz scores');
     assert.ok(scores && scores.type === 'list');
-    assert.match(scores.items[0]!, /100% \(3\/3, passed\)/);
+    // Derived: the quiz length changes as the approved questions land.
+    const total = module01.reps[0]!.quiz.length;
+    assert.match(scores.items[0]!, new RegExp(`100% \\(${total}/${total}, passed\\)`));
   });
 
   test('Level 3 gets conversation prompts, Level 2 does not', () => {
@@ -119,15 +121,6 @@ describe('Level 2 and 3 — weekly digest', () => {
       progress: progressWithAWeek(),
       weekStart: WEEK_START,
       weekEnd: WEEK_END,
-      fieldNoteAnswers: [
-        {
-          repId: 'm1-r2',
-          fieldNoteId: 'm1-r2-fn1',
-          topic: 'The doer trap',
-          text: 'I am still writing the weekly client report myself even though Priya could do it.',
-          savedAt: new Date('2026-08-12T11:00:00Z'),
-        },
-      ],
     });
     const level2 = notes.find((n) => n.to.level === 2)!;
     const level3 = notes.find((n) => n.to.level === 3)!;
@@ -141,7 +134,6 @@ describe('Level 2 and 3 — weekly digest', () => {
       progress: emptyProgress('e1', enrollment.startedAt),
       weekStart: WEEK_START,
       weekEnd: WEEK_END,
-      fieldNoteAnswers: [],
     });
     assert.match(notes[0]!.subject, /0 sections completed/);
     assert.equal(
@@ -163,7 +155,6 @@ describe('Level 2 and 3 — weekly digest', () => {
       progress: p,
       weekStart: WEEK_START,
       weekEnd: WEEK_END,
-      fieldNoteAnswers: [],
     });
     assert.match(notes[0]!.subject, /0 sections completed/);
   });
@@ -176,78 +167,68 @@ describe('Level 2 and 3 — weekly digest', () => {
         progress: progressWithAWeek(),
         weekStart: WEEK_START,
         weekEnd: WEEK_END,
-        fieldNoteAnswers: [],
       }),
       [],
     );
   });
 });
 
-describe('Level 3 conversation prompts — privacy invariant', () => {
-  /**
-   * The contract: a contact receives questions, never the learner's answer.
-   * These are the tests that make that claim enforceable.
+describe('Level 3 conversation prompts', () => {
+  /*
+   * Field Notes are gone, so the privacy invariant they needed — no verbatim
+   * span of a learner's private writing reaching their boss — no longer has
+   * anything to protect. What replaced it is narrower: prompts come from the
+   * lessons covered and the questions missed, both of which a Level 2 contact
+   * already sees as a score.
    */
-  const sensitive =
-    'Honestly I have completely lost confidence in my own manager and I am already interviewing somewhere else because of how the reorg was handled.';
+  test('a missed question produces a sharper prompt than the topic alone', () => {
+    const rep = module01.reps.find((r) => r.number === '1.1')!;
+    const missed = rep.quiz[0]!;
 
-  test('no long verbatim span from the answer reaches the output', () => {
-    const questions = templateGenerator.generate({
-      answers: [
-        {
-          repId: 'm1-r3',
-          fieldNoteId: 'm1-r3-fn1',
-          topic: 'Relationship reset',
-          text: sensitive,
-          savedAt: new Date('2026-08-12T11:00:00Z'),
-        },
-      ],
-      completedRepIds: ['m1-r3'],
+    const withMiss = templateGenerator.generate({
+      completedRepIds: [rep.id],
+      missedQuestionIds: [missed.id],
     });
+    const withoutMiss = templateGenerator.generate({ completedRepIds: [rep.id] });
+
+    assert.equal(withMiss[0]?.basis, 'missed');
+    assert.equal(withoutMiss[0]?.basis, 'topic');
+    assert.notEqual(withMiss[0]?.question, withoutMiss[0]?.question);
+  });
+
+  test('a prompt never repeats a quiz stem verbatim', () => {
+    // A stem reads like a test question. The contact is being handed a
+    // conversation opener, not an exam paper.
+    const rep = module01.reps.find((r) => r.number === '1.1')!;
+    const questions = templateGenerator.generate({
+      completedRepIds: [rep.id],
+      missedQuestionIds: rep.quiz.map((q) => q.id),
+      max: 5,
+    });
+    for (const q of questions) {
+      for (const quizQuestion of rep.quiz) {
+        assert.equal(
+          q.question.includes(quizQuestion.stem),
+          false,
+          `prompt repeats a stem verbatim: "${quizQuestion.stem}"`,
+        );
+      }
+    }
+  });
+
+  test('at most one prompt per lesson, however many were missed', () => {
+    const rep = module01.reps.find((r) => r.number === '1.1')!;
+    const questions = templateGenerator.generate({
+      completedRepIds: [rep.id],
+      missedQuestionIds: rep.quiz.map((q) => q.id),
+      max: 5,
+    });
+    assert.equal(questions.filter((q) => q.basis === 'missed').length, 1);
+  });
+
+  test('questions are still generated when nothing was missed', () => {
+    const questions = templateGenerator.generate({ completedRepIds: ['m1-r3'] });
     assert.ok(questions.length > 0);
-
-    const output = questions.map((q) => `${q.question} ${q.rationale}`).join(' ').toLowerCase();
-    const words = sensitive.toLowerCase().replace(/[^\p{L}\p{N}\s]/gu, '').split(/\s+/);
-
-    for (let i = 0; i + MAX_ECHOED_WORDS <= words.length; i++) {
-      const span = words.slice(i, i + MAX_ECHOED_WORDS + 1).join(' ');
-      assert.equal(
-        output.includes(span),
-        false,
-        `output leaked a ${MAX_ECHOED_WORDS + 1}-word span from the learner's answer: "${span}"`,
-      );
-    }
-  });
-
-  test('extractSubjectPhrases never returns more than MAX_ECHOED_WORDS words', () => {
-    for (const phrase of extractSubjectPhrases(sensitive, 10)) {
-      assert.ok(
-        phrase.split(/\s+/).length <= MAX_ECHOED_WORDS,
-        `phrase too long: "${phrase}"`,
-      );
-    }
-  });
-
-  test('questions are still generated when no Field Note was written', () => {
-    const questions = templateGenerator.generate({
-      answers: [],
-      completedRepIds: ['m1-r6'],
-    });
-    assert.ok(questions.length > 0, 'section topic alone is enough — source (b) in the spec');
-    assert.equal(questions.every((q) => q.basis === 'topic'), true);
-  });
-
-  test('empty input produces nothing rather than a filler question', () => {
-    assert.deepEqual(templateGenerator.generate({ answers: [], completedRepIds: [] }), []);
-  });
-
-  test('output is capped and de-duplicated', () => {
-    const questions = templateGenerator.generate({
-      answers: [],
-      completedRepIds: ['m1-r1', 'm1-r2', 'm1-r3', 'm1-r4', 'm1-r5'],
-      max: 3,
-    });
-    assert.equal(questions.length, 3);
-    assert.equal(new Set(questions.map((q) => q.question)).size, 3);
+    assert.ok(questions.every((q) => q.basis === 'topic'));
   });
 });
