@@ -186,7 +186,7 @@
   .pillars { grid-template-columns: repeat(3, 1fr); gap: var(--nms-space-7); }
 }
 
-/* ---- Rep list ---------------------------------------------------------- */
+/* ---- Section list ---------------------------------------------------------- */
 
 .repList {
   list-style: none;
@@ -207,7 +207,7 @@
 }
 .repRow:hover { background: var(--nms-color-surface); }
 
-.repNum {
+.sectionNum {
   font-family: var(--nms-font-mono);
   font-size: var(--nms-font-caption-size);
   color: var(--nms-color-accent-text);
@@ -215,10 +215,10 @@
 }
 
 .repMain { display: flex; flex-direction: column; gap: 4px; }
-.repTitle { font-weight: 600; font-size: 1.0625rem; }
-.repHook { color: var(--nms-color-fg-muted); font-size: var(--nms-font-caption-size); }
+.sectionTitle { font-weight: 600; font-size: 1.0625rem; }
+.sectionHook { color: var(--nms-color-fg-muted); font-size: var(--nms-font-caption-size); }
 
-.repMeta {
+.sectionMeta {
   display: none;
   font-size: var(--nms-font-caption-size);
   color: var(--nms-color-fg-subtle);
@@ -227,7 +227,7 @@
 
 @media (min-width: 720px) {
   .repRow { grid-template-columns: 3rem 1fr auto; }
-  .repMeta { display: block; }
+  .sectionMeta { display: block; }
 }
 
 /* ---- Corner band ------------------------------------------------------- */

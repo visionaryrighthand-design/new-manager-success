@@ -1,11 +1,11 @@
-import type { Rep } from '../types.js';
+import type { Section } from '../types.js';
 
 /**
  * 1.2 — Why Being Great at Your Job Isn't Enough Anymore
  * Script status: APPROVED & LOCKED (April 2026). Beats are verbatim.
  */
-export const rep02: Rep = {
-  id: 'm1-r2',
+export const section02: Section = {
+  id: 'm1-s2',
   moduleNumber: 1,
   index: 2,
   number: '1.2',
@@ -111,7 +111,7 @@ export const rep02: Rep = {
 
   quiz: [
     {
-      id: 'm1-r2-q1',
+      id: 'm1-s2-q1',
       kind: 'recall',
       source: '1.2',
       stem: "What is the main difference between a “doer” and a “leader”?",
@@ -143,7 +143,7 @@ export const rep02: Rep = {
       ],
     },
     {
-      id: 'm1-r2-q2',
+      id: 'm1-s2-q2',
       kind: 'recall',
       source: '1.2',
       stem: "Why can being a top performer sometimes hurt a new manager?",
@@ -175,7 +175,7 @@ export const rep02: Rep = {
       ],
     },
     {
-      id: 'm1-r2-q3',
+      id: 'm1-s2-q3',
       kind: 'recall',
       source: '1.2',
       stem: "Which lens should a leader begin using?",
@@ -207,7 +207,7 @@ export const rep02: Rep = {
       ],
     },
     {
-      id: 'm1-r2-q4',
+      id: 'm1-s2-q4',
       kind: 'recall',
       source: '1.2',
       stem: "A common temptation for new managers is to:",
@@ -239,7 +239,7 @@ export const rep02: Rep = {
       ],
     },
     {
-      id: 'm1-r2-q5',
+      id: 'm1-s2-q5',
       kind: 'recall',
       source: '1.2',
       stem: "The best managers focus on:",
@@ -271,7 +271,7 @@ export const rep02: Rep = {
       ],
     },
     {
-      id: 'm1-r2-q6',
+      id: 'm1-s2-q6',
       kind: 'recall',
       source: '1.2',
       stem: "“Letting go” means:",
@@ -303,7 +303,7 @@ export const rep02: Rep = {
       ],
     },
     {
-      id: 'm1-r2-q7',
+      id: 'm1-s2-q7',
       kind: 'recall',
       source: '1.1',
       stem: "From Section 1.1: What hasn’t changed when you become a manager?",
@@ -335,7 +335,7 @@ export const rep02: Rep = {
       ],
     },
     {
-      id: 'm1-r2-q8',
+      id: 'm1-s2-q8',
       kind: 'recall',
       source: '1.4',
       stem: "From Section 1.1: What is emotional contagion?",
@@ -367,7 +367,7 @@ export const rep02: Rep = {
       ],
     },
     {
-      id: 'm1-r2-q9',
+      id: 'm1-s2-q9',
       kind: 'recall',
       source: '1.2',
       stem: "One of the biggest shifts in management is:",
@@ -399,7 +399,7 @@ export const rep02: Rep = {
       ],
     },
     {
-      id: 'm1-r2-q10',
+      id: 'm1-s2-q10',
       kind: 'scenario',
       source: '1.2',
       stem: "Why is it important for managers to shift from task-focused to people-focused thinking?",

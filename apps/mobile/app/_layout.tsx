@@ -21,7 +21,7 @@ export default function RootLayout() {
             }}
           >
             <Stack.Screen name="index" options={{ animation: 'fade' }} />
-            <Stack.Screen name="rep/[repId]" options={{ gestureEnabled: false }} />
+            <Stack.Screen name="section/[sectionId]" options={{ gestureEnabled: false }} />
           </Stack>
         </ProgressProvider>
       </SafeAreaProvider>

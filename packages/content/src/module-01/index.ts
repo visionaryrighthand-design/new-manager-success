@@ -1,16 +1,16 @@
 import type { CourseModule } from '../types.js';
-import { rep01 } from './rep-01.js';
-import { rep02 } from './rep-02.js';
-import { rep03 } from './rep-03.js';
-import { rep04 } from './rep-04.js';
-import { rep05 } from './rep-05.js';
-import { rep06 } from './rep-06.js';
-import { rep07 } from './rep-07.js';
-import { rep08 } from './rep-08.js';
+import { section01 } from './section-01.js';
+import { section02 } from './section-02.js';
+import { section03 } from './section-03.js';
+import { section04 } from './section-04.js';
+import { section05 } from './section-05.js';
+import { section06 } from './section-06.js';
+import { section07 } from './section-07.js';
+import { section08 } from './section-08.js';
 
 /**
  * Module 1 — The Mindset Shift: From Doer to Manager.
- * The MVP. Eight Reps, all from the approved & locked April 2026 script.
+ * The MVP. Eight Sections, all from the approved & locked April 2026 script.
  */
 export const module01: CourseModule = {
   id: 'm1',
@@ -22,7 +22,7 @@ export const module01: CourseModule = {
   status: 'live',
   // 85% to match the midterm and final exam thresholds in the course outline.
   passingScore: 85,
-  reps: [rep01, rep02, rep03, rep04, rep05, rep06, rep07, rep08],
+  sections: [section01, section02, section03, section04, section05, section06, section07, section08],
 };
 
-export { rep01, rep02, rep03, rep04, rep05, rep06, rep07, rep08 };
+export { section01, section02, section03, section04, section05, section06, section07, section08 };

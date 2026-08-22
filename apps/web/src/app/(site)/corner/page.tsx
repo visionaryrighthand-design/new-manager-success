@@ -47,20 +47,20 @@ function buildDemo() {
   const week = { start: new Date('2026-08-10T00:00:00Z'), end: new Date('2026-08-17T00:00:00Z') };
   let progress = emptyProgress('demo', DEMO_ENROLLMENT.startedAt);
 
-  for (const [i, repId] of ['m1-r1', 'm1-r2', 'm1-r3'].entries()) {
+  for (const [i, sectionId] of ['m1-s1', 'm1-s2', 'm1-s3'].entries()) {
     const at = new Date(`2026-08-1${1 + i}T10:00:00Z`);
     progress = applyActivity(progress, {
-      id: `open-${repId}`,
+      id: `open-${sectionId}`,
       enrollmentId: 'demo',
-      type: 'rep-opened',
-      repId,
+      type: 'section-opened',
+      sectionId,
       at,
     });
     progress = applyActivity(progress, {
-      id: `done-${repId}`,
+      id: `done-${sectionId}`,
       enrollmentId: 'demo',
-      type: 'rep-completed',
-      repId,
+      type: 'section-completed',
+      sectionId,
       at,
     });
   }
@@ -69,8 +69,8 @@ function buildDemo() {
   // marketing. Buyers trust a report that can show a bad week.
   progress = recordQuizAttempt(
     progress,
-    'm1-r1',
-    module01.reps[0]!.quiz.map((q) => ({
+    'm1-s1',
+    module01.sections[0]!.quiz.map((q) => ({
       questionId: q.id,
       optionId: q.options.find((o) => o.correct)!.id,
     })),
@@ -79,15 +79,15 @@ function buildDemo() {
 
   progress = recordQuizAttempt(
     progress,
-    'm1-r3',
-    module01.reps[2]!.quiz.map((q, i) => ({
+    'm1-s3',
+    module01.sections[2]!.quiz.map((q, i) => ({
       questionId: q.id,
       optionId: (i === 0 ? q.options.find((o) => !o.correct) : q.options.find((o) => o.correct))!.id,
     })),
     new Date('2026-08-13T10:20:00Z'),
   ).progress;
 
-  const level1 = sectionCompleteNotifications(DEMO_ENROLLMENT, 'm1-r3');
+  const level1 = sectionCompleteNotifications(DEMO_ENROLLMENT, 'm1-s3');
 
   const digests = weeklyDigestNotifications({
     enrollment: DEMO_ENROLLMENT,
@@ -97,7 +97,7 @@ function buildDemo() {
     // Level 3 prompts now come from the lessons covered and the questions
     // missed, since Field Notes were removed when a lesson became a video and
     // a quiz. Two misses, so the demo shows the sharper kind of prompt.
-    missedQuestionIds: ['m1-r2-q2', 'm1-r2-q4'],
+    missedQuestionIds: ['m1-s2-q2', 'm1-s2-q4'],
   });
 
   const inactivity = inactivityNotifications({

@@ -11,7 +11,7 @@ Not "do people like it". Everyone says they like it.
 
 You are testing four things, in this order of importance:
 
-1. **Do they come back?** Completing Rep 1.1 proves nothing — a new toy gets
+1. **Do they come back?** Completing Section 1.1 proves nothing — a new toy gets
    opened once. The number that matters is how many people open a *second*
    session on a *different day*.
 2. **Does the Curveball land?** This is the product's central bet: that
@@ -73,15 +73,15 @@ Enroll everyone through `/enroll`. For clients A and B, put each learner's own
 supervisor in their Corner at Level 2, and put your champion at Level 3 for
 everyone. Client C gets no contacts at all — that is the point of client C.
 
-**Week 1 — Reps 1.1–1.3**
+**Week 1 — Sections 1.1–1.3**
 Do not schedule a training session. The entire premise is that this fits into a
 real week. Send one message on Monday and then leave them alone.
 
-**Week 2 — Reps 1.4–1.6**
+**Week 2 — Sections 1.4–1.6**
 Mid-pilot check-in with the champion only. Ask what they have heard
 unprompted — unprompted comments are worth ten survey responses.
 
-**Week 3 — Reps 1.7–1.8**
+**Week 3 — Sections 1.7–1.8**
 Watch for who has gone quiet. Under the shipped rules that is 7 business days
 of inactivity, so week 3 is when the safety net would have fired if it were
 sending. Note who it *would* have caught and whether that matches reality.
@@ -147,10 +147,10 @@ it manually.
 
 | Metric | Why | Rough bar for "keep going" |
 |---|---|---|
-| Reps started / enrolled | Activation | >70% start Rep 1.1 |
+| Sections started / enrolled | Activation | >70% start Section 1.1 |
 | **Distinct active days per learner** | The real retention signal | Median ≥3 |
 | Module 1 completion | Blunt but comparable to LMS benchmarks | >40% (typical corporate e-learning is 20–30%) |
-| Curveballs answered / Reps started | Are they engaging or skipping | >90% |
+| Curveballs answered / Sections started | Are they engaging or skipping | >90% |
 | Field Notes with >100 chars | Are reflections real | >50% |
 | Median first-attempt quiz score | Is 85% the right bar | 70–85% |
 
@@ -164,7 +164,7 @@ the quiz is theatre. Below 60%, either the content or the questions are failing.
 - **Retention holds (median ≥3 active days) →** build Module 2 and ship email
   delivery. That combination is the smallest thing that makes this a real
   product.
-- **Curveballs are the most-cited feature →** increase to 2–3 per Rep in phase
+- **Curveballs are the most-cited feature →** increase to 2–3 per Section in phase
   2 and reduce narration. That is a cheaper, better product than more script.
 - **Contacts changed behaviour →** the business is team seats. Price per seat,
   sell to HR, and prioritise the manager dashboard.

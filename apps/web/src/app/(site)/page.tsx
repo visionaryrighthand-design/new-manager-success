@@ -9,11 +9,11 @@ import styles from './page.module.css';
 const PILLARS = [
   {
     title: 'Seven minutes, not seven hours',
-    body: 'A Rep is one idea, one scenario, one decision. Short enough to do between a stand-up and a one-to-one, which is when management actually gets learned.',
+    body: 'A Section is one idea, one scenario, one decision. Short enough to do between a stand-up and a one-to-one, which is when management actually gets learned.',
   },
   {
     title: 'Judgment, not trivia',
-    body: 'Every Rep interrupts you with a Curveball: a real situation, four plausible moves, and a straight answer on what each one costs. No option is simply “wrong”.',
+    body: 'Every Section interrupts you with a Curveball: a real situation, four plausible moves, and a straight answer on what each one costs. No option is simply “wrong”.',
   },
   {
     title: 'Someone is in your corner',
@@ -22,7 +22,7 @@ const PILLARS = [
 ];
 
 export default function HomePage() {
-  const reps = module01.reps;
+  const sections = module01.sections;
 
   return (
     <>
@@ -47,8 +47,8 @@ export default function HomePage() {
             </p>
 
             <div className={styles.heroActions}>
-              <Link href="/learn/m1-r1" className="nms-btn nms-btn--bright">
-                Start Rep 1.1 free
+              <Link href="/learn/m1-s1" className="nms-btn nms-btn--bright">
+                Start Section 1.1 free
               </Link>
               <Link href="/for-teams" className="nms-btn nms-btn--ghost">
                 Enroll a team
@@ -57,11 +57,11 @@ export default function HomePage() {
 
             <dl className={styles.heroStats}>
               <div>
-                <dt>Reps in Module 1</dt>
-                <dd>{reps.length}</dd>
+                <dt>Sections in Module 1</dt>
+                <dd>{sections.length}</dd>
               </div>
               <div>
-                <dt>Minutes per Rep</dt>
+                <dt>Minutes per Section</dt>
                 <dd>7</dd>
               </div>
               <div>
@@ -128,15 +128,15 @@ export default function HomePage() {
         <p className={styles.sectionLede}>{module01.description}</p>
 
         <ol className={styles.repList}>
-          {reps.map((rep) => (
-            <li key={rep.id}>
-              <Link href={`/learn/${rep.id}`} className={styles.repRow}>
-                <span className={styles.repNum}>{rep.number}</span>
+          {sections.map((section) => (
+            <li key={section.id}>
+              <Link href={`/learn/${section.id}`} className={styles.repRow}>
+                <span className={styles.sectionNum}>{section.number}</span>
                 <span className={styles.repMain}>
-                  <span className={styles.repTitle}>{rep.title}</span>
-                  <span className={styles.repHook}>{rep.hook}</span>
+                  <span className={styles.sectionTitle}>{section.title}</span>
+                  <span className={styles.sectionHook}>{section.hook}</span>
                 </span>
-                <span className={styles.repMeta}>{rep.quiz.length} questions</span>
+                <span className={styles.sectionMeta}>{section.quiz.length} questions</span>
               </Link>
             </li>
           ))}

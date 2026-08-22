@@ -47,10 +47,10 @@
       transparent 42%
     ),
     /* The pool of light behind the card. Its horizontal position shifts with
-       the Rep index, so consecutive Reps are lit from different sides. */
+       the Section index, so consecutive Sections are lit from different sides. */
     radial-gradient(
       var(--wash-size, 92% 54%) at
-        calc(var(--wash-x, 18%) + var(--rep-seed, 1) * 7%) var(--wash-y, 24%),
+        calc(var(--wash-x, 18%) + var(--section-seed, 1) * 7%) var(--wash-y, 24%),
       var(--wash, color-mix(in srgb, var(--nms-color-accent) 26%, transparent)),
       transparent 74%
     ),
@@ -91,7 +91,7 @@
   --wash-size: 104% 58%;
 }
 
-/* The Field Note is the most personal card in a Rep. Soft, wide, centred. */
+/* The Field Note is the most personal card in a Section. Soft, wide, centred. */
 .player[data-card='fieldNote'] {
   --wash: color-mix(in srgb, var(--nms-color-bright) 12%, transparent);
   --wash-top: color-mix(in srgb, var(--nms-color-bright) 8%, transparent);
@@ -108,7 +108,7 @@
 }
 
 /* The cold open is lit from below and hardest of all: it is an arrival. */
-.player[data-card='repIntro'] {
+.player[data-card='sectionIntro'] {
   --wash: color-mix(in srgb, var(--nms-color-accent) 46%, transparent);
   --wash-top: color-mix(in srgb, var(--nms-color-accent) 8%, transparent);
   --wash-x: 20%;
@@ -153,7 +153,7 @@
 
 .headerText { display: flex; flex-direction: column; min-width: 0; margin-inline-end: auto; }
 
-.repNumber {
+.sectionNumber {
   font-family: var(--nms-font-mono);
   font-size: 0.7rem;
   font-weight: 700;
@@ -162,7 +162,7 @@
   color: var(--nms-color-accent-text);
 }
 
-.repTitle {
+.sectionTitle {
   font-size: var(--nms-font-caption-size);
   color: var(--nms-color-fg-muted);
   white-space: nowrap;
@@ -256,7 +256,7 @@
  * every beat is meant to be seen, and momentum scrolling past three of them
  * is the failure mode of a feed used for teaching.
  *
- * A card taller than the viewport (Rep 1.8's seven-item recap) is a snap area
+ * A card taller than the viewport (Section 1.8's seven-item recap) is a snap area
  * larger than the snapport, which the browser lets you scroll through freely
  * rather than fighting. That is why `mandatory` is safe here.
  */
@@ -346,7 +346,7 @@
 }
 
 /*
- * The Rep number, enormous and nearly gone. It is a texture, not a label —
+ * The Section number, enormous and nearly gone. It is a texture, not a label —
  * the readable version is in the eyebrow underneath.
  */
 .introNumber {
@@ -581,7 +581,7 @@
 /*
  * The payoff arrives as a cut, not a fade.
  *
- * One card per Rep gets this and no more. The restraint is the effect: if
+ * One card per Section gets this and no more. The restraint is the effect: if
  * every card moved like this the feed would read as a screensaver, and the
  * line that is supposed to be the one they remember would be indistinguishable
  * from the twelve around it.

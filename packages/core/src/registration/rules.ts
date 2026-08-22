@@ -16,7 +16,7 @@ import type {
  * Both "someone else" branches add "Me".
  *
  * This is not cosmetic: a self-registered learner who ends up as their own
- * contact would receive a Level 1 email every time they finish a Rep they
+ * contact would receive a Level 1 email every time they finish a Section they
  * just finished.
  */
 export function allowedContactRoles(entry: RegistrationEntry): readonly ContactRole[] {

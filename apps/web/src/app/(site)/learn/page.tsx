@@ -1,6 +1,6 @@
 import Link from 'next/link';
 import type { Metadata } from 'next';
-import { course, module01, estimateRepTotalSeconds } from '@nms/content';
+import { course, module01, estimateSectionTotalSeconds } from '@nms/content';
 import styles from './learn.module.css';
 
 export const metadata: Metadata = {
@@ -19,25 +19,25 @@ export default function LearnPage() {
       <p className={styles.lede}>{module01.description}</p>
 
       <div className={styles.meta}>
-        <span>{module01.reps.length} Reps</span>
-        <span>{module01.reps.reduce((n, r) => n + r.quiz.length, 0)} questions</span>
-        <span>{module01.reps.length} videos</span>
+        <span>{module01.sections.length} Sections</span>
+        <span>{module01.sections.reduce((n, r) => n + r.quiz.length, 0)} questions</span>
+        <span>{module01.sections.length} videos</span>
         <span>{module01.passingScore}% to pass</span>
       </div>
 
-      <ol className={styles.reps}>
-        {module01.reps.map((rep) => (
-          <li key={rep.id}>
-            <Link href={`/learn/${rep.id}`} className={styles.rep}>
-              <span className={styles.repNum}>{rep.number}</span>
-              <span className={styles.repBody}>
-                <span className={styles.repTitle}>{rep.title}</span>
-                {rep.subtitle ? <span className={styles.repSubtitle}>{rep.subtitle}</span> : null}
-                <span className={styles.repHook}>{rep.hook}</span>
-                <span className={styles.repTags}>
-                  <span>{Math.round(estimateRepTotalSeconds(rep) / 60)} min</span>
-                  <span>{rep.quiz.length} questions</span>
-                  <span>{rep.videoUrl ? 'Video ready' : 'Script only'}</span>
+      <ol className={styles.sections}>
+        {module01.sections.map((section) => (
+          <li key={section.id}>
+            <Link href={`/learn/${section.id}`} className={styles.section}>
+              <span className={styles.sectionNum}>{section.number}</span>
+              <span className={styles.sectionBody}>
+                <span className={styles.sectionTitle}>{section.title}</span>
+                {section.subtitle ? <span className={styles.sectionSubtitle}>{section.subtitle}</span> : null}
+                <span className={styles.sectionHook}>{section.hook}</span>
+                <span className={styles.sectionTags}>
+                  <span>{Math.round(estimateSectionTotalSeconds(section) / 60)} min</span>
+                  <span>{section.quiz.length} questions</span>
+                  <span>{section.videoUrl ? 'Video ready' : 'Script only'}</span>
                 </span>
               </span>
               <span className={styles.chevron} aria-hidden>

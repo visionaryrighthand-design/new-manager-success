@@ -9,10 +9,10 @@ import {
   type CSSProperties,
 } from 'react';
 import Link from 'next/link';
-import type { FeedCard, QuizQuestion, Rep } from '@nms/content';
-import { estimateRepTotalSeconds, feedCards } from '@nms/content';
+import type { FeedCard, QuizQuestion, Section } from '@nms/content';
+import { estimateSectionTotalSeconds, feedCards } from '@nms/content';
 import { XP } from '@nms/core';
-import styles from './RepPlayer.module.css';
+import styles from './SectionPlayer.module.css';
 
 /**
  * The lesson.
@@ -31,13 +31,13 @@ import styles from './RepPlayer.module.css';
 
 type Card = FeedCard;
 
-export interface RepPlayerProps {
-  rep: Rep;
-  nextRepId?: string;
+export interface SectionPlayerProps {
+  section: Section;
+  nextSectionId?: string;
 }
 
-export function RepPlayer({ rep, nextRepId }: RepPlayerProps) {
-  const allCards = useMemo(() => feedCards(rep), [rep]);
+export function SectionPlayer({ section, nextSectionId }: SectionPlayerProps) {
+  const allCards = useMemo(() => feedCards(section), [section]);
   const [answers, setAnswers] = useState<Record<string, string>>({});
   const [active, setActive] = useState(0);
   const [xp, setXp] = useState(0);
@@ -116,10 +116,10 @@ export function RepPlayer({ rep, nextRepId }: RepPlayerProps) {
   useEffect(() => {
     if (cards[active]?.kind !== 'summary' || scored.current) return;
     scored.current = true;
-    earn(XP.repCompleted);
+    earn(XP.sectionCompleted);
   }, [active, cards, earn]);
 
-  const correctCount = rep.quiz.filter((q) => {
+  const correctCount = section.quiz.filter((q) => {
     const chosen = q.options.find((o) => o.id === answers[q.id]);
     return chosen?.correct;
   }).length;
@@ -128,12 +128,12 @@ export function RepPlayer({ rep, nextRepId }: RepPlayerProps) {
     (questionId: string, optionId: string) => {
       if (answers[questionId]) return;
       setAnswers((a) => ({ ...a, [questionId]: optionId }));
-      const correct = rep.quiz
+      const correct = section.quiz
         .find((q) => q.id === questionId)
         ?.options.find((o) => o.id === optionId)?.correct;
       if (correct) earn(XP.quizQuestionCorrect);
     },
-    [answers, rep.quiz, earn],
+    [answers, section.quiz, earn],
   );
 
   const gated = cards.length < allCards.length && active === cards.length - 1;
@@ -144,16 +144,16 @@ export function RepPlayer({ rep, nextRepId }: RepPlayerProps) {
       data-surface="feed"
       // The wash is keyed to the card on screen, and seeded by the lesson
       // index so consecutive lessons are lit from different sides.
-      data-card={cards[active]?.kind ?? 'repIntro'}
-      style={{ '--rep-seed': rep.index } as CSSProperties}
+      data-card={cards[active]?.kind ?? 'sectionIntro'}
+      style={{ '--section-seed': section.index } as CSSProperties}
     >
       <header className={styles.header}>
         <Link href="/learn" className={styles.back} aria-label="Back to Module 1">
           ←
         </Link>
         <div className={styles.headerText}>
-          <span className={styles.repNumber}>Lesson {rep.number}</span>
-          <span className={styles.repTitle}>{rep.title}</span>
+          <span className={styles.sectionNumber}>Section {section.number}</span>
+          <span className={styles.sectionTitle}>{section.title}</span>
         </div>
         <span className={styles.xpCounter} aria-label={`${xp} XP earned`}>
           {xp}
@@ -183,12 +183,12 @@ export function RepPlayer({ rep, nextRepId }: RepPlayerProps) {
           >
             <CardView
               card={card}
-              rep={rep}
+              section={section}
               isActive={i === active}
               answers={answers}
               onAnswer={onAnswer}
               correctCount={correctCount}
-              nextRepId={nextRepId}
+              nextSectionId={nextSectionId}
             />
           </section>
         ))}
@@ -236,22 +236,22 @@ function revealedCount(cards: Card[], answers: Record<string, string>): number {
 
 interface CardViewProps {
   card: Card;
-  rep: Rep;
+  section: Section;
   isActive: boolean;
   answers: Record<string, string>;
   onAnswer: (questionId: string, optionId: string) => void;
   correctCount: number;
-  nextRepId?: string;
+  nextSectionId?: string;
 }
 
 function CardView(props: CardViewProps) {
   const { card } = props;
 
   switch (card.kind) {
-    case 'repIntro':
-      return <RepIntroCard rep={card.rep} />;
+    case 'sectionIntro':
+      return <SectionIntroCard section={card.section} />;
     case 'video':
-      return <VideoCard rep={card.rep} isActive={props.isActive} />;
+      return <VideoCard section={card.section} isActive={props.isActive} />;
     case 'quiz':
       return (
         <QuizCard
@@ -264,7 +264,7 @@ function CardView(props: CardViewProps) {
       );
     case 'summary':
       return (
-        <SummaryCard rep={props.rep} correctCount={props.correctCount} nextRepId={props.nextRepId} />
+        <SummaryCard section={props.section} correctCount={props.correctCount} nextSectionId={props.nextSectionId} />
       );
   }
 }
@@ -277,18 +277,18 @@ function CardView(props: CardViewProps) {
  * lesson opens on a different sentence at display scale, which is most of what
  * makes eight of them feel like eight things rather than one long thing.
  */
-function RepIntroCard({ rep }: { rep: Rep }) {
+function SectionIntroCard({ section }: { section: Section }) {
   return (
     <div className={styles.intro}>
       <span className={styles.introNumber} aria-hidden>
-        {rep.number}
+        {section.number}
       </span>
       <span className={styles.introEyebrow}>
-        Lesson {rep.number} · {rep.title}
+        Section {section.number} · {section.title}
       </span>
-      <p className={styles.introHook}>{rep.hook}</p>
+      <p className={styles.introHook}>{section.hook}</p>
       <span className={styles.introMeta}>
-        {Math.max(1, Math.round(estimateRepTotalSeconds(rep) / 60))} min · {rep.quiz.length} questions
+        {Math.max(1, Math.round(estimateSectionTotalSeconds(section) / 60))} min · {section.quiz.length} questions
       </span>
     </div>
   );
@@ -302,7 +302,7 @@ function RepIntroCard({ rep }: { rep: Rep }) {
  * transcript stays available under the video once it does: a manager doing
  * this on a shop floor or a train often has the sound off.
  */
-function VideoCard({ rep, isActive }: { rep: Rep; isActive: boolean }) {
+function VideoCard({ section, isActive }: { section: Section; isActive: boolean }) {
   const ref = useRef<HTMLVideoElement>(null);
   // Read off the file rather than assumed. The per-beat clips were shot 9:16
   // for a feed; a lesson film may well be 16:9, and guessing wrong letterboxes
@@ -317,16 +317,16 @@ function VideoCard({ rep, isActive }: { rep: Rep; isActive: boolean }) {
     el.pause();
   }, [isActive]);
 
-  const script = rep.beats
+  const script = section.beats
     .flatMap((beat) => (beat.speech ? beat.speech.split('\n\n') : []))
     .map((para) => para.trim())
     .filter(Boolean);
 
-  if (!rep.videoUrl) {
+  if (!section.videoUrl) {
     return (
       <article className={styles.reading}>
         <span className={styles.readingRule} aria-hidden />
-        <h2 className={styles.readingTitle}>{rep.title}</h2>
+        <h2 className={styles.readingTitle}>{section.title}</h2>
         <p className={styles.readingMeta}>Script · film not shot yet</p>
         {script.map((para, i) => (
           <p key={i} className={styles.readingBody}>
@@ -343,8 +343,8 @@ function VideoCard({ rep, isActive }: { rep: Rep; isActive: boolean }) {
         ref={ref}
         className={styles.video}
         style={ratio ? ({ aspectRatio: String(ratio) } as CSSProperties) : undefined}
-        src={rep.videoUrl}
-        poster={rep.posterUrl}
+        src={section.videoUrl}
+        poster={section.posterUrl}
         controls
         playsInline
         preload="metadata"
@@ -433,21 +433,21 @@ function QuizCard({
 }
 
 function SummaryCard({
-  rep,
+  section,
   correctCount,
-  nextRepId,
+  nextSectionId,
 }: {
-  rep: Rep;
+  section: Section;
   correctCount: number;
-  nextRepId?: string;
+  nextSectionId?: string;
 }) {
-  const total = rep.quiz.length;
+  const total = section.quiz.length;
   const score = total === 0 ? 0 : Math.round((correctCount / total) * 100);
   const passed = score >= 85;
 
   return (
     <div className={styles.card}>
-      <p className={styles.quizLabel}>Lesson {rep.number} complete</p>
+      <p className={styles.quizLabel}>Section {section.number} complete</p>
       <p className={styles.summaryScore}>
         {correctCount}
         <span>/{total}</span>
@@ -455,12 +455,12 @@ function SummaryCard({
       <p className={styles.prompt}>
         {passed ? 'Locked in.' : 'Worth running back before you move on.'}
       </p>
-      <p className={styles.readingBody}>{rep.keyIdea}</p>
+      <p className={styles.readingBody}>{section.keyIdea}</p>
 
       <div className={styles.summaryActions}>
-        {nextRepId ? (
-          <Link href={`/learn/${nextRepId}`} className="nms-btn nms-btn--bright">
-            Next lesson
+        {nextSectionId ? (
+          <Link href={`/learn/${nextSectionId}`} className="nms-btn nms-btn--bright">
+            Next section
           </Link>
         ) : (
           <Link href="/learn" className="nms-btn nms-btn--bright">
@@ -468,7 +468,7 @@ function SummaryCard({
           </Link>
         )}
         <Link href="/learn" className={`nms-btn nms-btn--ghost ${styles.ghostOnDark}`}>
-          All lessons
+          All sections
         </Link>
       </div>
 

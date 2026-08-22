@@ -1,4 +1,4 @@
-import type { Rep } from '../types.js';
+import type { Section } from '../types.js';
 
 /**
  * 1.5 — Emotional Intelligence for New Managers
@@ -10,8 +10,8 @@ import type { Rep } from '../types.js';
  * wording rather than quoted — no framework diagram or proprietary assessment
  * is reproduced. See docs/product/IP_PUNCH_LIST.md § Cleared.
  */
-export const rep05: Rep = {
-  id: 'm1-r5',
+export const section05: Section = {
+  id: 'm1-s5',
   moduleNumber: 1,
   index: 5,
   number: '1.5',
@@ -146,7 +146,7 @@ export const rep05: Rep = {
       where: 'Field Note, conditional on the Curveball answer',
       what: 'Four alternative prompts, one per Curveball choice, replacing the default prompt for anyone who answered.',
       reason:
-        'Same as A5 in Rep 1.1. In this Rep the pairing is tighter: the Curveball is about the gap between stimulus and response, and the follow-up asks the learner to examine the gap they just demonstrated.',
+        'Same as A5 in Section 1.1. In this Section the pairing is tighter: the Curveball is about the gap between stimulus and response, and the follow-up asks the learner to examine the gap they just demonstrated.',
       status: 'proposed',
     },
     {
@@ -155,7 +155,7 @@ export const rep05: Rep = {
       where: 'after b3',
       what: '"How long between feeling frustration and showing it?" Three options, no scoring.',
       reason:
-        'This Rep ran nine consecutive passive cards and 2m25 before its Curveball, the worst stretch in Module 1. Asking this before the four components are named gives the learner a personal reading to hold them against.',
+        'This Section ran nine consecutive passive cards and 2m25 before its Curveball, the worst stretch in Module 1. Asking this before the four components are named gives the learner a personal reading to hold them against.',
       status: 'proposed',
     },
     {
@@ -171,7 +171,7 @@ export const rep05: Rep = {
 
   quiz: [
     {
-      id: 'm1-r5-q1',
+      id: 'm1-s5-q1',
       kind: 'recall',
       source: '1.5',
       stem: 'Which component of Emotional Intelligence should a new manager focus on first, and why?',
@@ -204,7 +204,7 @@ export const rep05: Rep = {
       ],
     },
     {
-      id: 'm1-r5-q2',
+      id: 'm1-s5-q2',
       kind: 'recall',
       source: '1.5',
       stem: 'Empathy, as defined in this section, means:',
@@ -237,7 +237,7 @@ export const rep05: Rep = {
       ],
     },
     {
-      id: 'm1-r5-q3',
+      id: 'm1-s5-q3',
       kind: 'scenario',
       source: '1.5',
       stem: 'An employee makes a costly mistake and you feel your frustration spike. Applying self-regulation, what happens next?',

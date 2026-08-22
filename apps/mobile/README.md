@@ -20,7 +20,7 @@ Expo Go on a real device.
 app/                    expo-router file routes
   _layout.tsx           providers + stack config
   index.tsx             home: streak, XP, module progress, up-next
-  rep/[repId].tsx       the feed — one full-screen card per script beat
+  section/[sectionId].tsx       the feed — one full-screen card per script beat
 src/
   theme.ts              native theme derived from @nms/brand tokens
   progress-store.tsx    on-device progress, persisted via AsyncStorage
@@ -31,7 +31,7 @@ assets/                 generated app icons (see below)
 ## Notes for whoever picks this up
 
 **Progress is local-first.** The device owns progress and the server is a sync
-target, not the source of truth. A manager doing a Rep on a factory floor, a
+target, not the source of truth. A manager doing a Section on a factory floor, a
 hospital ward, or the Tube needs their streak to survive a dead connection — a
 streak that resets because a request failed is worse than no streak. The rules
 all live in `@nms/core`, so device and server compute identical results

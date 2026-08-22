@@ -12,7 +12,7 @@ import {
  * Learner progress, persisted on device.
  *
  * The app owns progress locally and treats the server as a sync target rather
- * than the source of truth. That is not a shortcut — a manager doing a Rep on
+ * than the source of truth. That is not a shortcut — a manager doing a Section on
  * a factory floor, a hospital ward, or the Tube needs the streak to survive a
  * dead connection, and a streak that resets because of a failed request is
  * worse than no streak at all.
@@ -29,7 +29,7 @@ interface ProgressContextValue {
   progress: LearnerProgress;
   ready: boolean;
   track: (event: Omit<ActivityEvent, 'id' | 'enrollmentId' | 'at'> & { at?: Date }) => void;
-  submitQuiz: (repId: string, answers: Array<{ questionId: string; optionId: string }>) => void;
+  submitQuiz: (sectionId: string, answers: Array<{ questionId: string; optionId: string }>) => void;
   reset: () => void;
 }
 
@@ -43,15 +43,15 @@ function reviveProgress(raw: string): LearnerProgress | null {
     return {
       ...parsed,
       startedAt: new Date(parsed.startedAt as unknown as string),
-      reps: Object.fromEntries(
-        Object.entries(parsed.reps ?? {}).map(([id, rep]) => [
+      sections: Object.fromEntries(
+        Object.entries(parsed.sections ?? {}).map(([id, section]) => [
           id,
           {
-            ...rep,
-            openedAt: revive(rep.openedAt),
-            completedAt: revive(rep.completedAt),
-            fieldNoteSavedAt: revive(rep.fieldNoteSavedAt),
-            attempts: (rep.attempts ?? []).map((a) => ({
+            ...section,
+            openedAt: revive(section.openedAt),
+            completedAt: revive(section.completedAt),
+            fieldNoteSavedAt: revive(section.fieldNoteSavedAt),
+            attempts: (section.attempts ?? []).map((a) => ({
               ...a,
               at: new Date(a.at as unknown as string),
             })),
@@ -89,7 +89,7 @@ export function ProgressProvider({ children }: { children: React.ReactNode }) {
 
   const persist = useCallback((next: LearnerProgress) => {
     setProgress(next);
-    // Fire and forget: a failed write must never block the UI mid-Rep.
+    // Fire and forget: a failed write must never block the UI mid-Section.
     void AsyncStorage.setItem(STORAGE_KEY, JSON.stringify(next)).catch(() => {});
   }, []);
 
@@ -110,9 +110,9 @@ export function ProgressProvider({ children }: { children: React.ReactNode }) {
     [],
   );
 
-  const submitQuiz = useCallback<ProgressContextValue['submitQuiz']>((repId, answers) => {
+  const submitQuiz = useCallback<ProgressContextValue['submitQuiz']>((sectionId, answers) => {
     setProgress((current) => {
-      const { progress: next } = recordQuizAttempt(current, repId, answers, new Date());
+      const { progress: next } = recordQuizAttempt(current, sectionId, answers, new Date());
       void AsyncStorage.setItem(STORAGE_KEY, JSON.stringify(next)).catch(() => {});
       return next;
     });

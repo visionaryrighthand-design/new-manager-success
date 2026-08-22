@@ -1,11 +1,11 @@
-import type { Rep } from '../types.js';
+import type { Section } from '../types.js';
 
 /**
  * 1.3 — The Relationship Reset
  * Script status: APPROVED & LOCKED (April 2026). Beats are verbatim.
  */
-export const rep03: Rep = {
-  id: 'm1-r3',
+export const section03: Section = {
+  id: 'm1-s3',
   moduleNumber: 1,
   index: 3,
   number: '1.3',
@@ -121,7 +121,7 @@ export const rep03: Rep = {
 
   quiz: [
     {
-      id: 'm1-r3-q1',
+      id: 'm1-s3-q1',
       kind: 'recall',
       source: '1.3',
       stem: 'What is the stated goal of the relationship reset?',
@@ -154,7 +154,7 @@ export const rep03: Rep = {
       ],
     },
     {
-      id: 'm1-r3-q2',
+      id: 'm1-s3-q2',
       kind: 'recall',
       source: '1.3',
       stem: 'Approval-seeking tends to produce which pattern?',
@@ -187,7 +187,7 @@ export const rep03: Rep = {
       ],
     },
     {
-      id: 'm1-r3-q3',
+      id: 'm1-s3-q3',
       kind: 'scenario',
       source: '1.3',
       stem: 'You approve a late request from one team member because you know she has had a hard month. You would have said no to anyone else. What is the real cost?',

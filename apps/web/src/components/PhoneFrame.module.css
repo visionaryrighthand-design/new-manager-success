@@ -28,7 +28,7 @@
   font-size: 0.75rem;
 }
 
-.repTag {
+.sectionTag {
   font-family: var(--nms-font-mono);
   font-weight: 700;
   color: var(--nms-color-fg-subtle);

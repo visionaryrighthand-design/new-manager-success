@@ -1,4 +1,4 @@
-import type { Rep } from '../types.js';
+import type { Section } from '../types.js';
 
 /**
  * 1.8 — Module 1 Review
@@ -11,8 +11,8 @@ import type { Rep } from '../types.js';
  * Curveball interaction. The script's own answer becomes the response on the
  * correct choice, verbatim.
  */
-export const rep08: Rep = {
-  id: 'm1-r8',
+export const section08: Section = {
+  id: 'm1-s8',
   moduleNumber: 1,
   index: 8,
   number: '1.8',
@@ -98,7 +98,7 @@ export const rep08: Rep = {
 
   quiz: [
     {
-      id: 'm1-r8-q1',
+      id: 'm1-s8-q1',
       kind: 'scenario',
       source: '1.2',
       stem: 'Six months in, your team ships more than it did before your promotion but you have personally produced almost nothing. How should this be read?',
@@ -132,7 +132,7 @@ export const rep08: Rep = {
       ],
     },
     {
-      id: 'm1-r8-q2',
+      id: 'm1-s8-q2',
       kind: 'scenario',
       source: '1.3',
       stem: 'Which pair of statements is consistent with Module 1?',
@@ -165,7 +165,7 @@ export const rep08: Rep = {
       ],
     },
     {
-      id: 'm1-r8-q3',
+      id: 'm1-s8-q3',
       kind: 'scenario',
       source: '1.4',
       stem: 'Your team has stopped bringing you problems early. Which Module 1 idea most directly explains this?',
@@ -200,7 +200,7 @@ export const rep08: Rep = {
       ],
     },
     {
-      id: 'm1-r8-q4',
+      id: 'm1-s8-q4',
       kind: 'scenario',
       source: '1.7',
       stem: 'Which of these does the most damage to a new manager’s credibility?',
@@ -234,7 +234,7 @@ export const rep08: Rep = {
       ],
     },
     {
-      id: 'm1-r8-q5',
+      id: 'm1-s8-q5',
       kind: 'recall',
       source: '1.1',
       stem: 'What is the reframe the whole program is built on?',

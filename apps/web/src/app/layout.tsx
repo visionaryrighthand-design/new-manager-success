@@ -6,7 +6,7 @@ import './globals.css';
  * Root layout: document shell only.
  *
  * Site chrome lives in `(site)/layout.tsx` and the feed player deliberately
- * has none — see `(player)`. Once a learner is inside a Rep, chrome that
+ * has none — see `(player)`. Once a learner is inside a Section, chrome that
  * offers them somewhere else to go is working against the product.
  */
 

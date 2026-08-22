@@ -41,10 +41,10 @@ export default function CurriculumPage() {
                 <>
                   <p className={styles.moduleBody}>{module01.description}</p>
                   <ul className={styles.repList}>
-                    {module01.reps.map((rep) => (
-                      <li key={rep.id}>
-                        <Link href={`/learn/${rep.id}`}>
-                          <span className={styles.repNum}>{rep.number}</span> {rep.title}
+                    {module01.sections.map((section) => (
+                      <li key={section.id}>
+                        <Link href={`/learn/${section.id}`}>
+                          <span className={styles.sectionNum}>{section.number}</span> {section.title}
                         </Link>
                       </li>
                     ))}
@@ -60,8 +60,8 @@ export default function CurriculumPage() {
       </ol>
 
       <div className={styles.cta}>
-        <Link href="/learn/m1-r1" className="nms-btn nms-btn--bright">
-          Start Rep 1.1
+        <Link href="/learn/m1-s1" className="nms-btn nms-btn--bright">
+          Start Section 1.1
         </Link>
         <Link href="/enroll" className="nms-btn nms-btn--ghost">
           Enroll

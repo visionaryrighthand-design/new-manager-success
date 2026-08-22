@@ -6,7 +6,7 @@ import {
   daysSinceStart,
   emptyProgress,
   moduleCompletionPercent,
-  nextRepFor,
+  nextSectionFor,
   recordQuizAttempt,
   XP,
 } from './engine.js';
@@ -25,53 +25,53 @@ const event = (over: Partial<ActivityEvent> & Pick<ActivityEvent, 'type' | 'at'>
 describe('applyActivity', () => {
   test('does not mutate the input', () => {
     const before = emptyProgress('e1', START);
-    const after = applyActivity(before, event({ type: 'rep-completed', repId: 'm1-r1', at: at('2026-08-10') }));
+    const after = applyActivity(before, event({ type: 'section-completed', sectionId: 'm1-s1', at: at('2026-08-10') }));
     assert.equal(before.xp, 0);
-    assert.equal(after.xp, XP.repCompleted);
+    assert.equal(after.xp, XP.sectionCompleted);
     assert.notEqual(before, after);
   });
 
-  test('completing a Rep twice only awards XP once', () => {
+  test('completing a Section twice only awards XP once', () => {
     let p = emptyProgress('e1', START);
-    const e = event({ type: 'rep-completed', repId: 'm1-r1', at: at('2026-08-10') });
+    const e = event({ type: 'section-completed', sectionId: 'm1-s1', at: at('2026-08-10') });
     p = applyActivity(p, e);
     p = applyActivity(p, { ...e, id: 'again' });
-    assert.equal(p.xp, XP.repCompleted);
+    assert.equal(p.xp, XP.sectionCompleted);
   });
 
   test('every activity type records an active date, not just completions', () => {
     // The inactivity spec is explicit that opening a section counts.
     let p = emptyProgress('e1', START);
-    p = applyActivity(p, event({ type: 'rep-opened', repId: 'm1-r1', at: at('2026-08-10') }));
+    p = applyActivity(p, event({ type: 'section-opened', sectionId: 'm1-s1', at: at('2026-08-10') }));
     assert.deepEqual(p.activeDates, ['2026-08-10']);
   });
 });
 
 describe('recordQuizAttempt', () => {
   const allCorrect = () =>
-    module01.reps[0]!.quiz.map((q) => ({
+    module01.sections[0]!.quiz.map((q) => ({
       questionId: q.id,
       optionId: q.options.find((o) => o.correct)!.id,
     }));
 
   test('scores a perfect attempt at 100 and passes it', () => {
-    const { attempt } = recordQuizAttempt(emptyProgress('e1', START), 'm1-r1', allCorrect(), at('2026-08-10'));
+    const { attempt } = recordQuizAttempt(emptyProgress('e1', START), 'm1-s1', allCorrect(), at('2026-08-10'));
     assert.equal(attempt.score, 100);
     // Derived, not hardcoded: the quiz grew from 3 questions to 10 when the
     // approved quiz document landed, and it will grow again for 1.3 onward.
-    assert.equal(attempt.correctCount, module01.reps[0]!.quiz.length);
+    assert.equal(attempt.correctCount, module01.sections[0]!.quiz.length);
     assert.equal(attempt.passed, true);
   });
 
   test('one wrong answer is scored proportionally and can still pass', () => {
-    const total = module01.reps[0]!.quiz.length;
+    const total = module01.sections[0]!.quiz.length;
     const answers = allCorrect();
-    const q = module01.reps[0]!.quiz[0]!;
+    const q = module01.sections[0]!.quiz[0]!;
     answers[0] = { questionId: q.id, optionId: q.options.find((o) => !o.correct)!.id };
 
     const { attempt } = recordQuizAttempt(
       emptyProgress('e1', START),
-      'm1-r1',
+      'm1-s1',
       answers,
       at('2026-08-10'),
     );
@@ -83,28 +83,28 @@ describe('recordQuizAttempt', () => {
   });
 
   test('unanswered questions count as wrong rather than throwing', () => {
-    const { attempt } = recordQuizAttempt(emptyProgress('e1', START), 'm1-r1', [], at('2026-08-10'));
+    const { attempt } = recordQuizAttempt(emptyProgress('e1', START), 'm1-s1', [], at('2026-08-10'));
     assert.equal(attempt.score, 0);
   });
 
   test('retakes are allowed and bestScore keeps the high mark', () => {
     let p = emptyProgress('e1', START);
-    p = recordQuizAttempt(p, 'm1-r1', [], at('2026-08-10')).progress;
-    p = recordQuizAttempt(p, 'm1-r1', allCorrect(), at('2026-08-11')).progress;
-    assert.equal(p.reps['m1-r1']!.attempts.length, 2);
-    assert.equal(p.reps['m1-r1']!.bestScore, 100);
+    p = recordQuizAttempt(p, 'm1-s1', [], at('2026-08-10')).progress;
+    p = recordQuizAttempt(p, 'm1-s1', allCorrect(), at('2026-08-11')).progress;
+    assert.equal(p.sections['m1-s1']!.attempts.length, 2);
+    assert.equal(p.sections['m1-s1']!.bestScore, 100);
   });
 
   test('XP is awarded on the first attempt only, so failing cannot be farmed', () => {
     let p = emptyProgress('e1', START);
-    p = recordQuizAttempt(p, 'm1-r1', [], at('2026-08-10')).progress;
+    p = recordQuizAttempt(p, 'm1-s1', [], at('2026-08-10')).progress;
     assert.equal(p.xp, 0, 'nothing correct on attempt one');
-    p = recordQuizAttempt(p, 'm1-r1', allCorrect(), at('2026-08-11')).progress;
+    p = recordQuizAttempt(p, 'm1-s1', allCorrect(), at('2026-08-11')).progress;
     assert.equal(p.xp, 0, 'the retake still scores 100 but earns no XP');
   });
 
-  test('an unknown rep is a programming error, not a silent no-op', () => {
-    assert.throws(() => recordQuizAttempt(emptyProgress('e1', START), 'nope', [], at('2026-08-10')), /Unknown rep/);
+  test('an unknown section is a programming error, not a silent no-op', () => {
+    assert.throws(() => recordQuizAttempt(emptyProgress('e1', START), 'nope', [], at('2026-08-10')), /Unknown section/);
   });
 });
 
@@ -158,28 +158,28 @@ describe('computeStreak', () => {
 });
 
 describe('module progress', () => {
-  test('completion percent tracks completed Reps', () => {
+  test('completion percent tracks completed Sections', () => {
     let p = emptyProgress('e1', START);
-    const repIds = module01.reps.map((r) => r.id);
-    assert.equal(moduleCompletionPercent(p, repIds), 0);
-    p = applyActivity(p, event({ type: 'rep-completed', repId: 'm1-r1', at: at('2026-08-10') }));
-    p = applyActivity(p, event({ type: 'rep-completed', repId: 'm1-r2', at: at('2026-08-10') }));
-    assert.equal(moduleCompletionPercent(p, repIds), 25, '2 of 8');
+    const sectionIds = module01.sections.map((r) => r.id);
+    assert.equal(moduleCompletionPercent(p, sectionIds), 0);
+    p = applyActivity(p, event({ type: 'section-completed', sectionId: 'm1-s1', at: at('2026-08-10') }));
+    p = applyActivity(p, event({ type: 'section-completed', sectionId: 'm1-s2', at: at('2026-08-10') }));
+    assert.equal(moduleCompletionPercent(p, sectionIds), 25, '2 of 8');
   });
 
-  test('nextRepFor returns the first incomplete Rep in course order', () => {
+  test('nextSectionFor returns the first incomplete Section in course order', () => {
     let p = emptyProgress('e1', START);
-    assert.equal(nextRepFor(p), 'm1-r1');
-    p = applyActivity(p, event({ type: 'rep-completed', repId: 'm1-r1', at: at('2026-08-10') }));
-    assert.equal(nextRepFor(p), 'm1-r2');
+    assert.equal(nextSectionFor(p), 'm1-s1');
+    p = applyActivity(p, event({ type: 'section-completed', sectionId: 'm1-s1', at: at('2026-08-10') }));
+    assert.equal(nextSectionFor(p), 'm1-s2');
   });
 
-  test('nextRepFor is undefined once the module is finished', () => {
+  test('nextSectionFor is undefined once the module is finished', () => {
     let p = emptyProgress('e1', START);
-    for (const rep of module01.reps) {
-      p = applyActivity(p, event({ type: 'rep-completed', repId: rep.id, at: at('2026-08-10') }));
+    for (const section of module01.sections) {
+      p = applyActivity(p, event({ type: 'section-completed', sectionId: section.id, at: at('2026-08-10') }));
     }
-    assert.equal(nextRepFor(p), undefined);
+    assert.equal(nextSectionFor(p), undefined);
   });
 
   test('daysSinceStart counts whole days and never goes negative', () => {

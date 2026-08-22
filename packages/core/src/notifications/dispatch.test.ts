@@ -24,25 +24,25 @@ const enrollment: Enrollment = {
 
 describe('Level 1 — real-time per section', () => {
   test('only Level 1 contacts get the per-section notification', () => {
-    const notes = sectionCompleteNotifications(enrollment, 'm1-r1');
+    const notes = sectionCompleteNotifications(enrollment, 'm1-s1');
     assert.equal(notes.length, 1);
     assert.equal(notes[0]!.to.id, 'c1');
     assert.equal(notes[0]!.triggeredByLevel, 1);
   });
 
   test('Level 2 and 3 are not double-sent — that content is in their digest', () => {
-    const notes = sectionCompleteNotifications(enrollment, 'm1-r1');
+    const notes = sectionCompleteNotifications(enrollment, 'm1-s1');
     assert.equal(notes.some((n) => n.to.level > 1), false);
   });
 
   test('the notification names the section and its key idea', () => {
-    const [note] = sectionCompleteNotifications(enrollment, 'm1-r3');
+    const [note] = sectionCompleteNotifications(enrollment, 'm1-s3');
     assert.match(note!.subject, /1\.3/);
     assert.match(note!.subject, /Relationship Reset/);
     assert.equal(note!.body.some((b) => b.type === 'stat' && b.label === 'Key idea'), true);
   });
 
-  test('an unknown rep produces nothing rather than throwing', () => {
+  test('an unknown section produces nothing rather than throwing', () => {
     assert.deepEqual(sectionCompleteNotifications(enrollment, 'nope'), []);
   });
 });
@@ -50,12 +50,12 @@ describe('Level 1 — real-time per section', () => {
 describe('Level 2 and 3 — weekly digest', () => {
   function progressWithAWeek() {
     let p = emptyProgress('e1', enrollment.startedAt);
-    for (const repId of ['m1-r1', 'm1-r2']) {
+    for (const sectionId of ['m1-s1', 'm1-s2']) {
       p = applyActivity(p, {
-        id: `a-${repId}`,
+        id: `a-${sectionId}`,
         enrollmentId: 'e1',
-        type: 'rep-completed',
-        repId,
+        type: 'section-completed',
+        sectionId,
         at: new Date('2026-08-12T10:00:00Z'),
       });
     }
@@ -64,8 +64,8 @@ describe('Level 2 and 3 — weekly digest', () => {
     // option ids quietly turned a perfect run into a 10% one.
     p = recordQuizAttempt(
       p,
-      'm1-r1',
-      module01.reps[0]!.quiz.map((q) => ({
+      'm1-s1',
+      module01.sections[0]!.quiz.map((q) => ({
         questionId: q.id,
         optionId: q.options.find((o) => o.correct)!.id,
       })),
@@ -111,7 +111,7 @@ describe('Level 2 and 3 — weekly digest', () => {
     const scores = notes[0]!.body.find((b) => b.type === 'list' && b.title === 'Quiz scores');
     assert.ok(scores && scores.type === 'list');
     // Derived: the quiz length changes as the approved questions land.
-    const total = module01.reps[0]!.quiz.length;
+    const total = module01.sections[0]!.quiz.length;
     assert.match(scores.items[0]!, new RegExp(`100% \\(${total}/${total}, passed\\)`));
   });
 
@@ -146,8 +146,8 @@ describe('Level 2 and 3 — weekly digest', () => {
     const p = applyActivity(emptyProgress('e1', enrollment.startedAt), {
       id: 'a1',
       enrollmentId: 'e1',
-      type: 'rep-completed',
-      repId: 'm1-r1',
+      type: 'section-completed',
+      sectionId: 'm1-s1',
       at: new Date('2026-08-05T10:00:00Z'), // before WEEK_START
     });
     const notes = weeklyDigestNotifications({
@@ -182,14 +182,14 @@ describe('Level 3 conversation prompts', () => {
    * already sees as a score.
    */
   test('a missed question produces a sharper prompt than the topic alone', () => {
-    const rep = module01.reps.find((r) => r.number === '1.1')!;
-    const missed = rep.quiz[0]!;
+    const section = module01.sections.find((r) => r.number === '1.1')!;
+    const missed = section.quiz[0]!;
 
     const withMiss = templateGenerator.generate({
-      completedRepIds: [rep.id],
+      completedSectionIds: [section.id],
       missedQuestionIds: [missed.id],
     });
-    const withoutMiss = templateGenerator.generate({ completedRepIds: [rep.id] });
+    const withoutMiss = templateGenerator.generate({ completedSectionIds: [section.id] });
 
     assert.equal(withMiss[0]?.basis, 'missed');
     assert.equal(withoutMiss[0]?.basis, 'topic');
@@ -199,14 +199,14 @@ describe('Level 3 conversation prompts', () => {
   test('a prompt never repeats a quiz stem verbatim', () => {
     // A stem reads like a test question. The contact is being handed a
     // conversation opener, not an exam paper.
-    const rep = module01.reps.find((r) => r.number === '1.1')!;
+    const section = module01.sections.find((r) => r.number === '1.1')!;
     const questions = templateGenerator.generate({
-      completedRepIds: [rep.id],
-      missedQuestionIds: rep.quiz.map((q) => q.id),
+      completedSectionIds: [section.id],
+      missedQuestionIds: section.quiz.map((q) => q.id),
       max: 5,
     });
     for (const q of questions) {
-      for (const quizQuestion of rep.quiz) {
+      for (const quizQuestion of section.quiz) {
         assert.equal(
           q.question.includes(quizQuestion.stem),
           false,
@@ -217,17 +217,17 @@ describe('Level 3 conversation prompts', () => {
   });
 
   test('at most one prompt per lesson, however many were missed', () => {
-    const rep = module01.reps.find((r) => r.number === '1.1')!;
+    const section = module01.sections.find((r) => r.number === '1.1')!;
     const questions = templateGenerator.generate({
-      completedRepIds: [rep.id],
-      missedQuestionIds: rep.quiz.map((q) => q.id),
+      completedSectionIds: [section.id],
+      missedQuestionIds: section.quiz.map((q) => q.id),
       max: 5,
     });
     assert.equal(questions.filter((q) => q.basis === 'missed').length, 1);
   });
 
   test('questions are still generated when nothing was missed', () => {
-    const questions = templateGenerator.generate({ completedRepIds: ['m1-r3'] });
+    const questions = templateGenerator.generate({ completedSectionIds: ['m1-s3'] });
     assert.ok(questions.length > 0);
     assert.ok(questions.every((q) => q.basis === 'topic'));
   });

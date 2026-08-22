@@ -20,7 +20,7 @@ const STEPS = [
   },
   {
     title: 'They start on their phone',
-    body: 'Seven-minute Reps, a Curveball in each, a written reflection at the end. No scheduling, no room booking, no travel.',
+    body: 'Seven-minute Sections, a Curveball in each, a written reflection at the end. No scheduling, no room booking, no travel.',
   },
   {
     title: 'You hear when it matters',
@@ -71,7 +71,7 @@ export default function ForTeamsPage() {
           <div className={styles.pilotCard}>
             <p className={styles.pilotLabel}>Available now</p>
             <ul>
-              <li>Module 1 complete, 8 Reps, 26 questions, 10 Curveballs</li>
+              <li>Module 1 complete, 8 Sections, 26 questions, 10 Curveballs</li>
               <li>Full registration and Corner setup</li>
               <li>Progress, streaks, and scoring</li>
               <li>Web and mobile</li>

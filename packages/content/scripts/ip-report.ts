@@ -34,7 +34,7 @@ for (const severity of ['legal', 'editorial', 'production']) {
   console.log('-'.repeat(72));
 
   for (const d of list) {
-    console.log(`\n[${d.ref}]  Rep ${d.repNumber}`);
+    console.log(`\n[${d.ref}]  Section ${d.sectionNumber}`);
     console.log(`  APPROVED : ${d.original}`);
     console.log(`  SHIPPING : ${d.shipped}`);
     console.log(`  WHY      : ${d.reason}`);

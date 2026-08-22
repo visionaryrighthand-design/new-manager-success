@@ -406,8 +406,8 @@ export function EnrollFlow() {
         are implemented and tested in <code>@nms/core</code>, the transport is the part still
         to wire up. See <code>docs/product/MVP_SPEC.md</code>.
       </p>
-      <a className="nms-btn nms-btn--bright" href="/learn/m1-r1">
-        Start Rep 1.1
+      <a className="nms-btn nms-btn--bright" href="/learn/m1-s1">
+        Start Section 1.1
       </a>
     </Frame>
   );

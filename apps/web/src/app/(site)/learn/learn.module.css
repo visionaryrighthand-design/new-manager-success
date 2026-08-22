@@ -38,7 +38,7 @@
   color: var(--nms-color-fg-muted);
 }
 
-.reps {
+.sections {
   list-style: none;
   margin: var(--nms-space-9) 0 0;
   padding: 0;
@@ -47,7 +47,7 @@
   gap: var(--nms-space-3);
 }
 
-.rep {
+.section {
   display: grid;
   grid-template-columns: 2.75rem 1fr auto;
   gap: var(--nms-space-4);
@@ -61,12 +61,12 @@
     border-color var(--nms-duration-quick) var(--nms-ease-standard),
     transform var(--nms-duration-quick) var(--nms-ease-standard);
 }
-.rep:hover {
+.section:hover {
   border-color: var(--nms-color-accent);
   transform: translateY(-1px);
 }
 
-.repNum {
+.sectionNum {
   font-family: var(--nms-font-mono);
   font-weight: 700;
   font-size: 0.85rem;
@@ -74,12 +74,12 @@
   padding-top: 3px;
 }
 
-.repBody { display: flex; flex-direction: column; gap: 5px; min-width: 0; }
-.repTitle { font-weight: 650; font-size: 1.0625rem; letter-spacing: -0.01em; }
-.repSubtitle { font-size: var(--nms-font-caption-size); color: var(--nms-color-fg-subtle); }
-.repHook { color: var(--nms-color-fg-muted); font-size: 0.95rem; }
+.sectionBody { display: flex; flex-direction: column; gap: 5px; min-width: 0; }
+.sectionTitle { font-weight: 650; font-size: 1.0625rem; letter-spacing: -0.01em; }
+.sectionSubtitle { font-size: var(--nms-font-caption-size); color: var(--nms-color-fg-subtle); }
+.sectionHook { color: var(--nms-color-fg-muted); font-size: 0.95rem; }
 
-.repTags {
+.sectionTags {
   margin-top: var(--nms-space-2);
   display: flex;
   flex-wrap: wrap;

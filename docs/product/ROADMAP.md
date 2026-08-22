@@ -41,7 +41,7 @@ constraint that keeps scripts feed-shaped. Two things to do before drafting:
 
 Genuinely hold these open. From `PILOT_PLAYBOOK.md`:
 
-- Curveballs cited as the best part → 2–3 per Rep, less narration
+- Curveballs cited as the best part → 2–3 per Section, less narration
 - Contacts changed behaviour → team seats, manager dashboard, price per seat
 - Contacts ignored it → individual subscriptions, cut Corner scope
 - Nothing retained → the problem is the content, not the app
@@ -72,7 +72,7 @@ Declared in the data model, previewed in the UI, not built:
 - **Midterm** after Module 6, 85% to pass, gates the second half
 - **Final** across all twelve, 85%, issues certification
 
-**Build the final exam server-scored.** Rep quizzes deliberately ship correct
+**Build the final exam server-scored.** Section quizzes deliberately ship correct
 answers to the client — feedback has to render instantly and offline, and this
 is a training product, not an exam board. That trade-off inverts the moment
 there is an external credential attached.

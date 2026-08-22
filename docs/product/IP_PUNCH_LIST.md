@@ -37,9 +37,9 @@ four-level model is named **The Readiness Dial** — original, and consistent wi
 the outline's own "dial" language. Every substantive idea in the locked script
 is unchanged.
 
-**Recorded changes.** Seven, machine-readable, in `Rep.scriptDeviations`:
+**Recorded changes.** Seven, machine-readable, in `Section.scriptDeviations`:
 
-| Ref | Rep | Change |
+| Ref | Section | Change |
 |-----|-----|--------|
 | D6  | 1.5 | Forward-reference to the mark removed from narration |
 | D6a | 1.6 | Section title → "Managing in the Moment" |
@@ -62,7 +62,7 @@ four-quadrant readiness ladder with Situational Leadership®.
 If counsel wants more distance, the cheapest change is renaming the four
 responses without touching a word of their descriptions. Suggested originals:
 **Show / Build / Back / Release**. This is a one-line change in
-`packages/content/src/module-01/rep-06.ts` plus two quiz options.
+`packages/content/src/module-01/section-06.ts` plus two quiz options.
 
 **Decision needed from:** course owner + IP counsel.
 
@@ -102,15 +102,15 @@ quadrant diagram.
 
 ## Cleared — reviewed, no action
 
-**"Emotional Intelligence" and its four components (Rep 1.5).** Descriptive
+**"Emotional Intelligence" and its four components (Section 1.5).** Descriptive
 term in general use. The four components named are the widely published Goleman
 groupings, described here in original wording rather than quoted, with no
 framework diagram or proprietary assessment reproduced. Ships as written.
 
-**"Servant Leadership" (Rep 1.7).** Descriptive concept in general use
+**"Servant Leadership" (Section 1.7).** Descriptive concept in general use
 (Greenleaf, 1970). Ships as written.
 
-**"Emotional contagion" (Rep 1.4).** Scientific term of art, not a brand.
+**"Emotional contagion" (Section 1.4).** Scientific term of art, not a brand.
 
 ---
 
@@ -148,9 +148,9 @@ list or the other.
 All of these ship as `proposed`. A test asserts that — approving one should be
 a deliberate edit, not a default.
 
-| Ref | Rep | Where | What | Why |
+| Ref | Section | Where | What | Why |
 |---|---|---|---|---|
-| A1 | 1.1 | after b2 | Gut Check: *"How much management training did you get before your first day?"* | Four passive cards before the first input. Also makes the learner state the Rep's premise before the script argues it |
+| A1 | 1.1 | after b2 | Gut Check: *"How much management training did you get before your first day?"* | Four passive cards before the first input. Also makes the learner state the Section's premise before the script argues it |
 | A2 | 1.1 | after b9 | Gut Check: *"Think of a manager you left, or nearly left. What tipped it?"* | Six passive cards in the back half. Turns "employees quit managers" into the learner's own memory rather than an assertion |
 | A3 | 1.5 | after b3 | Gut Check: *"How long between feeling frustration and showing it?"* | Nine passive cards and 2m25 before the Curveball — the worst stretch in Module 1 |
 | A4 | 1.5 | after b6 | Gut Check: *"Which of the four is hardest for you right now?"* | Makes b7 land as an answer: the script says focus on self-regulation, and this is where the learner has just said whether they agree |
@@ -159,9 +159,9 @@ a deliberate edit, not a default.
 npm run report:cadence -w @nms/content   # what these are fixing, measured
 ```
 
-**Still to do.** Reps 1.2, 1.3, 1.4, 1.6 and 1.7 each still run over ninety
+**Still to do.** Sections 1.2, 1.3, 1.4, 1.6 and 1.7 each still run over ninety
 seconds with no input; 1.3 is the worst at 2m36. That list is pinned in the
-test suite, so a Rep cannot quietly join it and fixing one forces the list to
+test suite, so a Section cannot quietly join it and fixing one forces the list to
 be updated.
 
 

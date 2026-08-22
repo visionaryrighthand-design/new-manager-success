@@ -90,7 +90,7 @@ from, and the player falls back to them as a readable transcript for any
 lesson whose film has not been made yet.
 
 ```bash
-npm run report:content -w @nms/content   # per-Rep timing + validation
+npm run report:content -w @nms/content   # per-Section timing + validation
 npm run report:ip -w @nms/content        # every change from a locked script
 ```
 

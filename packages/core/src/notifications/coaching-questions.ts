@@ -1,4 +1,4 @@
-import { findRep } from '@nms/content';
+import { findSection } from '@nms/content';
 
 /**
  * Level 3 conversation prompts.
@@ -35,7 +35,7 @@ export interface CoachingQuestion {
   question: string;
   /** Why it is being suggested — shown in small type under the question. */
   rationale: string;
-  /** Lesson this came from, e.g. '1.3'. */
+  /** Section this came from, e.g. '1.3'. */
   source: string;
   /** 'missed' if shaped by a question they got wrong, 'topic' if from the section alone. */
   basis: 'missed' | 'topic';
@@ -43,7 +43,7 @@ export interface CoachingQuestion {
 
 export interface CoachingQuestionGenerator {
   generate(input: {
-    completedRepIds: readonly string[];
+    completedSectionIds: readonly string[];
     /** Quiz question ids the learner answered incorrectly, most recent first. */
     missedQuestionIds?: readonly string[];
     max?: number;
@@ -51,14 +51,14 @@ export interface CoachingQuestionGenerator {
 }
 
 /**
- * Two questions per lesson, keyed by lesson number.
+ * Two questions per section, keyed by section number.
  *
  * Keyed by number rather than by a topic string because the topic string used
  * to live on the Field Note, and there is no longer a Field Note to hang it
  * on. The number is the one identifier every document in the project agrees
  * about.
  */
-const LESSON_QUESTIONS: Record<string, string[]> = {
+const SECTION_QUESTIONS: Record<string, string[]> = {
   '1.1': [
     'What part of the manager job has turned out to be nothing like you expected?',
     'What is something about your new role that nobody explained to you?',
@@ -93,10 +93,10 @@ const LESSON_QUESTIONS: Record<string, string[]> = {
   ],
 };
 
-/** Fallback for a lesson with no bespoke questions written yet. */
+/** Fallback for a section with no bespoke questions written yet. */
 function genericFor(title: string): string[] {
   return [
-    `What came up for you in the lesson on ${title.toLowerCase()}?`,
+    `What came up for you in the section on ${title.toLowerCase()}?`,
     `Where is ${title.toLowerCase()} showing up in your week right now?`,
   ];
 }
@@ -108,7 +108,7 @@ function genericFor(title: string): string[] {
  * verbatim. What is passed on is the subject and an invitation to talk about
  * it in the learner's own situation.
  */
-function fromMissed(stem: string, lessonNumber: string, lessonTitle: string): CoachingQuestion {
+function fromMissed(stem: string, sectionNumber: string, sectionTitle: string): CoachingQuestion {
   const subject = stem
     .replace(/^(what|which|why|how|who|when)\b/i, '')
     .replace(/\?$/, '')
@@ -116,9 +116,9 @@ function fromMissed(stem: string, lessonNumber: string, lessonTitle: string): Co
     .trim();
 
   return {
-    question: `In the ${lessonTitle.toLowerCase()} lesson, the question about ${lowerFirst(subject)} was the one that tripped you up. How does that play out on your team?`,
-    rationale: `Lesson ${lessonNumber}. Answered incorrectly on the first attempt.`,
-    source: lessonNumber,
+    question: `In the ${sectionTitle.toLowerCase()} section, the question about ${lowerFirst(subject)} was the one that tripped you up. How does that play out on your team?`,
+    rationale: `Section ${sectionNumber}. Answered incorrectly on the first attempt.`,
+    source: sectionNumber,
     basis: 'missed',
   };
 }
@@ -128,7 +128,7 @@ function lowerFirst(text: string): string {
 }
 
 export const templateGenerator: CoachingQuestionGenerator = {
-  generate({ completedRepIds, missedQuestionIds = [], max = 3 }) {
+  generate({ completedSectionIds, missedQuestionIds = [], max = 3 }) {
     const questions: CoachingQuestion[] = [];
     const seen = new Set<string>();
 
@@ -141,25 +141,25 @@ export const templateGenerator: CoachingQuestionGenerator = {
     // A question they got wrong is the sharpest prompt available, so those
     // come first and the topic prompts fill whatever room is left.
     const missed = new Set(missedQuestionIds);
-    for (const repId of completedRepIds) {
-      const rep = findRep(repId);
-      if (!rep) continue;
-      for (const question of rep.quiz) {
+    for (const sectionId of completedSectionIds) {
+      const section = findSection(sectionId);
+      if (!section) continue;
+      for (const question of section.quiz) {
         if (!missed.has(question.id)) continue;
-        push(fromMissed(question.stem, rep.number, rep.title));
-        break; // At most one per lesson; a digest is not a report card.
+        push(fromMissed(question.stem, section.number, section.title));
+        break; // At most one per section; a digest is not a report card.
       }
     }
 
-    for (const repId of completedRepIds) {
-      const rep = findRep(repId);
-      if (!rep) continue;
-      const pool = LESSON_QUESTIONS[rep.number] ?? genericFor(rep.title);
+    for (const sectionId of completedSectionIds) {
+      const section = findSection(sectionId);
+      if (!section) continue;
+      const pool = SECTION_QUESTIONS[section.number] ?? genericFor(section.title);
       if (pool[0]) {
         push({
           question: pool[0],
-          rationale: `Lesson ${rep.number} — ${rep.title}.`,
-          source: rep.number,
+          rationale: `Section ${section.number} — ${section.title}.`,
+          source: section.number,
           basis: 'topic',
         });
       }

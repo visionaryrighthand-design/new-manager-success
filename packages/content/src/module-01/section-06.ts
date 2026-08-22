@@ -1,10 +1,10 @@
-import type { Rep } from '../types.js';
+import type { Section } from '../types.js';
 
 /**
  * 1.6 — Managing in the Moment
  * Script status: APPROVED & LOCKED (April 2026), with four recorded deviations.
  *
- * ⚠ This is the one Rep in Module 1 that does not ship verbatim.
+ * ⚠ This is the one Section in Module 1 that does not ship verbatim.
  *
  * The locked April script titles this section "Situational Leadership — One
  * Style Doesn't Fit All" and uses the term four times. Situational Leadership®
@@ -20,8 +20,8 @@ import type { Rep } from '../types.js';
  * unchanged. All four wording changes are recorded in `scriptDeviations` and
  * printed by `npm run report:ip -w @nms/content` for sign-off.
  */
-export const rep06: Rep = {
-  id: 'm1-r6',
+export const section06: Section = {
+  id: 'm1-s6',
   moduleNumber: 1,
   index: 6,
   number: '1.6',
@@ -133,7 +133,7 @@ export const rep06: Rep = {
       ref: 'D6a',
       severity: 'legal',
       original: 'SECTION 1.6: “Situational Leadership, One Style Doesn’t Fit All”',
-      shipped: 'Rep 1.6: “Managing in the Moment” (subtitle: “One style doesn’t fit all”)',
+      shipped: 'Section 1.6: “Managing in the Moment” (subtitle: “One style doesn’t fit all”)',
       reason:
         'Adopts the title already approved in the August 2026 Expanded Module Outline, which supersedes the April script header. Removes the registered mark from the section title while keeping the original subtitle line.',
       needsSignoffFrom: 'Course owner + IP counsel',
@@ -183,7 +183,7 @@ export const rep06: Rep = {
 
   quiz: [
     {
-      id: 'm1-r6-q1',
+      id: 'm1-s6-q1',
       kind: 'recall',
       source: '1.6',
       stem: 'Readiness is made up of which two things?',
@@ -200,7 +200,7 @@ export const rep06: Rep = {
       ],
     },
     {
-      id: 'm1-r6-q2',
+      id: 'm1-s6-q2',
       kind: 'recall',
       source: '1.6',
       stem: 'What is the most common mistake managers make when applying the readiness levels?',
@@ -233,7 +233,7 @@ export const rep06: Rep = {
       ],
     },
     {
-      id: 'm1-r6-q3',
+      id: 'm1-s6-q3',
       kind: 'scenario',
       source: '1.6',
       stem: 'Someone on your team has the skill to run a project alone but keeps checking in for reassurance before every decision. Which level, and which response?',

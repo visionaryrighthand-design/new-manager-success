@@ -8,9 +8,9 @@
  * renders one beat per card, which is what makes a 7-minute lesson feel like
  * a scroll instead of a video.
  *
- * RULE: `speech` and `text` on any beat of an `approved-locked` Rep are
+ * RULE: `speech` and `text` on any beat of an `approved-locked` Section are
  * verbatim from the approved script. Any change is recorded in
- * `Rep.scriptDeviations` and surfaced by `npm run report:ip`. Do not edit
+ * `Section.scriptDeviations` and surfaced by `npm run report:ip`. Do not edit
  * locked copy without adding a deviation entry.
  */
 
@@ -40,7 +40,7 @@ export type BeatType =
   | 'hold';
 
 export interface Beat {
-  /** Stable id, unique within its Rep. Used as the scroll anchor and analytics key. */
+  /** Stable id, unique within its Section. Used as the scroll anchor and analytics key. */
   id: string;
   type: BeatType;
   /**
@@ -64,7 +64,7 @@ export interface Beat {
    * Voiceover for this beat.
    *
    * The card is the product; audio rides on top of it. That ordering is
-   * deliberate — a card has to work in silence, because a manager doing a Rep
+   * deliberate — a card has to work in silence, because a manager doing a Section
    * on a shop floor, a ward, or a train has the sound off. Audio deepens a
    * card that already reads; it does not rescue one that does not.
    *
@@ -107,13 +107,13 @@ export interface QuizQuestion {
   kind: 'recall' | 'scenario';
   stem: string;
   options: QuizOption[];
-  /** The Rep section this question is drawn from, e.g. '1.3'. */
+  /** The Section section this question is drawn from, e.g. '1.3'. */
   source: string;
 }
 
 
 /**
- * Open-ended written reflection. Every Rep must have at least one — this is a
+ * Open-ended written reflection. Every Section must have at least one — this is a
  * hard requirement from the Registration & Progress Communications spec,
  * because Level 3 contacts receive 1:1 questions generated from these answers.
  */
@@ -162,11 +162,11 @@ export interface ContentAddition {
 }
 
 // ---------------------------------------------------------------------------
-// Reps and Modules
+// Sections and Modules
 // ---------------------------------------------------------------------------
 
-export interface Rep {
-  /** Stable id, e.g. 'm1-r3'. */
+export interface Section {
+  /** Stable id, e.g. 'm1-s3'. */
   id: string;
   moduleNumber: number;
   /** Position within the module, 1-based. */
@@ -174,7 +174,7 @@ export interface Rep {
   /** Display number from the outline, e.g. '1.3'. */
   number: string;
   title: string;
-  /** Optional second line on the Rep card. */
+  /** Optional second line on the Section card. */
   subtitle?: string;
   /** Target duration from the script header. */
   durationMinutes: number;
@@ -182,7 +182,7 @@ export interface Rep {
   spokenWordCount: number;
   scriptStatus: 'approved-locked' | 'drafted' | 'outline-only';
   /**
-   * The first thing a learner sees on the Rep card in the feed. Three seconds
+   * The first thing a learner sees on the Section card in the feed. Three seconds
    * to earn the swipe. Written for the app — not part of the locked script.
    */
   hook: string;
@@ -209,7 +209,7 @@ export interface Rep {
   /** Poster frame shown before playback. */
   posterUrl?: string;
   scriptDeviations?: ScriptDeviation[];
-  /** Everything in this Rep that the approved script does not contain. */
+  /** Everything in this Section that the approved script does not contain. */
   contentAdditions?: ContentAddition[];
 }
 
@@ -221,7 +221,7 @@ export interface CourseModule {
   /** Marketing/summary copy for the module card. */
   description: string;
   status: 'live' | 'in-production' | 'outlined';
-  reps: Rep[];
+  sections: Section[];
   /** Score required to complete the module, 0–100. */
   passingScore: number;
 }

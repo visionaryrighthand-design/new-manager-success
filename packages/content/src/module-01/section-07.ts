@@ -1,4 +1,4 @@
-import type { Rep } from '../types.js';
+import type { Section } from '../types.js';
 
 /**
  * 1.7 — Leading by Example and Acting Like an Owner
@@ -9,8 +9,8 @@ import type { Rep } from '../types.js';
  * use in training content — logged under § Cleared in the IP punch list rather
  * than as a deviation.
  */
-export const rep07: Rep = {
-  id: 'm1-r7',
+export const section07: Section = {
+  id: 'm1-s7',
   moduleNumber: 1,
   index: 7,
   number: '1.7',
@@ -115,7 +115,7 @@ export const rep07: Rep = {
 
   quiz: [
     {
-      id: 'm1-r7-q1',
+      id: 'm1-s7-q1',
       kind: 'recall',
       source: '1.7',
       stem: 'What does “acting like an owner” mean in this section?',
@@ -147,7 +147,7 @@ export const rep07: Rep = {
       ],
     },
     {
-      id: 'm1-r7-q2',
+      id: 'm1-s7-q2',
       kind: 'recall',
       source: '1.7',
       stem: 'Complete the pattern: “What you model becomes the standard. What you tolerate becomes…”',
@@ -159,7 +159,7 @@ export const rep07: Rep = {
       ],
     },
     {
-      id: 'm1-r7-q3',
+      id: 'm1-s7-q3',
       kind: 'scenario',
       source: '1.7',
       stem: 'A manager holds a strong all-hands about accountability, then misses two of his own deadlines that month without mentioning it. What does the team learn?',

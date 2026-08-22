@@ -8,18 +8,18 @@
  * `RESETS_INACTIVITY` below is the enumeration of that sentence.
  */
 export type ActivityType =
-  | 'rep-opened'
+  | 'section-opened'
   | 'beat-viewed'
   | 'quiz-answered'
-  | 'rep-completed'
+  | 'section-completed'
   | 'module-completed';
 
 /** Every activity type resets the inactivity clock. Named so the rule is greppable. */
 export const RESETS_INACTIVITY: readonly ActivityType[] = [
-  'rep-opened',
+  'section-opened',
   'beat-viewed',
   'quiz-answered',
-  'rep-completed',
+  'section-completed',
   'module-completed',
 ];
 
@@ -28,7 +28,7 @@ export interface ActivityEvent {
   enrollmentId: string;
   type: ActivityType;
   at: Date;
-  repId?: string;
+  sectionId?: string;
   /** Question, Curveball, Field Note, or beat id, depending on `type`. */
   targetId?: string;
   /** For `quiz-answered`. */
@@ -36,7 +36,7 @@ export interface ActivityEvent {
 }
 
 export interface QuizAttempt {
-  repId: string;
+  sectionId: string;
   at: Date;
   /** 0–100. */
   score: number;
@@ -45,8 +45,8 @@ export interface QuizAttempt {
   passed: boolean;
 }
 
-export interface RepProgress {
-  repId: string;
+export interface SectionProgress {
+  sectionId: string;
   openedAt?: Date;
   completedAt?: Date;
   /** Best score across attempts, 0–100. Undefined until the quiz is attempted. */
@@ -74,7 +74,7 @@ export interface StreakState {
 export interface LearnerProgress {
   enrollmentId: string;
   startedAt: Date;
-  reps: Record<string, RepProgress>;
+  sections: Record<string, SectionProgress>;
   xp: number;
   streak: StreakState;
   /** Calendar dates, in the learner's zone, on which any activity happened. */

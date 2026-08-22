@@ -15,13 +15,13 @@ import { useLocalSearchParams, useRouter } from 'expo-router';
 import * as Haptics from 'expo-haptics';
 import { ResizeMode, Video, type VideoProps } from 'expo-av';
 import {
-  estimateRepTotalSeconds,
+  estimateSectionTotalSeconds,
   feedCards,
-  findRep,
-  nextRep,
+  findSection,
+  nextSection,
   type FeedCard,
   type QuizQuestion,
-  type Rep,
+  type Section,
 } from '@nms/content';
 import { colors, radius, space, type } from '../../src/theme';
 import { useProgress } from '../../src/progress-store';
@@ -51,27 +51,27 @@ type Card = FeedCard;
  */
 const VideoPlayer = Video as unknown as React.ComponentType<VideoProps & { ref?: unknown }>;
 
-export default function RepScreen() {
-  const { repId } = useLocalSearchParams<{ repId: string }>();
-  const rep = repId ? findRep(repId) : undefined;
+export default function SectionScreen() {
+  const { sectionId } = useLocalSearchParams<{ sectionId: string }>();
+  const section = sectionId ? findSection(sectionId) : undefined;
 
-  if (!rep) {
+  if (!section) {
     return (
       <View style={styles.missing}>
-        <Text style={styles.missingText}>That lesson does not exist.</Text>
+        <Text style={styles.missingText}>That section does not exist.</Text>
       </View>
     );
   }
-  return <LessonFeed rep={rep} />;
+  return <SectionFeed section={section} />;
 }
 
-function LessonFeed({ rep }: { rep: Rep }) {
+function SectionFeed({ section }: { section: Section }) {
   const router = useRouter();
   const insets = useSafeAreaInsets();
   const { height } = useWindowDimensions();
   const { progress, track, submitQuiz } = useProgress();
 
-  const cards = useMemo(() => feedCards(rep), [rep]);
+  const cards = useMemo(() => feedCards(section), [section]);
   const [index, setIndex] = useState(0);
   const [answers, setAnswers] = useState<Record<string, string>>({});
   const listRef = useRef<FlatList<Card>>(null);
@@ -80,8 +80,8 @@ function LessonFeed({ rep }: { rep: Rep }) {
   // Opening a lesson is activity. The inactivity spec is explicit that it
   // counts, so it is recorded here rather than only on completion.
   useEffect(() => {
-    track({ type: 'rep-opened', repId: rep.id });
-  }, [rep.id, track]);
+    track({ type: 'section-opened', sectionId: section.id });
+  }, [section.id, track]);
 
   const onViewableItemsChanged = useRef(({ viewableItems }: { viewableItems: ViewToken[] }) => {
     const first = viewableItems[0];
@@ -104,9 +104,9 @@ function LessonFeed({ rep }: { rep: Rep }) {
           ? Haptics.NotificationFeedbackType.Success
           : Haptics.NotificationFeedbackType.Error,
       );
-      track({ type: 'quiz-answered', repId: rep.id, targetId: question.id, correct });
+      track({ type: 'quiz-answered', sectionId: section.id, targetId: question.id, correct });
     },
-    [answers, rep.id, track],
+    [answers, section.id, track],
   );
 
   // Score and complete once the learner reaches the summary card.
@@ -115,15 +115,15 @@ function LessonFeed({ rep }: { rep: Rep }) {
     if (card?.kind !== 'summary' || quizSubmitted.current) return;
     quizSubmitted.current = true;
     submitQuiz(
-      rep.id,
-      rep.quiz.map((q) => ({ questionId: q.id, optionId: answers[q.id] ?? '' })),
+      section.id,
+      section.quiz.map((q) => ({ questionId: q.id, optionId: answers[q.id] ?? '' })),
     );
-    track({ type: 'rep-completed', repId: rep.id });
+    track({ type: 'section-completed', sectionId: section.id });
     void Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
-  }, [index, cards, rep, answers, submitQuiz, track]);
+  }, [index, cards, section, answers, submitQuiz, track]);
 
-  const followUp = nextRep(rep.id);
-  const correctCount = rep.quiz.filter(
+  const followUp = nextSection(section.id);
+  const correctCount = section.quiz.filter(
     (q) => q.options.find((o) => o.id === answers[q.id])?.correct,
   ).length;
 
@@ -147,14 +147,14 @@ function LessonFeed({ rep }: { rep: Rep }) {
           >
             <CardView
               card={item}
-              rep={rep}
+              section={section}
               isActive={i === index}
               answers={answers}
               onChooseQuiz={onChooseQuiz}
               correctCount={correctCount}
               progressXp={progress.xp}
-              onFinish={() => router.replace(followUp ? `/rep/${followUp.id}` : '/')}
-              finishLabel={followUp ? `Next lesson: ${followUp.number}` : 'Back to Module 1'}
+              onFinish={() => router.replace(followUp ? `/section/${followUp.id}` : '/')}
+              finishLabel={followUp ? `Next section: ${followUp.number}` : 'Back to Module 1'}
             />
           </View>
         )}
@@ -181,7 +181,7 @@ function LessonFeed({ rep }: { rep: Rep }) {
             />
           ))}
         </View>
-        <Text style={styles.repTag}>{rep.number}</Text>
+        <Text style={styles.sectionTag}>{section.number}</Text>
       </View>
 
       {cards[index]?.kind !== 'summary' ? (
@@ -219,7 +219,7 @@ function nextLabel(card: Card | undefined): string {
 
 interface CardViewProps {
   card: Card;
-  rep: Rep;
+  section: Section;
   isActive: boolean;
   answers: Record<string, string>;
   onChooseQuiz: (question: QuizQuestion, optionId: string) => void;
@@ -230,26 +230,26 @@ interface CardViewProps {
 }
 
 function CardView(props: CardViewProps) {
-  const { card, rep } = props;
+  const { card, section } = props;
 
-  if (card.kind === 'repIntro') {
+  if (card.kind === 'sectionIntro') {
     return (
       <View style={styles.card}>
         <View style={styles.introRule} />
         <Text style={styles.introEyebrow}>
-          LESSON {card.rep.number} · {card.rep.title.toUpperCase()}
+          SECTION {card.section.number} · {card.section.title.toUpperCase()}
         </Text>
-        <Text style={styles.introHook}>{card.rep.hook}</Text>
+        <Text style={styles.introHook}>{card.section.hook}</Text>
         <Text style={styles.introMeta}>
-          {Math.max(1, Math.round(estimateRepTotalSeconds(card.rep) / 60))} min ·{' '}
-          {card.rep.quiz.length} questions
+          {Math.max(1, Math.round(estimateSectionTotalSeconds(card.section) / 60))} min ·{' '}
+          {card.section.quiz.length} questions
         </Text>
       </View>
     );
   }
 
   if (card.kind === 'video') {
-    return <VideoCard rep={card.rep} isActive={props.isActive} />;
+    return <VideoCard section={card.section} isActive={props.isActive} />;
   }
 
   if (card.kind === 'quiz') {
@@ -264,12 +264,12 @@ function CardView(props: CardViewProps) {
     );
   }
 
-  const total = rep.quiz.length;
+  const total = section.quiz.length;
   const score = total === 0 ? 0 : Math.round((props.correctCount / total) * 100);
 
   return (
     <View style={styles.card}>
-      <Text style={styles.quizLabel}>LESSON {rep.number} COMPLETE</Text>
+      <Text style={styles.quizLabel}>SECTION {section.number} COMPLETE</Text>
       <Text style={styles.summaryScore}>
         {props.correctCount}
         <Text style={styles.summaryScoreTotal}>/{total}</Text>
@@ -277,7 +277,7 @@ function CardView(props: CardViewProps) {
       <Text style={styles.prompt}>
         {score >= 85 ? 'Locked in.' : 'Worth running back before you move on.'}
       </Text>
-      <Text style={styles.body}>{rep.keyIdea}</Text>
+      <Text style={styles.body}>{section.keyIdea}</Text>
       <Text style={styles.xpLine}>{props.progressXp.toLocaleString()} XP total</Text>
 
       <Pressable style={styles.finish} onPress={props.onFinish}>
@@ -293,7 +293,7 @@ function CardView(props: CardViewProps) {
  * Falls back to the script as a scrollable transcript until the film exists,
  * so a lesson with no footage is a lesson rather than an empty screen.
  */
-function VideoCard({ rep, isActive }: { rep: Rep; isActive: boolean }) {
+function VideoCard({ section, isActive }: { section: Section; isActive: boolean }) {
   const ref = useRef<Video>(null);
 
   // Leaving the card stops the video. Two lessons talking at once is the
@@ -303,16 +303,16 @@ function VideoCard({ rep, isActive }: { rep: Rep; isActive: boolean }) {
     void ref.current?.pauseAsync();
   }, [isActive]);
 
-  const script = rep.beats
+  const script = section.beats
     .flatMap((beat) => (beat.speech ? beat.speech.split('\n\n') : []))
     .map((para) => para.trim())
     .filter(Boolean);
 
-  if (!rep.videoUrl) {
+  if (!section.videoUrl) {
     return (
       <View style={styles.card}>
         <Text style={styles.quizLabel}>SCRIPT · FILM NOT SHOT YET</Text>
-        <Text style={styles.introHook}>{rep.title}</Text>
+        <Text style={styles.introHook}>{section.title}</Text>
         <ScrollView style={styles.transcript} contentContainerStyle={styles.transcriptInner}>
           {script.map((para, i) => (
             <Text key={i} style={styles.body}>
@@ -329,13 +329,13 @@ function VideoCard({ rep, isActive }: { rep: Rep; isActive: boolean }) {
       <VideoPlayer
         ref={ref}
         style={styles.video}
-        source={{ uri: rep.videoUrl }}
-        posterSource={rep.posterUrl ? { uri: rep.posterUrl } : undefined}
+        source={{ uri: section.videoUrl }}
+        posterSource={section.posterUrl ? { uri: section.posterUrl } : undefined}
         useNativeControls
         resizeMode={ResizeMode.CONTAIN}
       />
-      <Text style={styles.quizLabel}>LESSON {rep.number}</Text>
-      <Text style={styles.introHook}>{rep.title}</Text>
+      <Text style={styles.quizLabel}>SECTION {section.number}</Text>
+      <Text style={styles.introHook}>{section.title}</Text>
     </View>
   );
 }
@@ -496,7 +496,7 @@ const styles = StyleSheet.create({
   segmentVideo: { backgroundColor: colors.accent, opacity: 0.4 },
   segmentDone: { backgroundColor: colors.bright, opacity: 1 },
   segmentNow: { backgroundColor: colors.accent, opacity: 1 },
-  repTag: { ...type.numeric, color: colors.fgSubtle, fontSize: 12 },
+  sectionTag: { ...type.numeric, color: colors.fgSubtle, fontSize: 12 },
 
   bottomBar: {
     position: 'absolute',

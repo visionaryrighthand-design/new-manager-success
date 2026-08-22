@@ -1,11 +1,11 @@
-import type { Rep } from '../types.js';
+import type { Section } from '../types.js';
 
 /**
  * 1.4 — Your Energy Sets the Tone
  * Script status: APPROVED & LOCKED (April 2026). Beats are verbatim.
  */
-export const rep04: Rep = {
-  id: 'm1-r4',
+export const section04: Section = {
+  id: 'm1-s4',
   moduleNumber: 1,
   index: 4,
   number: '1.4',
@@ -103,7 +103,7 @@ export const rep04: Rep = {
 
   quiz: [
     {
-      id: 'm1-r4-q1',
+      id: 'm1-s4-q1',
       kind: 'recall',
       source: '1.4',
       stem: 'What is emotional contagion?',
@@ -135,7 +135,7 @@ export const rep04: Rep = {
       ],
     },
     {
-      id: 'm1-r4-q2',
+      id: 'm1-s4-q2',
       kind: 'recall',
       source: '1.4',
       stem: 'The pre-game routine is described as taking how long?',
@@ -147,7 +147,7 @@ export const rep04: Rep = {
       ],
     },
     {
-      id: 'm1-r4-q3',
+      id: 'm1-s4-q3',
       kind: 'scenario',
       source: '1.4',
       stem: 'A manager decides that from now on she will always appear upbeat in front of her team, regardless of how she feels. What is the problem?',

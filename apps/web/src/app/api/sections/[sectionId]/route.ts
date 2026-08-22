@@ -1,32 +1,32 @@
 import { NextResponse } from 'next/server';
-import { findRep, module01, nextRep } from '@nms/content';
+import { findSection, module01, nextSection } from '@nms/content';
 
-/** Full content for one Rep. Fetched by the app when a learner opens it. */
+/** Full content for one Section. Fetched by the app when a learner opens it. */
 export const dynamic = 'force-static';
 
 export function generateStaticParams() {
-  return module01.reps.map((rep) => ({ repId: rep.id }));
+  return module01.sections.map((section) => ({ sectionId: section.id }));
 }
 
 export async function GET(
   _request: Request,
-  { params }: { params: Promise<{ repId: string }> },
+  { params }: { params: Promise<{ sectionId: string }> },
 ) {
-  const { repId } = await params;
-  const rep = findRep(repId);
+  const { sectionId } = await params;
+  const section = findSection(sectionId);
 
-  if (!rep) {
-    return NextResponse.json({ error: 'Rep not found', repId }, { status: 404 });
+  if (!section) {
+    return NextResponse.json({ error: 'Section not found', sectionId }, { status: 404 });
   }
 
   return NextResponse.json({
-    ...rep,
+    ...section,
     // Correct answers ship to the client. This is a training product, not an
     // exam board: the quiz exists to teach, retakes are unlimited, and every
     // option's feedback has to render the instant it is tapped — including
     // offline. Gating answers server-side would buy nothing and cost the
     // offline experience. The final certification exam is the surface where
     // that trade-off changes; see docs/product/MVP_SPEC.md § Assessment.
-    nextRepId: nextRep(rep.id)?.id ?? null,
+    nextSectionId: nextSection(section.id)?.id ?? null,
   });
 }

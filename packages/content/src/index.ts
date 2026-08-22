@@ -8,7 +8,7 @@ import type {
   ContentAddition,
   CourseModule,
   QuizQuestion,
-  Rep,
+  Section,
   ScriptDeviation,
 } from './types.js';
 
@@ -44,8 +44,8 @@ export function estimateBeatSeconds(beat: Beat): number {
 }
 
 /** Narration + on-screen beats only. What a straight video edit would run. */
-export function estimateRepSeconds(rep: Rep): number {
-  return rep.beats.reduce((total, beat) => total + estimateBeatSeconds(beat), 0);
+export function estimateSectionSeconds(section: Section): number {
+  return section.beats.reduce((total, beat) => total + estimateBeatSeconds(beat), 0);
 }
 
 /** Median observed interaction costs, in seconds. Revisit with pilot telemetry. */
@@ -55,12 +55,12 @@ const INTERACTION_SECONDS = {
 } as const;
 
 /**
- * What a Rep actually costs a learner in the app: narration plus every
+ * What a Section actually costs a learner in the app: narration plus every
  * interaction. This — not the narration alone — is the number to check the
  * "7-minute lesson" promise against.
  */
-export function estimateRepTotalSeconds(rep: Rep): number {
-  return estimateRepSeconds(rep) + rep.quiz.length * INTERACTION_SECONDS.quizQuestion;
+export function estimateSectionTotalSeconds(section: Section): number {
+  return estimateSectionSeconds(section) + section.quiz.length * INTERACTION_SECONDS.quizQuestion;
 }
 
 /* ------------------------------------------------------------------------ *
@@ -151,29 +151,29 @@ export function beatNeedsVoiceover(beat: Beat): boolean {
   return beat.type !== 'reading' && Boolean(beat.speech);
 }
 
-export function allReps(): Rep[] {
-  return course.modules.flatMap((m) => m.reps);
+export function allSections(): Section[] {
+  return course.modules.flatMap((m) => m.sections);
 }
 
-export function findRep(repId: string): Rep | undefined {
-  return allReps().find((r) => r.id === repId);
+export function findSection(sectionId: string): Section | undefined {
+  return allSections().find((r) => r.id === sectionId);
 }
 
 export function findModule(moduleId: string): CourseModule | undefined {
   return course.modules.find((m) => m.id === moduleId);
 }
 
-/** The Rep that follows `repId` in course order, or undefined at the end. */
-export function nextRep(repId: string): Rep | undefined {
-  const reps = allReps();
-  const i = reps.findIndex((r) => r.id === repId);
-  return i >= 0 ? reps[i + 1] : undefined;
+/** The Section that follows `sectionId` in course order, or undefined at the end. */
+export function nextSection(sectionId: string): Section | undefined {
+  const sections = allSections();
+  const i = sections.findIndex((r) => r.id === sectionId);
+  return i >= 0 ? sections[i + 1] : undefined;
 }
 
 /** Everything in the product that the approved scripts do not contain. */
-export function contentAdditions(): Array<ContentAddition & { repId: string; repNumber: string }> {
-  return allReps().flatMap((rep) =>
-    (rep.contentAdditions ?? []).map((a) => ({ ...a, repId: rep.id, repNumber: rep.number })),
+export function contentAdditions(): Array<ContentAddition & { sectionId: string; sectionNumber: string }> {
+  return allSections().flatMap((section) =>
+    (section.contentAdditions ?? []).map((a) => ({ ...a, sectionId: section.id, sectionNumber: section.number })),
   );
 }
 
@@ -191,10 +191,10 @@ export function contentAdditions(): Array<ContentAddition & { repId: string; rep
  * Both players render this directly, so the order lives in one place.
  */
 export type FeedCard =
-  /** Cold open. Rep number, hook, title, full bleed. */
-  | { kind: 'repIntro'; key: string; rep: Rep; seconds: number }
+  /** Cold open. Section number, hook, title, full bleed. */
+  | { kind: 'sectionIntro'; key: string; section: Section; seconds: number }
   /** The lesson itself. Falls back to the script as text until the film exists. */
-  | { kind: 'video'; key: string; rep: Rep; seconds: number }
+  | { kind: 'video'; key: string; section: Section; seconds: number }
   | { kind: 'quiz'; key: string; question: QuizQuestion; index: number; total: number; seconds: number }
   | { kind: 'summary'; key: string; seconds: number };
 
@@ -203,29 +203,29 @@ export function isInteractive(card: FeedCard): boolean {
   return card.kind === 'quiz';
 }
 
-export function feedCards(rep: Rep): FeedCard[] {
+export function feedCards(section: Section): FeedCard[] {
   const cards: FeedCard[] = [
-    { kind: 'repIntro', key: `intro-${rep.id}`, rep, seconds: 4 },
-    { kind: 'video', key: `video-${rep.id}`, rep, seconds: estimateRepSeconds(rep) },
+    { kind: 'sectionIntro', key: `intro-${section.id}`, section, seconds: 4 },
+    { kind: 'video', key: `video-${section.id}`, section, seconds: estimateSectionSeconds(section) },
   ];
-  rep.quiz.forEach((question, i) =>
+  section.quiz.forEach((question, i) =>
     cards.push({
       kind: 'quiz',
       key: `q-${question.id}`,
       question,
       index: i,
-      total: rep.quiz.length,
+      total: section.quiz.length,
       seconds: INTERACTION_SECONDS.quizQuestion,
     }),
   );
-  cards.push({ kind: 'summary', key: `summary-${rep.id}`, seconds: 0 });
+  cards.push({ kind: 'summary', key: `summary-${section.id}`, seconds: 0 });
   return cards;
 }
 
 /** Every recorded difference between the approved scripts and what ships. */
-export function scriptDeviations(): Array<ScriptDeviation & { repId: string; repNumber: string }> {
-  return allReps().flatMap((rep) =>
-    (rep.scriptDeviations ?? []).map((d) => ({ ...d, repId: rep.id, repNumber: rep.number })),
+export function scriptDeviations(): Array<ScriptDeviation & { sectionId: string; sectionNumber: string }> {
+  return allSections().flatMap((section) =>
+    (section.scriptDeviations ?? []).map((d) => ({ ...d, sectionId: section.id, sectionNumber: section.number })),
   );
 }
 
@@ -234,7 +234,7 @@ export function scriptDeviations(): Array<ScriptDeviation & { repId: string; rep
  * Returns a list of problems; empty means the content is shippable.
  *
  * These are not style opinions — each one breaks a downstream feature:
- *  - a Rep with no Field Note breaks Level 3 digests
+ *  - a Section with no Field Note breaks Level 3 digests
  *  - a quiz question with zero or multiple correct answers breaks scoring
  *  - a Curveball pointing at a missing beat never fires
  *  - a Curveball with no "best" choice has nothing to teach
@@ -248,47 +248,47 @@ export function validateContent(): string[] {
    * so this is caught here rather than by anyone noticing.
    */
   const seenVideos = new Map<string, string>();
-  for (const rep of allReps()) {
-    if (!rep.videoUrl) continue;
-    const first = seenVideos.get(rep.videoUrl);
+  for (const section of allSections()) {
+    if (!section.videoUrl) continue;
+    const first = seenVideos.get(section.videoUrl);
     if (first) {
-      problems.push(`${rep.number}: shares its video with ${first} — one file on two lessons`);
+      problems.push(`${section.number}: shares its video with ${first} — one file on two lessons`);
     } else {
-      seenVideos.set(rep.videoUrl, rep.number);
+      seenVideos.set(section.videoUrl, section.number);
     }
   }
 
-  for (const rep of allReps()) {
-    if (rep.quiz.length === 0) {
-      problems.push(`${rep.number}: has no quiz, and a lesson is a video and a quiz`);
+  for (const section of allSections()) {
+    if (section.quiz.length === 0) {
+      problems.push(`${section.number}: has no quiz, and a lesson is a video and a quiz`);
     }
 
     const seenBeatIds = new Set<string>();
-    for (const beat of rep.beats) {
-      if (seenBeatIds.has(beat.id)) problems.push(`${rep.number}: duplicate beat id "${beat.id}"`);
+    for (const beat of section.beats) {
+      if (seenBeatIds.has(beat.id)) problems.push(`${section.number}: duplicate beat id "${beat.id}"`);
       seenBeatIds.add(beat.id);
       if (beat.type === 'buildList' && !beat.items?.length) {
-        problems.push(`${rep.number}/${beat.id}: buildList beat has no items`);
+        problems.push(`${section.number}/${beat.id}: buildList beat has no items`);
       }
       if (beat.type === 'moment' && !beat.text) {
-        problems.push(`${rep.number}/${beat.id}: moment beat has no text`);
+        problems.push(`${section.number}/${beat.id}: moment beat has no text`);
       }
     }
 
     const seenQuizIds = new Set<string>();
-    for (const q of rep.quiz) {
-      if (seenQuizIds.has(q.id)) problems.push(`${rep.number}: duplicate question id "${q.id}"`);
+    for (const q of section.quiz) {
+      if (seenQuizIds.has(q.id)) problems.push(`${section.number}: duplicate question id "${q.id}"`);
       seenQuizIds.add(q.id);
 
       const correct = q.options.filter((o) => o.correct).length;
       if (correct !== 1) {
-        problems.push(`${rep.number}/${q.id}: expected exactly 1 correct option, found ${correct}`);
+        problems.push(`${section.number}/${q.id}: expected exactly 1 correct option, found ${correct}`);
       }
       if (q.options.length !== 4) {
-        problems.push(`${rep.number}/${q.id}: the quiz document specifies four options, found ${q.options.length}`);
+        problems.push(`${section.number}/${q.id}: the quiz document specifies four options, found ${q.options.length}`);
       }
       for (const o of q.options) {
-        if (!o.feedback) problems.push(`${rep.number}/${q.id}/${o.id}: option has no feedback`);
+        if (!o.feedback) problems.push(`${section.number}/${q.id}/${o.id}: option has no feedback`);
       }
     }
   }

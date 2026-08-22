@@ -197,7 +197,7 @@ corridor.
 6. No shame mechanics. A broken streak gets *"Pick it back up"*, never *"You
    lost it"*.
 7. Second person, present tense, in every scenario.
-8. Numbers are concrete. "7 minutes", "3 Reps left" — not "bite-sized".
+8. Numbers are concrete. "7 minutes", "3 Sections left" — not "bite-sized".
 
 ### Vocabulary
 
@@ -205,15 +205,15 @@ Use the product word. Never the generic one.
 
 | Ours | Generic | What it is |
 |---|---|---|
-| **Rep** | section, lesson | One ~7-minute lesson |
+| **Section** | section, lesson | One ~7-minute lesson |
 | **Curveball** | pop quiz | The scenario challenge that interrupts the feed |
 | **Field Note** | reflection | The open-ended written answer |
 | **Your Corner** | contacts | The people who receive your progress updates |
 | **Streak** | — | Consecutive active days |
-| **XP** | points | Earned for Reps, Curveballs, Field Notes |
+| **XP** | points | Earned for Sections, Curveballs, Field Notes |
 
-"Rep" carries a gym metaphor that is honest about what the product is: reps
-build a skill, and one rep does nothing. "Curveball" comes straight out of the
+"Section" carries a gym metaphor that is honest about what the product is: sections
+build a skill, and one section does nothing. "Curveball" comes straight out of the
 locked script — 1.5 already says *"a last-minute curveball from your boss"*.
 
 Canonical strings live in `packages/brand/src/voice.ts` as `boilerplate`. If a

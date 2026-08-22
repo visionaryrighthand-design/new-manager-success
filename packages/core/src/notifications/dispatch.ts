@@ -1,4 +1,4 @@
-import { findRep } from '@nms/content';
+import { findSection } from '@nms/content';
 import type { Contact, Enrollment, UpdateLevel } from '../registration/types.js';
 import { contactsAtLevel, contactsAtOrAbove } from '../registration/rules.js';
 import type { LearnerProgress } from '../progress/types.js';
@@ -45,29 +45,29 @@ export type NotificationBlock =
 // ---------------------------------------------------------------------------
 
 /**
- * Fired when a learner completes a Rep. Level 1 contacts only: Level 2 and 3
+ * Fired when a learner completes a Section. Level 1 contacts only: Level 2 and 3
  * contacts get the same information rolled into their weekly digest, and
  * double-sending is the fastest way to get a busy HR contact to filter us.
  */
 export function sectionCompleteNotifications(
   enrollment: Enrollment,
-  repId: string,
+  sectionId: string,
 ): Notification[] {
-  const rep = findRep(repId);
-  if (!rep) return [];
+  const section = findSection(sectionId);
+  if (!section) return [];
 
   return contactsAtLevel(enrollment, 1).map((contact) => ({
     kind: 'section-complete' as const,
     to: contact,
     enrollmentId: enrollment.id,
     triggeredByLevel: 1 as UpdateLevel,
-    subject: `${firstName(enrollment.student.name)} finished ${rep.number} — ${rep.title}`,
+    subject: `${firstName(enrollment.student.name)} finished ${section.number} — ${section.title}`,
     body: [
       {
         type: 'paragraph',
-        text: `${enrollment.student.name} just completed Rep ${rep.number}, “${rep.title}”.`,
+        text: `${enrollment.student.name} just completed Section ${section.number}, “${section.title}”.`,
       },
-      { type: 'stat', label: 'Key idea', value: rep.keyIdea },
+      { type: 'stat', label: 'Key idea', value: section.keyIdea },
     ],
   }));
 }
@@ -101,14 +101,14 @@ export function weeklyDigestNotifications(input: WeeklyDigestInput): Notificatio
   const recipients = contactsAtOrAbove(enrollment, 2);
   if (recipients.length === 0) return [];
 
-  const completedThisWeek = Object.values(progress.reps)
+  const completedThisWeek = Object.values(progress.sections)
     .filter((r) => r.completedAt && r.completedAt >= weekStart && r.completedAt < weekEnd)
     .sort((a, b) => (a.completedAt!.getTime() - b.completedAt!.getTime()));
 
-  const scoredThisWeek = Object.values(progress.reps).flatMap((r) =>
+  const scoredThisWeek = Object.values(progress.sections).flatMap((r) =>
     r.attempts
       .filter((a) => a.at >= weekStart && a.at < weekEnd)
-      .map((a) => ({ ...a, repId: r.repId })),
+      .map((a) => ({ ...a, sectionId: r.sectionId })),
   );
 
   const name = firstName(enrollment.student.name);
@@ -126,8 +126,8 @@ export function weeklyDigestNotifications(input: WeeklyDigestInput): Notificatio
       type: 'list',
       title: `Completed this week (${completedThisWeek.length})`,
       items: completedThisWeek.map((r) => {
-        const rep = findRep(r.repId);
-        return rep ? `${rep.number} — ${rep.title}` : r.repId;
+        const section = findSection(r.sectionId);
+        return section ? `${section.number} — ${section.title}` : r.sectionId;
       }),
     });
   }
@@ -137,8 +137,8 @@ export function weeklyDigestNotifications(input: WeeklyDigestInput): Notificatio
       type: 'list',
       title: 'Quiz scores',
       items: scoredThisWeek.map((a) => {
-        const rep = findRep(a.repId);
-        const label = rep ? `${rep.number} ${rep.title}` : a.repId;
+        const section = findSection(a.sectionId);
+        const label = section ? `${section.number} ${section.title}` : a.sectionId;
         const attemptNote = a.passed ? 'passed' : 'not yet passed';
         return `${label}: ${a.score}% (${a.correctCount}/${a.questionCount}, ${attemptNote})`;
       }),
@@ -157,7 +157,7 @@ export function weeklyDigestNotifications(input: WeeklyDigestInput): Notificatio
 
     if (contact.level === 3) {
       const questions = generator.generate({
-        completedRepIds: completedThisWeek.map((r) => r.repId),
+        completedSectionIds: completedThisWeek.map((r) => r.sectionId),
         missedQuestionIds,
         max: 3,
       });

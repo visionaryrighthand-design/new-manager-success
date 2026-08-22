@@ -35,8 +35,8 @@ export const brand = {
  */
 export const lexicon = {
   /** One ~7-minute lesson. Generic: "section", "lesson", "unit". */
-  rep: { term: 'Rep', plural: 'Reps', generic: 'section' },
-  /** A group of Reps. */
+  section: { term: 'Section', plural: 'Sections', generic: 'section' },
+  /** A group of Sections. */
   module: { term: 'Module', plural: 'Modules', generic: 'module' },
   /** The scenario challenge that interrupts the feed. Generic: "knowledge check". */
   curveball: { term: 'Curveball', plural: 'Curveballs', generic: 'pop quiz' },
@@ -44,7 +44,7 @@ export const lexicon = {
   fieldNote: { term: 'Field Note', plural: 'Field Notes', generic: 'reflection' },
   /** The people who receive progress updates about a learner. Generic: "contact". */
   corner: { term: 'Your Corner', plural: 'Corner', generic: 'contact' },
-  /** Consecutive days with at least one Rep or Curveball. */
+  /** Consecutive days with at least one Section or Curveball. */
   streak: { term: 'Streak', plural: 'Streaks', generic: 'streak' },
   /** Points earned. */
   xp: { term: 'XP', plural: 'XP', generic: 'points' },
@@ -59,14 +59,14 @@ export const voiceRules = [
   'No corporate filler: leverage, synergy, journey, unlock your potential, best-in-class.',
   'No shame mechanics. A broken streak gets "Pick it back up", never "You lost it".',
   'Second person present tense in scenarios. "You walk into work after a terrible morning."',
-  'Numbers are concrete. "7 minutes", "3 Reps left", not "bite-sized" or "a few".',
+  'Numbers are concrete. "7 minutes", "3 Sections left", not "bite-sized" or "a few".',
   'Write the product name in full on first use, "NMS" only in UI chrome where space forces it. Never "New Manager".',
 ] as const;
 
 /** Copy that must be identical everywhere it appears. */
 export const boilerplate = {
   streakBrokenTitle: 'Pick it back up.',
-  streakBrokenBody: 'Streaks are a habit tool, not a grade. Do one Rep and you are back.',
+  streakBrokenBody: 'Streaks are a habit tool, not a grade. Do one Section and you are back.',
   quizPassTitle: 'Locked in.',
   quizFailTitle: 'Not yet. Worth another look.',
   fieldNotePrompt: 'No wrong answers here. This one is for you.',

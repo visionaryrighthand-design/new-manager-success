@@ -1,10 +1,10 @@
-import { findRep, module01 } from '@nms/content';
+import { findSection, module01 } from '@nms/content';
 import { addCalendarDays, toCalendarDate } from '../time/business-days.js';
 import type {
   ActivityEvent,
   LearnerProgress,
   QuizAttempt,
-  RepProgress,
+  SectionProgress,
   StreakState,
 } from './types.js';
 
@@ -21,7 +21,7 @@ import type {
  * the learner for it teaches them to avoid the hard ones.
  */
 export const XP = {
-  repCompleted: 50,
+  sectionCompleted: 50,
   quizQuestionCorrect: 10,
   quizPassed: 40,
   moduleCompleted: 250,
@@ -34,18 +34,18 @@ export function emptyProgress(enrollmentId: string, startedAt: Date): LearnerPro
   return {
     enrollmentId,
     startedAt,
-    reps: {},
+    sections: {},
     xp: 0,
     streak: { current: 0, longest: 0, activeToday: false, atRisk: false },
     activeDates: [],
   };
 }
 
-function ensureRep(progress: LearnerProgress, repId: string): RepProgress {
-  const existing = progress.reps[repId];
+function ensureRep(progress: LearnerProgress, sectionId: string): SectionProgress {
+  const existing = progress.sections[sectionId];
   if (existing) return existing;
-  const created: RepProgress = { repId, attempts: [] };
-  progress.reps[repId] = created;
+  const created: SectionProgress = { sectionId, attempts: [] };
+  progress.sections[sectionId] = created;
   return created;
 }
 
@@ -64,7 +64,7 @@ export function applyActivity(
   const tz = options.timeZone ?? 'UTC';
   const next: LearnerProgress = {
     ...progress,
-    reps: { ...progress.reps },
+    sections: { ...progress.sections },
     activeDates: [...progress.activeDates],
   };
 
@@ -73,18 +73,18 @@ export function applyActivity(
     next.activeDates = [...next.activeDates, date].sort();
   }
 
-  if (event.repId) {
-    const rep = { ...ensureRep(next, event.repId) };
-    next.reps[event.repId] = rep;
+  if (event.sectionId) {
+    const section = { ...ensureRep(next, event.sectionId) };
+    next.sections[event.sectionId] = section;
 
     switch (event.type) {
-      case 'rep-opened':
-        rep.openedAt ??= event.at;
+      case 'section-opened':
+        section.openedAt ??= event.at;
         break;
-      case 'rep-completed':
-        if (!rep.completedAt) {
-          rep.completedAt = event.at;
-          next.xp += XP.repCompleted;
+      case 'section-completed':
+        if (!section.completedAt) {
+          section.completedAt = event.at;
+          next.xp += XP.sectionCompleted;
         }
         break;
       default:
@@ -102,32 +102,32 @@ export function applyActivity(
  * Records a quiz attempt and returns updated progress.
  *
  * Retakes are unlimited (the course outline specifies unlimited retakes for
- * both exams, so Rep quizzes follow suit). XP for correct answers is awarded
+ * both exams, so Section quizzes follow suit). XP for correct answers is awarded
  * on the *first* attempt only — otherwise the optimal strategy is to fail
  * repeatedly and farm the retry.
  */
 export function recordQuizAttempt(
   progress: LearnerProgress,
-  repId: string,
+  sectionId: string,
   answers: Array<{ questionId: string; optionId: string }>,
   at: Date,
   options: { timeZone?: string; passingScore?: number } = {},
 ): { progress: LearnerProgress; attempt: QuizAttempt } {
-  const rep = findRep(repId);
-  if (!rep) throw new Error(`Unknown rep: ${repId}`);
+  const section = findSection(sectionId);
+  if (!section) throw new Error(`Unknown section: ${sectionId}`);
 
   const passingScore = options.passingScore ?? module01.passingScore;
   let correctCount = 0;
-  for (const question of rep.quiz) {
+  for (const question of section.quiz) {
     const given = answers.find((a) => a.questionId === question.id);
     const chosen = question.options.find((o) => o.id === given?.optionId);
     if (chosen?.correct) correctCount += 1;
   }
 
-  const questionCount = rep.quiz.length;
+  const questionCount = section.quiz.length;
   const score = questionCount === 0 ? 0 : Math.round((correctCount / questionCount) * 100);
   const attempt: QuizAttempt = {
-    repId,
+    sectionId,
     at,
     score,
     correctCount,
@@ -135,12 +135,12 @@ export function recordQuizAttempt(
     passed: score >= passingScore,
   };
 
-  const next: LearnerProgress = { ...progress, reps: { ...progress.reps } };
-  const repProgress = { ...ensureRep(next, repId) };
+  const next: LearnerProgress = { ...progress, sections: { ...progress.sections } };
+  const repProgress = { ...ensureRep(next, sectionId) };
   const isFirstAttempt = repProgress.attempts.length === 0;
   repProgress.attempts = [...repProgress.attempts, attempt];
   repProgress.bestScore = Math.max(repProgress.bestScore ?? 0, score);
-  next.reps[repId] = repProgress;
+  next.sections[sectionId] = repProgress;
 
   if (isFirstAttempt) {
     next.xp += correctCount * XP.quizQuestionCorrect;
@@ -207,11 +207,11 @@ export function computeStreak(
   };
 }
 
-/** 0–100 completion across a module's Reps. */
-export function moduleCompletionPercent(progress: LearnerProgress, repIds: readonly string[]): number {
-  if (repIds.length === 0) return 0;
-  const done = repIds.filter((id) => progress.reps[id]?.completedAt).length;
-  return Math.round((done / repIds.length) * 100);
+/** 0–100 completion across a module's Sections. */
+export function moduleCompletionPercent(progress: LearnerProgress, sectionIds: readonly string[]): number {
+  if (sectionIds.length === 0) return 0;
+  const done = sectionIds.filter((id) => progress.sections[id]?.completedAt).length;
+  return Math.round((done / sectionIds.length) * 100);
 }
 
 /** Whole days since the learner started. Reported in every Level 2+ digest. */
@@ -219,7 +219,7 @@ export function daysSinceStart(progress: LearnerProgress, now: Date): number {
   return Math.max(0, Math.floor((now.getTime() - progress.startedAt.getTime()) / MS_PER_DAY));
 }
 
-/** The next Rep the learner should see: first not completed, in course order. */
-export function nextRepFor(progress: LearnerProgress): string | undefined {
-  return module01.reps.find((rep) => !progress.reps[rep.id]?.completedAt)?.id;
+/** The next Section the learner should see: first not completed, in course order. */
+export function nextSectionFor(progress: LearnerProgress): string | undefined {
+  return module01.sections.find((section) => !progress.sections[section.id]?.completedAt)?.id;
 }

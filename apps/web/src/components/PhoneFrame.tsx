@@ -9,26 +9,26 @@ import styles from './PhoneFrame.module.css';
  * arguing against itself. Content comes from the same package the app reads.
  */
 export function PhoneFrame() {
-  const rep = module01.reps[0]!;
-  const question = rep.quiz[0]!;
+  const section = module01.sections[0]!;
+  const question = section.quiz[0]!;
 
   return (
     <div className={styles.frame} data-surface="feed" role="img"
-         aria-label={`Preview of the New Manager Success app showing a question from Lesson ${rep.number}`}>
+         aria-label={`Preview of the New Manager Success app showing a question from Lesson ${section.number}`}>
       <div className={styles.screen}>
         <div className={styles.statusRow}>
-          <span className={styles.repTag}>{rep.number}</span>
+          <span className={styles.sectionTag}>{section.number}</span>
           <span className={styles.streak}>🔥 4</span>
         </div>
 
         <div className={styles.progressTrack} aria-hidden>
-          {rep.beats.slice(0, 8).map((beat, i) => (
+          {section.beats.slice(0, 8).map((beat, i) => (
             <span key={beat.id} className={i <= 4 ? styles.segDone : styles.seg} />
           ))}
         </div>
 
-        <p className={styles.curveballLabel}>Question 1 of {rep.quiz.length}</p>
-        <p className={styles.scenario}>{rep.hook}</p>
+        <p className={styles.curveballLabel}>Question 1 of {section.quiz.length}</p>
+        <p className={styles.scenario}>{section.hook}</p>
         <p className={styles.prompt}>{question.stem}</p>
 
         <ul className={styles.choices}>

@@ -11,7 +11,7 @@ someone might reasonably want to reverse.
 | Area | State |
 |---|---|
 | Brand system | Complete. Tokens, logo, icons, voice, generated CSS |
-| Module 1 content | Complete. 8 Reps, 26 quiz questions, 10 Curveballs, 8 Field Notes |
+| Module 1 content | Complete. 8 Sections, 26 quiz questions, 10 Curveballs, 8 Field Notes |
 | Registration + Corner rules | Complete and tested. 95 unit tests |
 | Update levels 1/2/3 | Rules complete. **No email transport** |
 | Inactivity alerts | Rules complete and tested. **No delivery** |
@@ -45,10 +45,10 @@ recomputes both numbers on every build.
 
 | | Narration only | In-app, with interactions |
 |---|---|---|
-| Per Rep | ~3m45 | **~7m19** |
+| Per Section | ~3m45 | **~7m19** |
 | Module 1 | 30m05 | **58m35** |
 
-Counting the Curveball, the Field Note, and the quiz, a Rep costs a learner
+Counting the Curveball, the Field Note, and the quiz, a Section costs a learner
 almost exactly seven minutes. **The promise holds — but on interaction, not on
 narration.**
 
@@ -57,7 +57,7 @@ narration.**
 1. **Accept it.** Four minutes of reading with three minutes of active
    decision-making is arguably a *better* product than seven minutes of
    talking, and much closer to the "TikTok meets Duolingo" brief. Recommended.
-   Note also that a card sets its own pace: a fast reader clears a Rep well
+   Note also that a card sets its own pace: a fast reader clears a Section well
    under the estimate and a careful one runs over, which a fixed-length video
    never allowed.
 2. **Commission ~40% more script per section** to hit the stated word counts.
@@ -222,7 +222,7 @@ Not done, and not doable from this repository alone:
 - 95 unit tests pass, covering business-day maths, the registration flowchart,
   all three update levels, inactivity trigger/reset/repeat, the Level 3 privacy
   invariant, streaks, XP, and scoring.
-- Content validation passes: every Rep has a Field Note, every quiz question has
+- Content validation passes: every Section has a Field Note, every quiz question has
   exactly one correct option, every Curveball trigger resolves to a real beat.
 - Web app builds and every page renders without console errors.
 - The group enrollment path was exercised end to end in a real browser:

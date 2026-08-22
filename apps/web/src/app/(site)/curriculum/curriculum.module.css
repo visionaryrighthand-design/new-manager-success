@@ -79,7 +79,7 @@
 }
 .repList a:hover { color: var(--nms-color-fg); }
 
-.repNum {
+.sectionNum {
   font-family: var(--nms-font-mono);
   font-size: 0.78rem;
   color: var(--nms-color-accent-text);

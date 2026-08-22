@@ -90,7 +90,7 @@ fix, it will return 404 forever, no matter how many times you redeploy.
 After redeploying, open the deployment from the Vercel dashboard, or use the
 project's main domain.
 
-A correct deployment serves `/`, `/learn`, `/learn/m1-r1`, `/enroll`, `/corner`,
+A correct deployment serves `/`, `/learn`, `/learn/m1-s1`, `/enroll`, `/corner`,
 `/curriculum`, and `/for-teams`.
 
 ---
