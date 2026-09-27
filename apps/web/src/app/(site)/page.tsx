@@ -33,7 +33,7 @@ export default function HomePage() {
       <section className={styles.hero} data-surface="feed">
         <div className={`nms-shell ${styles.heroInner}`}>
           <div className={styles.heroCopy}>
-            <p className="nms-eyebrow">New manager training</p>
+            <p className="nms-eyebrow">Promotion onboarding</p>
             <h1 className={styles.heroTitle}>
               You got promoted because you were great at your job.
               <span className={styles.heroAccent}> Nobody trained you for the new one.</span>
@@ -43,7 +43,7 @@ export default function HomePage() {
             <p className={styles.heroBody}>
               Management is a skill, and it can be learned. New Manager Success teaches it the way you
               actually learn now: seven-minute lessons on your phone, real situations from your
-              own week, and a streak that keeps you honest. Any profession, any team size.
+              own week, and a streak that keeps you honest.
             </p>
 
             <div className={styles.heroActions}>
