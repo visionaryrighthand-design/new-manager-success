@@ -46,7 +46,9 @@
 }
 .segDone { background: var(--nms-color-bright); }
 
-.curveballLabel {
+/* Was .curveballLabel. Curveballs were removed from the product; a class
+   named after a deleted feature is a wrong map of the thing it styles. */
+.questionLabel {
   margin-top: var(--nms-space-3);
   font-size: 0.7rem;
   font-weight: 800;
@@ -89,9 +91,26 @@
   line-height: 1.4;
 }
 
+/* The answered state in the real quiz is correctness, not selection, so the
+   preview uses the same success green rather than the accent blue. */
 .choiceActive {
-  border-color: var(--nms-color-accent);
-  background: var(--nms-color-accent-soft);
+  border-color: var(--nms-color-success);
+  background: color-mix(in srgb, var(--nms-color-success) 16%, transparent);
+}
+
+.choiceMark {
+  margin-left: auto;
+  font-weight: 700;
+  color: var(--nms-color-success);
+}
+
+.feedback {
+  margin-top: var(--nms-space-1);
+  padding-left: var(--nms-space-3);
+  border-left: 2px solid var(--nms-color-success);
+  font-size: 0.72rem;
+  line-height: 1.5;
+  color: var(--nms-color-fg-muted);
 }
 
 .choiceKey {

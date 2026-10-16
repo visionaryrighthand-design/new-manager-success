@@ -176,36 +176,33 @@ from earlier sections. Sections **1.1 and 1.2 are written**; the document ends
 
 | Section | Status |
 |---|---|
-| 1.1 | **Five questions — 3 MC + 2 TF.** Replaced the ten, see below |
+| 1.1 | Ten approved questions, shipped verbatim |
 | 1.2 | Ten approved questions, shipped verbatim |
 | 1.3 – 1.8 | Placeholder questions written for the build. Replace when the document is extended |
 
-### D8 — 1.1 now carries a five-question quiz · **OPEN · needs the author's sign-off**
+### D8 — the five-question form for 1.1 · **CLOSED · ten governs**
 
-Section 1.1's ten questions from the approved quiz document were **replaced**
-with five — three multiple choice then two true/false — supplied as "the locked
-quiz standard" when the final 1.1 video was published. The five are shipped
-verbatim and their ids (`q1`–`q5`) are the standard's own.
+A five-question quiz for 1.1 — three multiple choice then two true/false — was
+supplied as "the locked quiz standard" alongside the final video, and shipped
+briefly in place of the approved ten. It has been **withdrawn**: ten
+four-option questions per section is the standard, and 1.1 carries the
+approved ten again.
 
-Two documents now disagree about how long a section quiz is. 1.1 says five,
-1.2 says ten, and the approved quiz document says ten for both. **Someone needs
-to say which one governs**, because the answer decides whether 1.2 gets cut to
-five and whether 1.3–1.8 are written to five or to ten. Until then the expected
-length is recorded per section in the content tests rather than assumed.
+What the episode left behind, deliberately:
 
-Two smaller things from the same hand-off:
+- The schema still understands `format: 'true_false'`, and the validator
+  expects two options for it rather than four. Nothing in Module 1 uses it.
+  A test keeps the path honest so it does not rot before the next quiz needs
+  it.
+- Section quizzes are **ungated practice** — no pass mark, no lockout,
+  unlimited retakes — which came from the same hand-off and is unaffected by
+  the question count. The 85% bar remains the module quiz's alone.
 
-- **Q3 is not answerable from the 1.1 transcript.** It asks for the most common
-  reason employees leave, answer "Their manager". The supplied transcript does
-  not contain that claim — it comes from the full-screen moment at beat b9,
-  *"Employees don't quit companies. They quit managers."* A learner who watches
-  the film and reads the transcript has seen the line on screen, so the question
-  is fair; but if the moment is ever cut, the question goes with it.
-- **The ids are section-local.** `q1`–`q5` are unique within 1.1 but not across
-  the module, where every other section uses `m1-sN-qN`. Nothing breaks today —
-  every recorded row carries `section_id` alongside — but the Level 3 coaching
-  generator matches missed-question ids without a section prefix, so a second
-  section adopting bare `qN` ids would cross-talk with this one.
+One thing worth knowing if a short quiz is ever revisited: the question it
+asked about why employees leave was answerable only from the full-screen
+moment at beat b9, *"Employees don't quit companies. They quit managers."* —
+not from the spoken transcript. Questions drawn from on-screen text rather
+than narration break silently when a cut changes.
 
 The stems and options are the document's. The per-option **feedback is ours** —
 the document specifies only which letter is correct, and a quiz with no

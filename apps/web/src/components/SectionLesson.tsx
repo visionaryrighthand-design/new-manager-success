@@ -2,7 +2,7 @@
 
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import Link from 'next/link';
-import type { Section } from '@nms/content';
+import type { Section, QuizQuestion } from '@nms/content';
 import {
   answerSubmitEvent,
   isCorrectOption,
@@ -15,13 +15,27 @@ import { attemptsForSection, browserSink } from '@/lib/section-quiz-store';
 import styles from './SectionLesson.module.css';
 
 /**
- * The lesson page: header, video, transcript, quiz, next.
+ * The lesson, as a feed.
  *
- * Five blocks in a fixed order with nothing between them. This is not the
- * card feed — a lesson is now one video and one quiz, and a page that scrolls
- * normally is the honest shape for that. The feed player is still what every
- * other section renders, because every other section is still a script
- * without footage.
+ * One full-screen card per beat of the lesson — cold open, the film, then one
+ * question at a time, then the result — snapped so a swipe lands on exactly
+ * one card and never between two. The shape is borrowed from TikTok on
+ * purpose: the product's claim is that management training can hold attention
+ * the way a phone feed does, and a page that scrolls like a document argues
+ * the opposite.
+ *
+ * Two decisions worth naming:
+ *
+ * **The gate is made of absence.** Cards after the first unanswered question
+ * are not rendered at all, rather than rendered-and-disabled. There is
+ * nothing to scroll to, so there is nothing to feel blocked by — the feed
+ * simply ends until you answer, and then it continues. A disabled card you
+ * can see is a locked door; a card that isn't there yet is just the next
+ * thing.
+ *
+ * **Ungated still means ungated.** Progressive reveal is sequencing, not
+ * scoring. There is no pass mark, no lockout and unlimited retakes; getting
+ * every question wrong still finishes the section and still opens the next.
  */
 export function SectionLesson({
   section,
@@ -30,320 +44,421 @@ export function SectionLesson({
   section: Section;
   nextSectionId?: string;
 }) {
-  // An article, not a main: the player layout already supplies the <main>.
-  return (
-    <article className={styles.page}>
-      <LessonHeader section={section} />
-      <LessonVideo section={section} />
-      <Transcript text={section.transcript} />
-      <SectionQuiz section={section} />
-      <NextSection currentSectionId={section.id} sectionId={nextSectionId} />
-    </article>
-  );
-}
-
-/* ---- 1. Header --------------------------------------------------------- */
-
-function LessonHeader({ section }: { section: Section }) {
-  return (
-    <header className={styles.header}>
-      <p className={styles.module}>Module {section.moduleNumber}</p>
-      <h1 className={styles.title}>
-        <span className={styles.number}>{section.number}</span>
-        <span aria-hidden="true" className={styles.dot}>
-          ·
-        </span>
-        {section.title}
-      </h1>
-      {/* The runtime of the film, not the old 7-minute card-feed estimate. */}
-      <p className={styles.duration}>3 min</p>
-    </header>
-  );
-}
-
-/* ---- 2. Video ---------------------------------------------------------- */
-
-function LessonVideo({ section }: { section: Section }) {
-  if (!section.videoUrl) {
-    return (
-      <div className={styles.videoMissing} role="status">
-        This section has not been filmed yet.
-      </div>
-    );
-  }
-
-  return (
-    <div className={styles.videoFrame}>
-      <video
-        className={styles.video}
-        src={section.videoUrl}
-        poster={section.posterUrl}
-        controls
-        playsInline
-        /*
-         * No `autoPlay` and no `muted`. Muted autoplay would start the lesson
-         * before the learner asked for it, and an unmuted one would be
-         * blocked by the browser anyway.
-         *
-         * `preload="metadata"` is what puts the first frame on screen without
-         * a poster image: fetching one frame is cheap, and generating a real
-         * poster needs the source file, which is not in this repo.
-         */
-        preload="metadata"
-      />
-    </div>
-  );
-}
-
-/* ---- 3. Transcript ----------------------------------------------------- */
-
-function Transcript({ text }: { text?: string }) {
-  const [open, setOpen] = useState(false);
-  if (!text) return null;
-
-  return (
-    <section className={styles.transcript}>
-      <button
-        type="button"
-        className={styles.transcriptToggle}
-        onClick={() => setOpen((o) => !o)}
-        aria-expanded={open}
-        aria-controls="transcript-body"
-      >
-        <span>Transcript</span>
-        <span aria-hidden="true" className={open ? styles.chevronOpen : styles.chevron}>
-          ⌄
-        </span>
-      </button>
-      {/* Kept in the DOM so the browser's find-in-page reaches it, and so the
-          toggle does not re-mount a long block of text on every open. */}
-      <div id="transcript-body" className={styles.transcriptBody} hidden={!open}>
-        {text.split('\n\n').map((para, i) => (
-          <p key={i}>{para}</p>
-        ))}
-      </div>
-    </section>
-  );
-}
-
-/* ---- 4. Quiz ----------------------------------------------------------- */
-
-interface QuizState {
-  /** questionId → chosen optionId. */
-  answers: Record<string, string>;
-  submittedAt?: Date;
-}
-
-const EMPTY: QuizState = { answers: {} };
-
-function SectionQuiz({ section }: { section: Section }) {
-  const [state, setState] = useState<QuizState>(EMPTY);
+  const [answers, setAnswers] = useState<Record<string, string>>({});
   const [xpAwarded, setXpAwarded] = useState(0);
-  /** Attempts recorded before this page load, read once on mount. */
+  const [attemptRecorded, setAttemptRecorded] = useState(false);
+  const [unlocked, setUnlocked] = useState(false);
+  const [activeIndex, setActiveIndex] = useState(0);
   const priorAttempts = useRef(0);
-  const [hydrated, setHydrated] = useState(false);
+  const feedRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    priorAttempts.current = attemptsForSection(section.id).length;
-    setHydrated(true);
+    const prior = attemptsForSection(section.id);
+    priorAttempts.current = prior.length;
+    setUnlocked(prior.length > 0);
   }, [section.id]);
+
+  const cards = useMemo(() => buildCards(section), [section]);
+  const revealed = revealedCount(cards, answers);
 
   const score = useMemo(
     () =>
       scoreSectionQuiz(
         section,
-        Object.entries(state.answers).map(([questionId, optionId]) => ({ questionId, optionId })),
+        Object.entries(answers).map(([questionId, optionId]) => ({ questionId, optionId })),
       ),
-    [section, state.answers],
+    [section, answers],
   );
 
-  const answeredCount = Object.keys(state.answers).length;
-  const allAnswered = answeredCount === section.quiz.length;
-  const submitted = state.submittedAt != null;
+  const answeredAll = Object.keys(answers).length === section.quiz.length;
 
-  const choose = useCallback(
-    (questionId: string, optionId: string) => {
-      // An answered question stays answered: the feedback for it is already on
-      // screen, and letting it be changed afterwards would make the score a
-      // record of the last click rather than of what the learner knew.
-      setState((prev) => {
-        if (prev.answers[questionId] || prev.submittedAt) return prev;
-        return { ...prev, answers: { ...prev.answers, [questionId]: optionId } };
-      });
-      browserSink.recordEvent(answerSubmitEvent(section, questionId, optionId, new Date()));
-    },
-    [section],
-  );
-
-  const submit = useCallback(() => {
+  /*
+   * The quiz submits itself when the last question is answered. In a feed
+   * there is no page to press a button at the bottom of, and asking for a
+   * confirmation tap after the final answer would be a step that exists only
+   * to be got past.
+   */
+  useEffect(() => {
+    if (!answeredAll || attemptRecorded) return;
     const at = new Date();
     const attemptNumber = priorAttempts.current + 1;
     browserSink.recordAttempt(sectionAttemptRow(section, score.scorePct, attemptNumber, at));
     browserSink.recordEvent(quizSubmitEvent(section, score.scorePct, at));
-    // First submission only — a retake earns nothing, so there is no reason to
-    // fail on purpose and farm the retry.
     setXpAwarded(sectionQuizXp(attemptNumber > 1));
     priorAttempts.current = attemptNumber;
-    setState((prev) => ({ ...prev, submittedAt: at }));
-  }, [section, score.scorePct]);
+    setAttemptRecorded(true);
+    setUnlocked(true);
+  }, [answeredAll, attemptRecorded, section, score.scorePct]);
+
+  const choose = useCallback(
+    (question: QuizQuestion, optionId: string) => {
+      setAnswers((prev) => (prev[question.id] ? prev : { ...prev, [question.id]: optionId }));
+      browserSink.recordEvent(answerSubmitEvent(section, question.id, optionId, new Date()));
+    },
+    [section],
+  );
 
   const tryAgain = useCallback(() => {
-    setState(EMPTY);
+    setAnswers({});
     setXpAwarded(0);
+    setAttemptRecorded(false);
+    // Back to the first question rather than the top: the learner has already
+    // watched the film, and making them scroll past it again is a punishment
+    // for practising.
+    const firstQuestion = feedRef.current?.querySelector('[data-card="quiz"]');
+    firstQuestion?.scrollIntoView({ behavior: 'smooth' });
   }, []);
 
+  /* Which card is on screen, for the progress bar. */
+  useEffect(() => {
+    const root = feedRef.current;
+    if (!root) return;
+    const observer = new IntersectionObserver(
+      (entries) => {
+        for (const entry of entries) {
+          if (!entry.isIntersecting) continue;
+          const index = Number((entry.target as HTMLElement).dataset.index);
+          if (!Number.isNaN(index)) setActiveIndex(index);
+        }
+      },
+      // A band across the middle of the viewport: the active card is the one
+      // crossing the centre, not the one that happens to be tallest.
+      { root, rootMargin: '-45% 0px -45% 0px', threshold: 0 },
+    );
+    root.querySelectorAll('[data-index]').forEach((el) => observer.observe(el));
+    return () => observer.disconnect();
+  }, [revealed]);
+
+  const questionCards = cards.filter((c) => c.kind === 'quiz');
+  const answeredCount = Object.keys(answers).length;
+
   return (
-    <section className={styles.quiz} aria-labelledby="section-quiz-heading">
-      <div className={styles.quizHead}>
-        <h2 id="section-quiz-heading" className={styles.quizHeading}>
-          Section quiz
-        </h2>
-        {/* Said plainly, because a learner who thinks this is an exam reads
-            the options looking for the trick instead of the answer. */}
-        <p className={styles.quizNote}>Practice. No pass mark, unlimited retakes.</p>
-      </div>
+    /* `data-surface="feed"` switches the token set to the dark one. The feed
+       is an immersive full-screen surface whatever the OS theme says, and
+       without this the washes below are mixed against white paper. */
+    <div className={styles.feed} ref={feedRef} data-surface="feed">
+      <ProgressBar
+        total={cards.length}
+        active={activeIndex}
+        label={section.number}
+        answered={answeredCount}
+        questions={questionCards.length}
+      />
 
-      <ol className={styles.questions}>
-        {section.quiz.map((question, i) => {
-          const chosen = state.answers[question.id];
-          return (
-            <li key={question.id} className={styles.question}>
-              <p className={styles.stem}>
-                <span className={styles.stemIndex}>{i + 1}</span>
-                {question.stem}
-              </p>
-              <div
-                className={question.format === 'true_false' ? styles.optionsTf : styles.options}
-                role="group"
-                aria-label={`Question ${i + 1}`}
-              >
-                {question.options.map((option) => {
-                  const isChosen = chosen === option.id;
-                  const revealed = chosen != null;
-                  const correct = isCorrectOption(section, question.id, option.id);
-                  return (
-                    <button
-                      key={option.id}
-                      type="button"
-                      className={[
-                        styles.option,
-                        revealed && correct ? styles.optionCorrect : '',
-                        isChosen && !correct ? styles.optionWrong : '',
-                      ]
-                        .filter(Boolean)
-                        .join(' ')}
-                      onClick={() => choose(question.id, option.id)}
-                      disabled={revealed}
-                      aria-pressed={isChosen}
-                    >
-                      <span className={styles.optionText}>{option.text}</span>
-                      {revealed && correct ? (
-                        <span className={styles.mark} aria-label="Correct answer">
-                          ✓
-                        </span>
-                      ) : null}
-                      {isChosen && !correct ? (
-                        <span className={styles.mark} aria-label="Your answer, incorrect">
-                          ✕
-                        </span>
-                      ) : null}
-                    </button>
-                  );
-                })}
-              </div>
-              {chosen ? (
-                <p
-                  className={
-                    isCorrectOption(section, question.id, chosen)
-                      ? styles.feedbackRight
-                      : styles.feedbackWrong
-                  }
-                  role="status"
-                >
-                  <strong>
-                    {isCorrectOption(section, question.id, chosen) ? 'Correct.' : 'Not quite.'}
-                  </strong>{' '}
-                  {question.options.find((o) => o.id === chosen)?.feedback}
-                </p>
-              ) : null}
-            </li>
-          );
-        })}
-      </ol>
+      {cards.slice(0, revealed).map((card, i) => {
+        switch (card.kind) {
+          case 'open':
+            return <OpenCard key={card.key} index={i} section={section} />;
+          case 'video':
+            return <VideoCard key={card.key} index={i} section={section} />;
+          case 'quiz':
+            return (
+              <QuizCard
+                key={card.key}
+                index={i}
+                section={section}
+                question={card.question}
+                position={card.position}
+                total={questionCards.length}
+                chosen={answers[card.question.id]}
+                onChoose={choose}
+              />
+            );
+          case 'result':
+            return (
+              <ResultCard
+                key={card.key}
+                index={i}
+                score={score}
+                xp={xpAwarded}
+                unlocked={unlocked}
+                nextSectionId={nextSectionId}
+                onTryAgain={tryAgain}
+              />
+            );
+        }
+      })}
+    </div>
+  );
+}
 
-      <div className={styles.quizFoot}>
-        {submitted ? (
-          <>
-            <p className={styles.result}>
-              <span className={styles.resultScore}>{score.scorePct}%</span>
-              <span className={styles.resultDetail}>
-                {score.correctCount} of {score.questionCount} correct
-                {xpAwarded > 0 ? ` · +${xpAwarded} XP` : ''}
-              </span>
-            </p>
-            <button type="button" className="nms-btn nms-btn--ghost" onClick={tryAgain}>
-              Try again
-            </button>
-          </>
-        ) : (
-          <button
-            type="button"
-            className="nms-btn"
-            onClick={submit}
-            disabled={!allAnswered || !hydrated}
-          >
-            {allAnswered
-              ? 'Submit quiz'
-              : `Submit quiz (${answeredCount}/${section.quiz.length})`}
-          </button>
-        )}
+/* ---- Card list --------------------------------------------------------- */
+
+type Card =
+  | { kind: 'open'; key: string }
+  | { kind: 'video'; key: string }
+  | { kind: 'quiz'; key: string; question: QuizQuestion; position: number }
+  | { kind: 'result'; key: string };
+
+function buildCards(section: Section): Card[] {
+  return [
+    { kind: 'open', key: `open-${section.id}` },
+    { kind: 'video', key: `video-${section.id}` },
+    ...section.quiz.map((question, i) => ({
+      kind: 'quiz' as const,
+      key: `q-${question.id}`,
+      question,
+      position: i + 1,
+    })),
+    { kind: 'result', key: `result-${section.id}` },
+  ];
+}
+
+/** The feed ends at the first unanswered question. See the note on the gate. */
+function revealedCount(cards: Card[], answers: Record<string, string>): number {
+  for (let i = 0; i < cards.length; i++) {
+    const card = cards[i]!;
+    if (card.kind === 'quiz' && !answers[card.question.id]) return i + 1;
+  }
+  return cards.length;
+}
+
+/* ---- Chrome ------------------------------------------------------------ */
+
+function ProgressBar({
+  total,
+  active,
+  label,
+  answered,
+  questions,
+}: {
+  total: number;
+  active: number;
+  label: string;
+  answered: number;
+  questions: number;
+}) {
+  return (
+    <div className={styles.chrome}>
+      <div className={styles.chromeRow}>
+        <span className={styles.chromeTag}>{label}</span>
+        <span className={styles.chromeCount}>
+          {answered}/{questions}
+        </span>
       </div>
+      <div className={styles.track} aria-hidden>
+        {Array.from({ length: total }, (_, i) => (
+          <span key={i} className={i <= active ? styles.segDone : styles.seg} />
+        ))}
+      </div>
+    </div>
+  );
+}
+
+function SwipeCue({ children = 'Swipe up' }: { children?: string }) {
+  return (
+    <p className={styles.cue} aria-hidden>
+      {children}
+      <span className={styles.cueArrow}>↑</span>
+    </p>
+  );
+}
+
+/* ---- Cards ------------------------------------------------------------- */
+
+function OpenCard({ index, section }: { index: number; section: Section }) {
+  return (
+    <section className={styles.card} data-index={index} data-card="open">
+      <div className={styles.openInner}>
+        <p className={styles.openEyebrow}>
+          Section {section.number} · Module {section.moduleNumber}
+        </p>
+        <h1 className={styles.openTitle}>{section.title}</h1>
+        <p className={styles.openHook}>{section.hook}</p>
+      </div>
+      <SwipeCue>Start</SwipeCue>
     </section>
   );
 }
 
-/* ---- 5. Next ----------------------------------------------------------- */
-
-function NextSection({
-  currentSectionId,
-  sectionId,
-}: {
-  currentSectionId: string;
-  sectionId?: string;
-}) {
-  /*
-   * Enabled once the quiz has been submitted at least once, in this browser,
-   * ever — so a learner who submitted yesterday and came back is not asked to
-   * do it again. Read from the same rows the quiz writes.
-   */
-  const [unlocked, setUnlocked] = useState(false);
-  useEffect(() => {
-    const check = () => setUnlocked(attemptsForSection(currentSectionId).length > 0);
-    check();
-    // The quiz writes to storage in a sibling component, which fires no event
-    // of its own in this tab. Polling is crude but it is two reads a second of
-    // a short array, and it keeps the two components from having to share a
-    // store just for this.
-    const timer = window.setInterval(check, 500);
-    return () => window.clearInterval(timer);
-  }, [currentSectionId]);
-
-  if (!sectionId) return null;
+function VideoCard({ index, section }: { index: number; section: Section }) {
+  const [transcriptOpen, setTranscriptOpen] = useState(false);
 
   return (
-    <nav className={styles.next}>
-      {unlocked ? (
-        <Link href={`/learn/${sectionId}`} className="nms-btn nms-btn--bright">
-          Next section
-        </Link>
-      ) : (
+    <section className={styles.card} data-index={index} data-card="video">
+      <div className={styles.videoWrap}>
+        {section.videoUrl ? (
+          <video
+            className={styles.video}
+            src={section.videoUrl}
+            poster={section.posterUrl}
+            controls
+            playsInline
+            preload="metadata"
+          />
+        ) : (
+          <p className={styles.videoMissing}>This section has not been filmed yet.</p>
+        )}
+      </div>
+
+      {section.transcript ? (
         <>
-          <button type="button" className="nms-btn" disabled>
-            Next section
+          <button
+            type="button"
+            className={styles.transcriptToggle}
+            onClick={() => setTranscriptOpen(true)}
+            aria-expanded={transcriptOpen}
+            aria-controls="transcript-body"
+            hidden={transcriptOpen}
+          >
+            Transcript
+            <span aria-hidden className={styles.chevron}>
+              ⌄
+            </span>
           </button>
-          <p className={styles.nextHint}>Submit the quiz to continue.</p>
+
+          {/* A sheet over the film rather than a block under it: the card is a
+              fixed viewport, so pushing content down would push the video off
+              the top of the screen.
+
+              The sheet carries its own close control. The opening button sits
+              mid-card, which the sheet covers — leaving that as the only way
+              out meant a transcript you could open and not close. */}
+          <div id="transcript-body" className={styles.transcriptSheet} hidden={!transcriptOpen}>
+            <div className={styles.sheetHead}>
+              <span className={styles.sheetTitle}>Transcript</span>
+              <button
+                type="button"
+                className={styles.sheetClose}
+                onClick={() => setTranscriptOpen(false)}
+              >
+                Close
+              </button>
+            </div>
+            <div className={styles.sheetBody}>
+              {section.transcript.split('\n\n').map((para, i) => (
+                <p key={i}>{para}</p>
+              ))}
+            </div>
+          </div>
         </>
-      )}
-    </nav>
+      ) : null}
+
+      <SwipeCue>Then the questions</SwipeCue>
+    </section>
+  );
+}
+
+function QuizCard({
+  index,
+  section,
+  question,
+  position,
+  total,
+  chosen,
+  onChoose,
+}: {
+  index: number;
+  section: Section;
+  question: QuizQuestion;
+  position: number;
+  total: number;
+  chosen?: string;
+  onChoose: (question: QuizQuestion, optionId: string) => void;
+}) {
+  const answered = chosen != null;
+  const gotItRight = answered && isCorrectOption(section, question.id, chosen);
+
+  return (
+    <section
+      className={styles.card}
+      data-index={index}
+      data-card="quiz"
+      /* Seeds the per-card wash so consecutive questions do not share a
+         background. A feed where every card looks identical reads as one long
+         page that keeps snapping. */
+      data-tint={position % 4}
+    >
+      <div className={styles.quizInner}>
+        <p className={styles.quizLabel}>
+          Question {position} of {total}
+        </p>
+        <p className={styles.stem}>{question.stem}</p>
+
+        <div className={question.format === 'true_false' ? styles.optionsTf : styles.options}>
+          {question.options.map((option, i) => {
+            const isChosen = chosen === option.id;
+            const correct = option.correct;
+            return (
+              <button
+                key={option.id}
+                type="button"
+                className={[
+                  styles.option,
+                  answered && correct ? styles.optionCorrect : '',
+                  isChosen && !correct ? styles.optionWrong : '',
+                  answered && !isChosen && !correct ? styles.optionMuted : '',
+                ]
+                  .filter(Boolean)
+                  .join(' ')}
+                onClick={() => onChoose(question, option.id)}
+                disabled={answered}
+                aria-pressed={isChosen}
+              >
+                {question.format === 'true_false' ? null : (
+                  <span className={styles.optionKey}>{String.fromCharCode(65 + i)}</span>
+                )}
+                <span className={styles.optionText}>{option.text}</span>
+                {answered && correct ? <span className={styles.mark}>✓</span> : null}
+                {isChosen && !correct ? <span className={styles.mark}>✕</span> : null}
+              </button>
+            );
+          })}
+        </div>
+
+        {answered ? (
+          <div className={gotItRight ? styles.verdictRight : styles.verdictWrong} role="status">
+            <p className={styles.verdictHead}>{gotItRight ? 'Correct' : 'Not quite'}</p>
+            <p className={styles.verdictBody}>
+              {question.options.find((o) => o.id === chosen)?.feedback}
+            </p>
+          </div>
+        ) : null}
+      </div>
+
+      {answered ? <SwipeCue>{position === total ? 'See your score' : 'Next question'}</SwipeCue> : null}
+    </section>
+  );
+}
+
+function ResultCard({
+  index,
+  score,
+  xp,
+  unlocked,
+  nextSectionId,
+  onTryAgain,
+}: {
+  index: number;
+  score: { scorePct: number; correctCount: number; questionCount: number };
+  xp: number;
+  unlocked: boolean;
+  nextSectionId?: string;
+  onTryAgain: () => void;
+}) {
+  return (
+    <section className={styles.card} data-index={index} data-card="result">
+      <div className={styles.resultInner}>
+        <p className={styles.resultScore}>{score.scorePct}%</p>
+        <p className={styles.resultDetail}>
+          {score.correctCount} of {score.questionCount} correct
+        </p>
+        {xp > 0 ? <p className={styles.resultXp}>+{xp} XP</p> : null}
+
+        <div className={styles.resultActions}>
+          {nextSectionId && unlocked ? (
+            <Link href={`/learn/${nextSectionId}`} className="nms-btn nms-btn--bright">
+              Next section
+            </Link>
+          ) : null}
+          <button type="button" className="nms-btn nms-btn--ghost" onClick={onTryAgain}>
+            Try again
+          </button>
+        </div>
+        {/* Said once, here, because a learner who scored badly needs to know
+            the door is open before they decide the app is judging them. */}
+        <p className={styles.resultNote}>No pass mark. Retake it as often as you like.</p>
+      </div>
+    </section>
   );
 }
