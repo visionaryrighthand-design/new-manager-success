@@ -148,7 +148,14 @@ export function SectionLesson({
       {cards.slice(0, revealed).map((card, i) => {
         switch (card.kind) {
           case 'open':
-            return <OpenCard key={card.key} index={i} section={section} />;
+            return (
+              <OpenCard
+                key={card.key}
+                index={i}
+                section={section}
+                questionCount={section.quiz.length}
+              />
+            );
           case 'video':
             return <VideoCard key={card.key} index={i} section={section} />;
           case 'quiz':
@@ -245,28 +252,74 @@ function ProgressBar({
   );
 }
 
-function SwipeCue({ children = 'Swipe up' }: { children?: string }) {
+/**
+ * The swipe affordance.
+ *
+ * `loud` is for the cold open, where the learner has not yet been taught the
+ * gesture and a quiet grey line at the bottom of the screen reads as a
+ * caption rather than an instruction. Everywhere else the gesture is already
+ * known, so the cue steps back to a hint.
+ */
+function SwipeCue({ children = 'Swipe up', loud = false }: { children?: string; loud?: boolean }) {
   return (
-    <p className={styles.cue} aria-hidden>
+    <p className={loud ? styles.cueLoud : styles.cue} aria-hidden>
+      <span className={styles.cueChevrons}>
+        <span>⌃</span>
+        <span>⌃</span>
+      </span>
       {children}
-      <span className={styles.cueArrow}>↑</span>
     </p>
   );
 }
 
 /* ---- Cards ------------------------------------------------------------- */
 
-function OpenCard({ index, section }: { index: number; section: Section }) {
+function OpenCard({
+  index,
+  section,
+  questionCount,
+}: {
+  index: number;
+  section: Section;
+  questionCount: number;
+}) {
   return (
     <section className={styles.card} data-index={index} data-card="open">
+      {/* The section number, set huge and dropped behind the type. Cheap to
+          render, and it gives the card something to look at other than its
+          own margins. */}
+      <span className={styles.openWatermark} aria-hidden>
+        {section.number}
+      </span>
+
       <div className={styles.openInner}>
         <p className={styles.openEyebrow}>
           Section {section.number} · Module {section.moduleNumber}
         </p>
         <h1 className={styles.openTitle}>{section.title}</h1>
         <p className={styles.openHook}>{section.hook}</p>
+
+        {/* What the next three minutes actually cost and pay. The card was
+            asking for a swipe without saying what was on the other side. */}
+        <ul className={styles.openMeta}>
+          <li>
+            <strong>3 min</strong>
+            <span>watch</span>
+          </li>
+          <li>
+            <strong>{questionCount}</strong>
+            <span>questions</span>
+          </li>
+          <li>
+            <strong>+50</strong>
+            <span>XP</span>
+          </li>
+        </ul>
+
+        <p className={styles.openIdea}>{section.keyIdea}</p>
       </div>
-      <SwipeCue>Start</SwipeCue>
+
+      <SwipeCue loud>Swipe up</SwipeCue>
     </section>
   );
 }

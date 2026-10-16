@@ -175,30 +175,81 @@
  * on a tall window it left the question stranded at the top under a screen of
  * empty space.
  */
-.cue {
+.cue,
+.cueLoud {
   position: absolute;
   left: 0;
   right: 0;
   bottom: calc(var(--nms-space-6) + env(safe-area-inset-bottom));
-  text-align: center;
-  font-size: var(--nms-font-caption-size);
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  color: var(--nms-color-fg-subtle);
   display: flex;
+  flex-direction: column;
   align-items: center;
-  justify-content: center;
-  gap: var(--nms-space-2);
+  gap: var(--nms-space-1);
+  text-align: center;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  /*
+   * Decorative and aria-hidden, but it spans the full width of the card and
+   * sits above the content, so without this it swallowed taps on whatever
+   * was underneath — on a tall quiz card, the last option.
+   */
+  pointer-events: none;
 }
 
-.cueArrow {
-  display: inline-block;
-  animation: nudge 1.8s var(--nms-ease-standard) infinite;
+/* The quiet form. By this point the gesture has been taught. */
+.cue {
+  font-size: var(--nms-font-caption-size);
+  color: var(--nms-color-fg-subtle);
+  animation: breathe 2.4s var(--nms-ease-standard) infinite;
 }
 
-@keyframes nudge {
-  0%, 100% { transform: translateY(0); opacity: 0.55; }
-  50% { transform: translateY(-5px); opacity: 1; }
+/*
+ * The loud form, for the cold open.
+ *
+ * This is the only moment where the learner has been given no instruction at
+ * all, and a swipe is not a thing a web page usually asks for. So it is
+ * brighter, larger, and it moves: a static grey line at the bottom of a dark
+ * screen reads as a caption, and people sat on the cold open waiting for
+ * something to happen.
+ */
+.cueLoud {
+  font-size: var(--nms-font-body-size);
+  font-weight: 700;
+  color: var(--nms-color-bright);
+  animation: beacon 1.6s var(--nms-ease-standard) infinite;
+}
+
+.cueChevrons {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  line-height: 0.55;
+  font-size: 1.15em;
+}
+/* The second chevron trails the first, so the pair reads as upward motion
+   rather than as two marks blinking together. */
+.cueChevrons > span:first-child {
+  animation: riseFade 1.6s var(--nms-ease-standard) infinite;
+}
+.cueChevrons > span:last-child {
+  animation: riseFade 1.6s var(--nms-ease-standard) 0.18s infinite;
+  opacity: 0.45;
+}
+
+@keyframes breathe {
+  0%, 100% { opacity: 0.5; }
+  50% { opacity: 1; }
+}
+
+@keyframes beacon {
+  0%, 100% { opacity: 0.72; transform: translateY(0); }
+  50% { opacity: 1; transform: translateY(-4px); }
+}
+
+@keyframes riseFade {
+  0% { transform: translateY(3px); opacity: 0.3; }
+  45% { transform: translateY(-2px); opacity: 1; }
+  100% { transform: translateY(3px); opacity: 0.3; }
 }
 
 /* ---- Entrances --------------------------------------------------------- */
@@ -225,6 +276,80 @@
   display: flex;
   flex-direction: column;
   gap: var(--nms-space-4);
+}
+
+/*
+ * The section number as a background mark.
+ *
+ * Clipped to the card and anchored off the right edge so it reads as texture
+ * rather than as a number someone forgot to position. Stays behind the type:
+ * `.card > *` lifts real content to z-index 1.
+ */
+.openWatermark {
+  position: absolute;
+  z-index: 0;
+  top: 8%;
+  right: -6%;
+  font-family: var(--nms-font-display);
+  font-size: clamp(11rem, 46vw, 20rem);
+  font-weight: 800;
+  line-height: 0.8;
+  letter-spacing: -0.05em;
+  color: color-mix(in srgb, var(--nms-color-fg) 5%, transparent);
+  pointer-events: none;
+  user-select: none;
+}
+
+/* A slow drift, so the cold open is not a still image while the learner
+   decides whether anything is going to happen. */
+.card[data-card='open']::before {
+  animation: drift 14s ease-in-out infinite alternate;
+}
+
+@keyframes drift {
+  from { transform: translate3d(0, 0, 0) scale(1); }
+  to { transform: translate3d(0, -3%, 0) scale(1.08); }
+}
+
+.openMeta {
+  list-style: none;
+  margin: var(--nms-space-3) 0 0;
+  padding: 0;
+  display: flex;
+  gap: var(--nms-space-3);
+}
+
+.openMeta li {
+  flex: 1 1 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: var(--nms-space-3);
+  border: 1px solid var(--nms-color-border);
+  border-radius: var(--nms-radius-md);
+  background: color-mix(in srgb, var(--nms-color-surface) 70%, transparent);
+  backdrop-filter: blur(6px);
+}
+
+.openMeta strong {
+  font-family: var(--nms-font-display);
+  font-size: var(--nms-font-h3-size);
+  line-height: 1;
+  font-variant-numeric: tabular-nums;
+}
+
+.openMeta span {
+  font-size: var(--nms-font-caption-size);
+  color: var(--nms-color-fg-muted);
+}
+
+.openIdea {
+  margin-top: var(--nms-space-2);
+  padding-left: var(--nms-space-4);
+  border-left: 2px solid var(--nms-color-accent);
+  font-size: var(--nms-font-caption-size);
+  line-height: 1.6;
+  color: var(--nms-color-fg-muted);
 }
 
 .openEyebrow {
