@@ -284,8 +284,14 @@ export function validateContent(): string[] {
       if (correct !== 1) {
         problems.push(`${section.number}/${q.id}: expected exactly 1 correct option, found ${correct}`);
       }
-      if (q.options.length !== 4) {
-        problems.push(`${section.number}/${q.id}: the quiz document specifies four options, found ${q.options.length}`);
+      // Four options for multiple choice, two for true/false. Checked rather
+      // than assumed: a true/false question that has somehow acquired a third
+      // option is a content bug that renders without complaint.
+      const expectedOptions = q.format === 'true_false' ? 2 : 4;
+      if (q.options.length !== expectedOptions) {
+        problems.push(
+          `${section.number}/${q.id}: a ${q.format} question takes ${expectedOptions} options, found ${q.options.length}`,
+        );
       }
       for (const o of q.options) {
         if (!o.feedback) problems.push(`${section.number}/${q.id}/${o.id}: option has no feedback`);

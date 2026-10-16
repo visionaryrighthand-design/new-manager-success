@@ -1,3 +1,4 @@
+import { trueFalseOptions } from '../types.js';
 import type { Section } from '../types.js';
 
 /**
@@ -17,6 +18,26 @@ export const section01: Section = {
   keyIdea:
     'Most managers are promoted without preparation. That gap is real, and it is fixable.',
   topics: ['promotion transition', 'manager expectations', 'why new managers struggle'],
+  /*
+   * PUBLISH PENDING — rev55 has not been uploaded.
+   *
+   * The rev55 cut (1080x1920, 30fps, H.264/AAC, 2:54, captions burned in) is
+   * meant to live at `m1/s1/rev55.mp4` in the `videos` bucket, which would
+   * make it:
+   *
+   *   https://rhteswkgmndgijpllvjt.supabase.co/storage/v1/object/public/videos/m1/s1/rev55.mp4
+   *
+   * It is not written in below, because nothing has been uploaded to that
+   * path: the file never arrived in the repo, there are no Supabase
+   * credentials in this environment, and the host is blocked by the network
+   * policy. Pointing `videoUrl` at an object that does not exist would take
+   * the lesson from "last cut" to "broken player", so the previous cut stays
+   * live until the upload actually happens.
+   *
+   * To publish: upload the file, move the URL below into `videoUrlPrev`, and
+   * put the rev55 URL in `videoUrl`. The lesson page is already built for a
+   * 9:16 source.
+   */
   videoUrl:
     'https://rhteswkgmndgijpllvjt.supabase.co/storage/v1/object/public/videos/Heygen%20vids%200822/M1.1_The%20Invisible%20Promotion.mp4',
 
@@ -152,326 +173,197 @@ export const section01: Section = {
     },
   ],
 
+  /**
+   * The final cut's spoken script, verbatim.
+   *
+   * Em dashes are kept here, against the D7 deviation that removed them from
+   * on-screen copy, because this is a record of words that were said rather
+   * than copy anyone is reading as prose. Changing it would make the
+   * transcript disagree with the audio.
+   */
+  transcript: `Congratulations on your promotion.
+
+You've worked hard for this. You've been performing at a high level, and someone noticed. That's real, and it matters.
+
+But here's what most people don't tell you when they hand you that new title:
+
+The job you just accepted? Nobody actually trained you for it.
+
+Most promotions into management follow the same pattern. A talented employee does exceptional work. Leadership notices. They get promoted — usually because they're the best at what they do.
+
+And then they're handed a team, maybe a pay increase, and expected to figure out the rest. No roadmap. No instruction manual. No real preparation.
+
+The title is visible. The new paycheck is visible. But the actual job description of "manager" — what it truly requires of you — that part is invisible. And you're expected to just... know.
+
+Let's talk about what actually changed when you got promoted.
+
+Before, your success depended almost entirely on you. Your effort, your skill, your output. You controlled it. If you worked harder or smarter, results improved. Simple equation.
+
+Now? Your success depends on a group of people — people with different strengths, different motivations, and different ideas about what a productive day looks like. You can't do the work for them. You have to lead them to do it well.
+
+That's a fundamentally different challenge. And most new managers walk into it believing at least one of these three things.
+
+Myth #1: "I'll just do what my old manager did." Myth #2: "My team will respect me because of my track record." Myth #3: "I can still do my old job and manage at the same time."
+
+All three of those will get you in trouble.
+
+Your old manager's style was built for their context — not yours. Your track record impresses leadership, not necessarily your team. And trying to do both jobs at once usually means doing neither one well.
+
+Here's what happens when a manager steps in without the right preparation.
+
+Teams disengage. High performers start looking for the door. Productivity drops. Conflict increases. In a small business — every single one of these hits harder.
+
+That's a significant responsibility. But it's also a significant opportunity — because when you get this right, you can build something remarkable.
+
+Here's the reframe this entire program is built on.
+
+You were promoted because you were great at your job. That's your starting point — not your finish line. The skills that made you an exceptional doer are different from the skills that will make you an exceptional manager.
+
+You're not behind. You're not failing. You're at the beginning of a new game — and now you know the rules are different.
+
+In the next section, we're going to dig into exactly why high performers often struggle the most when they step into management — and what the shift from doing to leading actually looks like in practice.
+
+Let's keep going.`,
+
+  /*
+   * Section quiz, from the locked quiz standard: 3 multiple choice then 2
+   * true/false, in this order. Not shuffled — the order is part of the
+   * standard, and the two true/false questions are written to land after the
+   * recall questions have already walked through the material.
+   *
+   * Question and option text is verbatim. Option feedback is ours: the
+   * standard asks for one sentence per option and specifies that it must not
+   * reach past what the section says, so every line below paraphrases the
+   * transcript or the full-screen moment at b9 and nothing else.
+   *
+   * Ids are the standard's own (q1-q5) rather than the m1-s1-qN form used by
+   * the other sections, because the standard names them.
+   */
   quiz: [
     {
-      id: 'm1-s1-q1',
+      id: 'q1',
       kind: 'recall',
+      format: 'multiple_choice',
       source: '1.1',
-      stem: "What is the “invisible promotion”?",
+      stem: 'What is the "invisible promotion"?',
       options: [
         {
           id: 'a',
-          text: "A secret internal promotion process",
+          text: 'A promotion with no pay increase',
           correct: false,
-          feedback: "Nothing secret about it. What is hidden is the job description, not the process.",
+          feedback: 'The section calls the new paycheck visible. It is the job description that is not.',
         },
         {
           id: 'b',
-          text: "A shift in responsibility without formal training",
+          text: 'A promotion that comes with a new title but no training or preparation for management',
           correct: true,
-          feedback: "Yes. The title and the pay are visible. What the job actually requires of you is the part nobody spells out.",
+          feedback:
+            'The title is visible and the paycheck is visible. What the job actually requires of you is the part nobody hands over.',
         },
         {
           id: 'c',
-          text: "A raise without a title",
+          text: 'A promotion announced internally but not publicly',
           correct: false,
-          feedback: "The money is the visible part. It is the expectations that go unstated.",
+          feedback: 'What is invisible is the job description, not the announcement.',
         },
         {
           id: 'd',
-          text: "A temporary leadership assignment",
+          text: 'A promotion given to an employee without their prior knowledge',
           correct: false,
-          feedback: "The promotion is real and permanent. It is the preparation that is missing.",
+          feedback: 'The promotion itself is known. The training and preparation are what go missing.',
         },
       ],
     },
     {
-      id: 'm1-s1-q2',
+      id: 'q2',
       kind: 'recall',
+      format: 'multiple_choice',
       source: '1.1',
-      stem: "What is a key mindset shift for new managers?",
+      stem: 'Which of the following is NOT one of the three myths discussed about new managers?',
       options: [
         {
           id: 'a',
-          text: "Doing more of the same work",
+          text: `"I'll just do what my old manager did."`,
           correct: false,
-          feedback: "That is the doer trap. More of your old work is the one thing the new job does not need.",
+          feedback: `This is myth #1. Your old manager's style was built for their context, not yours.`,
         },
         {
           id: 'b',
-          text: "Delegating all tasks immediately",
-          correct: false,
-          feedback: "Handing everything over on day one is disposal, not delegation.",
+          text: '"I need to read every management book before I start."',
+          correct: true,
+          feedback:
+            'The three myths are the old manager’s style, the track record, and doing both jobs at once. Reading is not one of them.',
         },
         {
           id: 'c',
-          text: "Managing performance through others",
-          correct: true,
-          feedback: "Yes. Your results now arrive through other people rather than from your own hands.",
+          text: '"My team will respect me because of my track record."',
+          correct: false,
+          feedback: 'This is myth #2. Your track record impresses leadership, not necessarily your team.',
         },
         {
           id: 'd',
-          text: "Becoming friends with team members",
+          text: `"I can still do my old job and manage at the same time."`,
           correct: false,
-          feedback: "The goal is to be trusted and respected. Friendship is not the mechanism.",
+          feedback: 'This is myth #3. Doing both jobs at once usually means doing neither one well.',
         },
       ],
     },
     {
-      id: 'm1-s1-q3',
+      id: 'q3',
       kind: 'recall',
+      format: 'multiple_choice',
       source: '1.1',
-      stem: "Which of the following does NOT typically change when you become a manager?",
+      stem: 'According to the section, what is the most common reason employees leave their jobs?',
       options: [
         {
           id: 'a',
-          text: "Your personal work ethic",
-          correct: true,
-          feedback: "Correct. Your standards and your example come with you. Almost everything else about the job changes.",
+          text: 'Better pay elsewhere',
+          correct: false,
+          feedback: 'The section puts the manager ahead of pay.',
         },
         {
           id: 'b',
-          text: "The amount of responsibility",
+          text: 'Lack of advancement opportunities',
           correct: false,
-          feedback: "This changes immediately, and usually more than people expect.",
+          feedback: 'The section puts the manager ahead of advancement.',
         },
         {
           id: 'c',
-          text: "The way your success is measured",
-          correct: false,
-          feedback: "This changes completely: you are now measured by your team’s output.",
+          text: 'Their manager',
+          correct: true,
+          feedback: 'The section’s line is that employees do not quit companies, they quit managers.',
         },
         {
           id: 'd',
-          text: "Your need to support others",
+          text: 'Poor work-life balance',
           correct: false,
-          feedback: "This changes too. Supporting others goes from optional to the core of the role.",
+          feedback: 'The section puts the manager ahead of workload and balance.',
         },
       ],
     },
     {
-      id: 'm1-s1-q4',
+      id: 'q4',
       kind: 'recall',
+      format: 'true_false',
       source: '1.1',
-      stem: "What are you primarily responsible for as a manager?",
-      options: [
-        {
-          id: 'a',
-          text: "Completing your tasks efficiently",
-          correct: false,
-          feedback: "Still useful, no longer the point. Your task list is not what you are judged on now.",
-        },
-        {
-          id: 'b',
-          text: "Making sure others get results",
-          correct: true,
-          feedback: "Yes. That is the whole shift, and it is why the old skills stop being enough.",
-        },
-        {
-          id: 'c',
-          text: "Managing customer relationships directly",
-          correct: false,
-          feedback: "Part of some roles, but not what defines the job of managing.",
-        },
-        {
-          id: 'd',
-          text: "Reporting performance only",
-          correct: false,
-          feedback: "Reporting is a by-product. Producing the performance through others is the job.",
-        },
-      ],
+      stem: 'Your past performance as an individual contributor guarantees your team will respect you as their new manager.',
+      options: trueFalseOptions(false, {
+        whenTrue: 'Your track record impresses leadership, not necessarily your team.',
+        whenFalse: 'Your track record impresses leadership, not necessarily your team.',
+      }),
     },
     {
-      id: 'm1-s1-q5',
+      id: 'q5',
       kind: 'recall',
+      format: 'true_false',
       source: '1.1',
-      stem: "What can feel disorienting about becoming a new manager?",
-      options: [
-        {
-          id: 'a',
-          text: "Less autonomy",
-          correct: false,
-          feedback: "Most new managers get more latitude, not less. That is part of what makes it disorienting.",
-        },
-        {
-          id: 'b',
-          text: "Being excluded from team conversations",
-          correct: false,
-          feedback: "It happens, and it stings, but it is a symptom rather than the main disorientation.",
-        },
-        {
-          id: 'c',
-          text: "New expectations without clear instructions",
-          correct: true,
-          feedback: "Yes. High expectations arrive with no manual, which is exactly the invisible promotion.",
-        },
-        {
-          id: 'd',
-          text: "Traveling more",
-          correct: false,
-          feedback: "Role-specific, and not what makes the transition hard.",
-        },
-      ],
-    },
-    {
-      id: 'm1-s1-q6',
-      kind: 'recall',
-      source: '1.1',
-      stem: "What remains a key part of your effectiveness as a leader?",
-      options: [
-        {
-          id: 'a',
-          text: "Perfectionism",
-          correct: false,
-          feedback: "Perfectionism scales badly across a team. It was never the thing that made you effective.",
-        },
-        {
-          id: 'b',
-          text: "Independence",
-          correct: false,
-          feedback: "The job is now interdependent by definition.",
-        },
-        {
-          id: 'c',
-          text: "Reputation and example",
-          correct: true,
-          feedback: "Yes. What you model becomes the standard, and that carries over from your old role intact.",
-        },
-        {
-          id: 'd',
-          text: "Avoiding mistakes",
-          correct: false,
-          feedback: "A team that never sees a mistake handled well learns to hide their own.",
-        },
-      ],
-    },
-    {
-      id: 'm1-s1-q7',
-      kind: 'recall',
-      source: '1.1',
-      stem: "Which of the following best describes a successful transition into management?",
-      options: [
-        {
-          id: 'a',
-          text: "Taking on more individual tasks",
-          correct: false,
-          feedback: "That is moving in the wrong direction, however productive it feels.",
-        },
-        {
-          id: 'b',
-          text: "Focusing only on top performers",
-          correct: false,
-          feedback: "Your top performers need the least from you. It is the rest of the team that moves the number.",
-        },
-        {
-          id: 'c',
-          text: "Building a team that can execute",
-          correct: true,
-          feedback: "Yes. Success is a team that produces without you doing the producing.",
-        },
-        {
-          id: 'd',
-          text: "Keeping things the way they were",
-          correct: false,
-          feedback: "Nothing is the way it was. Behaving as though it is costs you the first few months.",
-        },
-      ],
-    },
-    {
-      id: 'm1-s1-q8',
-      kind: 'recall',
-      source: '1.1',
-      stem: "Your team begins looking to you for ________.",
-      options: [
-        {
-          id: 'a',
-          text: "Overtime approvals",
-          correct: false,
-          feedback: "Administrative, and the least of what they need from you.",
-        },
-        {
-          id: 'b',
-          text: "Social direction",
-          correct: false,
-          feedback: "You set the tone, but that is not what they come to you for.",
-        },
-        {
-          id: 'c',
-          text: "Answers, decisions, and direction",
-          correct: true,
-          feedback: "Yes, and often before you feel ready to give any of the three.",
-        },
-        {
-          id: 'd',
-          text: "Personal feedback",
-          correct: false,
-          feedback: "They need feedback from you, not for you.",
-        },
-      ],
-    },
-    {
-      id: 'm1-s1-q9',
-      kind: 'recall',
-      source: '1.1',
-      stem: "A challenge for many new managers is:",
-      options: [
-        {
-          id: 'a',
-          text: "Having too much time to think",
-          correct: false,
-          feedback: "Almost nobody reports this in their first ninety days.",
-        },
-        {
-          id: 'b',
-          text: "Getting a larger office",
-          correct: false,
-          feedback: "Not a challenge, and increasingly not a thing.",
-        },
-        {
-          id: 'c',
-          text: "Balancing old responsibilities with new ones",
-          correct: true,
-          feedback: "Yes. The old work rarely gets reassigned on schedule, and it is the easier work, which is what makes it tempting.",
-        },
-        {
-          id: 'd',
-          text: "Over-delegating",
-          correct: false,
-          feedback: "The far more common failure is delegating too little, too late.",
-        },
-      ],
-    },
-    {
-      id: 'm1-s1-q10',
-      kind: 'recall',
-      source: '1.1',
-      stem: "Which of the following would help reinforce the new manager mindset?",
-      options: [
-        {
-          id: 'a',
-          text: "Doing more technical work",
-          correct: false,
-          feedback: "Comfortable, and a retreat into the job you already had.",
-        },
-        {
-          id: 'b',
-          text: "Leading by example and coaching others",
-          correct: true,
-          feedback: "Yes. Both are the new job rather than the old one done harder.",
-        },
-        {
-          id: 'c',
-          text: "Avoiding conflict",
-          correct: false,
-          feedback: "Avoided conflict does not disappear. It compounds.",
-        },
-        {
-          id: 'd',
-          text: "Waiting for instructions",
-          correct: false,
-          feedback: "Nobody is coming with them. That is the premise of this whole section.",
-        },
-      ],
+      stem: 'The skills that make someone a great individual contributor are different from the skills required to be a great manager.',
+      options: trueFalseOptions(true, {
+        whenTrue:
+          'The skills that made you an exceptional doer are different from the skills that make you an exceptional manager.',
+        whenFalse:
+          'The skills that made you an exceptional doer are different from the skills that make you an exceptional manager.',
+      }),
     },
   ],
 

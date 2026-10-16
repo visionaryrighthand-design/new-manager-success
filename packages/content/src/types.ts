@@ -105,10 +105,35 @@ export interface QuizQuestion {
   id: string;
   /** `recall` checks the concept; `scenario` checks the judgment. */
   kind: 'recall' | 'scenario';
+  /**
+   * How the question is answered. The locked quiz standard specifies a fixed
+   * mix per section — 3 multiple choice then 2 true/false — so this is part of
+   * the content, not a renderer preference.
+   *
+   * A `true_false` question carries exactly two options; `multiple_choice`
+   * carries four. Both are modelled as options so one scoring path, one
+   * feedback path and one recorded answer shape cover the whole quiz.
+   *
+   * Optional, defaulting to `multiple_choice`, because the placeholder
+   * questions in the unfilmed sections predate it and there is no reason to
+   * annotate copy that is going to be replaced wholesale anyway.
+   */
+  format?: 'multiple_choice' | 'true_false';
   stem: string;
   options: QuizOption[];
   /** The Section section this question is drawn from, e.g. '1.3'. */
   source: string;
+}
+
+/** Options a true/false question is built from. The order is fixed: True, then False. */
+export function trueFalseOptions(
+  answer: boolean,
+  feedback: { whenTrue: string; whenFalse: string },
+): QuizOption[] {
+  return [
+    { id: 'true', text: 'True', correct: answer === true, feedback: feedback.whenTrue },
+    { id: 'false', text: 'False', correct: answer === false, feedback: feedback.whenFalse },
+  ];
 }
 
 
@@ -206,8 +231,23 @@ export interface Section {
    * Must be a direct, streamable URL (MP4 or HLS). A share page is not one.
    */
   videoUrl?: string;
+  /**
+   * The URL `videoUrl` replaced, kept so a bad publish can be rolled back by
+   * swapping two lines rather than digging through git history.
+   */
+  videoUrlPrev?: string;
   /** Poster frame shown before playback. */
   posterUrl?: string;
+  /**
+   * The spoken script as one block of prose, shown behind the transcript
+   * toggle on the lesson page.
+   *
+   * Stored rather than assembled from `beats` because the two drift: beats are
+   * the shooting script, broken for production and carrying stage directions,
+   * while this is what was actually said in the final cut. When a section has
+   * been filmed, this is the authority on its words.
+   */
+  transcript?: string;
   scriptDeviations?: ScriptDeviation[];
   /** Everything in this Section that the approved script does not contain. */
   contentAdditions?: ContentAddition[];

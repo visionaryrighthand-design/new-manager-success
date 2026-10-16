@@ -90,24 +90,42 @@ describe('a lesson is a video and then a quiz', () => {
 
 describe('quizzes', () => {
   /*
-   * The approved quiz document specifies ten four-option questions per
-   * section, and from 1.2 onward two of them are review from earlier sections.
-   * Only 1.1 and 1.2 have been written; the rest carry placeholders and are
-   * tracked in IP_PUNCH_LIST.md.
+   * Two quiz standards are in play, and they disagree about length.
+   *
+   * 1.1 was republished against the locked quiz standard: five questions, 3
+   * multiple choice then 2 true/false. Sections 1.2 onward still hold the
+   * earlier ten-question form from the approved quiz document. Both are
+   * "authored"; only their shape differs, so the expected length is recorded
+   * per section rather than assumed. When the remaining sections are
+   * published this should collapse back to one number.
    */
-  const AUTHORED = ['1.1', '1.2'];
+  const AUTHORED: Record<string, number> = { '1.1': 5, '1.2': 10 };
 
-  test('the authored lessons carry the full ten questions', () => {
-    for (const number of AUTHORED) {
+  test('the authored lessons carry the questions their standard specifies', () => {
+    for (const [number, expected] of Object.entries(AUTHORED)) {
       const section = module01.sections.find((r) => r.number === number)!;
-      assert.equal(section.quiz.length, 10, `${number}: expected 10 questions`);
+      assert.equal(section.quiz.length, expected, `${number}: expected ${expected} questions`);
     }
   });
 
-  test('every question has four options and exactly one correct answer', () => {
+  test('1.1 is three multiple choice then two true/false, in that order', () => {
+    // The order is part of the standard, and the player does not shuffle.
+    const section = module01.sections.find((r) => r.number === '1.1')!;
+    assert.deepEqual(
+      section.quiz.map((q) => q.format ?? 'multiple_choice'),
+      ['multiple_choice', 'multiple_choice', 'multiple_choice', 'true_false', 'true_false'],
+    );
+  });
+
+  test('every question has the right number of options and exactly one correct answer', () => {
     for (const section of module01.sections) {
       for (const q of section.quiz) {
-        assert.equal(q.options.length, 4, `${section.number}/${q.id}: not four options`);
+        const expected = q.format === 'true_false' ? 2 : 4;
+        assert.equal(
+          q.options.length,
+          expected,
+          `${section.number}/${q.id}: a ${q.format ?? 'multiple_choice'} question takes ${expected} options`,
+        );
         assert.equal(
           q.options.filter((o) => o.correct).length,
           1,
@@ -128,6 +146,32 @@ describe('quizzes', () => {
     }
   });
 
+  test('1.1 marks the answers the locked standard specifies', () => {
+    /*
+     * The standard gives each answer as an index into the printed option
+     * order, so that is how this is checked: by position, not by text. A
+     * reordered option list that kept the right answer marked would pass a
+     * text comparison while showing learners a different question.
+     */
+    const expected: Record<string, number> = { q1: 1, q2: 1, q3: 2, q4: 1, q5: 0 };
+    const section = module01.sections.find((r) => r.number === '1.1')!;
+    for (const q of section.quiz) {
+      const index = q.options.findIndex((o) => o.correct);
+      assert.equal(index, expected[q.id], `${q.id}: correct option is at index ${index}`);
+    }
+  });
+
+  test('1.1’s true/false options read True then False', () => {
+    const section = module01.sections.find((r) => r.number === '1.1')!;
+    for (const q of section.quiz.filter((q) => q.format === 'true_false')) {
+      assert.deepEqual(
+        q.options.map((o) => o.text),
+        ['True', 'False'],
+        `${q.id}: unexpected option labels`,
+      );
+    }
+  });
+
   test('lesson 1.2 carries review questions from an earlier section', () => {
     // Spaced repetition, per the quiz document.
     // A review question is one sourced from a different section than the one
@@ -141,9 +185,33 @@ describe('quizzes', () => {
 
   test('the lessons still awaiting Tom’s questions are exactly the ones we know about', () => {
     // A ratchet. When this list is empty the placeholder note in the punch
-    // list comes out too.
-    const placeholder = module01.sections.filter((r) => r.quiz.length < 10).map((r) => r.number);
+    // list comes out too. Derived from the authored set rather than from a
+    // question count, now that an authored quiz can be five questions long.
+    const placeholder = module01.sections
+      .filter((r) => !(r.number in AUTHORED))
+      .map((r) => r.number);
     assert.deepEqual(placeholder, ['1.3', '1.4', '1.5', '1.6', '1.7', '1.8']);
+  });
+});
+
+describe('transcripts', () => {
+  test('a filmed lesson stores its transcript', () => {
+    const section = module01.sections.find((r) => r.id === 'm1-s1')!;
+    assert.ok(section.transcript, '1.1 has no transcript');
+  });
+
+  test('1.1’s transcript opens and closes on the lines that were recorded', () => {
+    // Guards against a well-meaning reflow trimming the top or tail.
+    const transcript = module01.sections.find((r) => r.id === 'm1-s1')!.transcript!;
+    assert.match(transcript, /^Congratulations on your promotion\./);
+    assert.match(transcript, /Let's keep going\.$/);
+  });
+
+  test('1.1’s transcript names all three myths', () => {
+    const transcript = module01.sections.find((r) => r.id === 'm1-s1')!.transcript!;
+    for (const myth of ['Myth #1', 'Myth #2', 'Myth #3']) {
+      assert.ok(transcript.includes(myth), `transcript is missing ${myth}`);
+    }
   });
 });
 
