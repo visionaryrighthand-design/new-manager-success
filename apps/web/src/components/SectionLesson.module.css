@@ -42,10 +42,29 @@
   display: flex;
   flex-direction: column;
   justify-content: center;
+  /* Centres the column on a wide screen. Without it the options stretch to
+     the full width of a desktop window and the feed reads as a web form. */
+  align-items: center;
   gap: var(--nms-space-5);
   padding: calc(var(--nms-space-10) + env(safe-area-inset-top)) var(--nms-space-5)
-    calc(var(--nms-space-8) + env(safe-area-inset-bottom));
+    calc(var(--nms-space-9) + env(safe-area-inset-bottom));
   overflow: hidden;
+}
+
+/*
+ * One column width for everything in the feed, phone-shaped on every screen.
+ *
+ * A feed is a phone format. Letting it fill a 2000px window does not make it
+ * more usable, it makes it a different thing — so on desktop this reads as a
+ * tall centred column, which is what every feed does there.
+ */
+.openInner,
+.quizInner,
+.resultInner,
+.videoWrap,
+.transcriptToggle {
+  width: 100%;
+  max-width: var(--nms-feed-max-width);
 }
 
 /*
@@ -103,6 +122,14 @@
   pointer-events: none;
 }
 
+/* Lines the progress bar up with the column the cards sit in. */
+.chromeRow,
+.track {
+  width: 100%;
+  max-width: var(--nms-feed-max-width);
+  margin-inline: auto;
+}
+
 .chromeRow {
   display: flex;
   align-items: center;
@@ -141,8 +168,18 @@
 
 /* ---- Swipe cue --------------------------------------------------------- */
 
+/*
+ * Pinned to the bottom of the card rather than pushed there with
+ * `margin-top: auto`, which pinned the *content* to the top as a side effect.
+ * On a phone that was invisible because the content nearly filled the card;
+ * on a tall window it left the question stranded at the top under a screen of
+ * empty space.
+ */
 .cue {
-  margin-top: auto;
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: calc(var(--nms-space-6) + env(safe-area-inset-bottom));
   text-align: center;
   font-size: var(--nms-font-caption-size);
   letter-spacing: 0.08em;
