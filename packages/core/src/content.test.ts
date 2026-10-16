@@ -8,6 +8,8 @@ import {
   module01,
   validateContent,
   estimateSectionTotalSeconds,
+  sectionMinutes,
+  sectionTranscript,
   splitListItem,
   splitMomentLines,
 } from '@nms/content';
@@ -166,6 +168,57 @@ describe('quizzes', () => {
       .filter((r) => !AUTHORED.includes(r.number))
       .map((r) => r.number);
     assert.deepEqual(placeholder, ['1.3', '1.4', '1.5', '1.6', '1.7', '1.8']);
+  });
+});
+
+describe('every section can be delivered as a lesson', () => {
+  /*
+   * The lesson is the same five-card shape for all eight sections now, so
+   * each one has to carry what that shape needs. A section that renders an
+   * empty video card and an empty transcript is a dead screen, and the only
+   * honest way to catch that is to assert it here rather than to click
+   * through eight pages.
+   */
+  test('every section has words to show, filmed or not', () => {
+    for (const section of module01.sections) {
+      const { text } = sectionTranscript(section);
+      assert.ok(text.length > 200, `${section.number}: only ${text.length} characters to show`);
+    }
+  });
+
+  test('a section with no film falls back to its script, not to nothing', () => {
+    for (const section of module01.sections.filter((s) => !s.videoUrl)) {
+      const { text, isFinal } = sectionTranscript(section);
+      assert.equal(isFinal, false, `${section.number}: claims a final transcript without a film`);
+      assert.ok(text.includes('\n\n'), `${section.number}: script did not assemble into paragraphs`);
+    }
+  });
+
+  test('a filmed section reports its transcript as final', () => {
+    for (const section of module01.sections.filter((s) => s.videoUrl)) {
+      assert.equal(sectionTranscript(section).isFinal, true, `${section.number}`);
+    }
+  });
+
+  test('every section reports a believable runtime', () => {
+    for (const section of module01.sections) {
+      const minutes = sectionMinutes(section);
+      assert.ok(minutes >= 1, `${section.number}: ${minutes} min`);
+      assert.ok(minutes <= 10, `${section.number}: ${minutes} min is too long for one section`);
+    }
+  });
+
+  test('1.1 reports the three minutes its finished cut actually runs', () => {
+    // The published rev55 cut is 2:54. If the estimator drifts away from the
+    // one section we can check against reality, it is wrong about the rest.
+    const section = module01.sections.find((s) => s.id === 'm1-s1')!;
+    assert.equal(sectionMinutes(section), 3);
+  });
+
+  test('every section has a quiz to follow the film', () => {
+    for (const section of module01.sections) {
+      assert.ok(section.quiz.length > 0, `${section.number}: no questions`);
+    }
   });
 });
 

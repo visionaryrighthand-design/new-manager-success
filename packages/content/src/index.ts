@@ -139,6 +139,40 @@ export function splitMomentLines(text: string): string[] {
 }
 
 /**
+ * How long the lesson's film runs, in whole minutes, for the cold open.
+ *
+ * Derived from the narration rather than read from `durationMinutes`, which
+ * is the target from the script header and says 7 for every section in
+ * Module 1 — a planning figure, not a runtime. The estimate gives 1.1 three
+ * minutes against a real cut of 2:54, so it tracks the finished films closely
+ * enough to tell a learner what they are committing to.
+ */
+export function sectionMinutes(section: Section): number {
+  return Math.max(1, Math.round(estimateSectionSeconds(section) / 60));
+}
+
+/**
+ * The lesson's words, for the transcript panel.
+ *
+ * Prefers `section.transcript` — the final cut, verbatim — and falls back to
+ * assembling the shooting script from the beats.
+ *
+ * The two are not the same thing and the caller is told which it got. A
+ * shooting script is what was written; a transcript is what was said, after
+ * the edit moved things and the presenter changed a word. Presenting the
+ * first as the second would be quietly wrong on every section that has not
+ * been through an edit yet, so `isFinal` exists to let the UI say so.
+ */
+export function sectionTranscript(section: Section): { text: string; isFinal: boolean } {
+  if (section.transcript) return { text: section.transcript, isFinal: true };
+  const text = section.beats
+    .map((beat) => beat.speech?.trim())
+    .filter((speech): speech is string => Boolean(speech))
+    .join('\n\n');
+  return { text, isFinal: false };
+}
+
+/**
  * Whether this beat needs a voiceover recorded for it.
  *
  * `speech` is the signal — except on a `reading` beat, where the same field

@@ -2,7 +2,7 @@
 
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import Link from 'next/link';
-import type { Section, QuizQuestion } from '@nms/content';
+import { sectionMinutes, sectionTranscript, type Section, type QuizQuestion } from '@nms/content';
 import {
   answerSubmitEvent,
   isCorrectOption,
@@ -303,8 +303,8 @@ function OpenCard({
             asking for a swipe without saying what was on the other side. */}
         <ul className={styles.openMeta}>
           <li>
-            <strong>3 min</strong>
-            <span>watch</span>
+            <strong>{sectionMinutes(section)} min</strong>
+            <span>{section.videoUrl ? 'watch' : 'read'}</span>
           </li>
           <li>
             <strong>{questionCount}</strong>
@@ -326,6 +326,7 @@ function OpenCard({
 
 function VideoCard({ index, section }: { index: number; section: Section }) {
   const [transcriptOpen, setTranscriptOpen] = useState(false);
+  const transcript = sectionTranscript(section);
 
   return (
     <section className={styles.card} data-index={index} data-card="video">
@@ -340,11 +341,24 @@ function VideoCard({ index, section }: { index: number; section: Section }) {
             preload="metadata"
           />
         ) : (
-          <p className={styles.videoMissing}>This section has not been filmed yet.</p>
+          /*
+           * No film yet. An empty 9:16 box with an apology in it is a dead
+           * screen in the middle of the lesson, so the script is shown
+           * instead and the section stays usable: the learner reads what
+           * they would otherwise have watched, then answers the same quiz.
+           */
+          <div className={styles.scriptFallback}>
+            <p className={styles.scriptNote}>Not filmed yet — here is the script.</p>
+            <div className={styles.scriptBody}>
+              {transcript.text.split('\n\n').map((para, i) => (
+                <p key={i}>{para}</p>
+              ))}
+            </div>
+          </div>
         )}
       </div>
 
-      {section.transcript ? (
+      {section.videoUrl && transcript.text ? (
         <>
           <button
             type="button"
@@ -369,7 +383,13 @@ function VideoCard({ index, section }: { index: number; section: Section }) {
               out meant a transcript you could open and not close. */}
           <div id="transcript-body" className={styles.transcriptSheet} hidden={!transcriptOpen}>
             <div className={styles.sheetHead}>
-              <span className={styles.sheetTitle}>Transcript</span>
+              {/* Named for what it actually is. Until a section has been
+                  through an edit, this is the script it was shot from, and
+                  calling that a transcript would be a small lie on seven of
+                  the eight sections. */}
+              <span className={styles.sheetTitle}>
+                {transcript.isFinal ? 'Transcript' : 'Script'}
+              </span>
               <button
                 type="button"
                 className={styles.sheetClose}
@@ -379,7 +399,7 @@ function VideoCard({ index, section }: { index: number; section: Section }) {
               </button>
             </div>
             <div className={styles.sheetBody}>
-              {section.transcript.split('\n\n').map((para, i) => (
+              {transcript.text.split('\n\n').map((para, i) => (
                 <p key={i}>{para}</p>
               ))}
             </div>
@@ -387,7 +407,7 @@ function VideoCard({ index, section }: { index: number; section: Section }) {
         </>
       ) : null}
 
-      <SwipeCue>Then the questions</SwipeCue>
+      <SwipeCue>{section.videoUrl ? 'Then the questions' : 'To the questions'}</SwipeCue>
     </section>
   );
 }

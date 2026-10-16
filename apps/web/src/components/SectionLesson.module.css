@@ -399,6 +399,44 @@
   text-align: center;
 }
 
+/* Stands in for the film on a section that has not been shot. Scrolls on its
+   own so the card keeps its height and the feed keeps snapping. */
+.scriptFallback {
+  display: flex;
+  flex-direction: column;
+  gap: var(--nms-space-4);
+  width: 100%;
+  height: 100%;
+  min-height: 0;
+}
+
+.scriptNote {
+  flex: 0 0 auto;
+  align-self: flex-start;
+  padding: var(--nms-space-1) var(--nms-space-4);
+  border-radius: var(--nms-radius-pill);
+  background: color-mix(in srgb, var(--nms-color-warning) 20%, transparent);
+  border: 1px solid color-mix(in srgb, var(--nms-color-warning) 45%, transparent);
+  font-size: var(--nms-font-caption-size);
+  font-weight: 600;
+}
+
+.scriptBody {
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  display: flex;
+  flex-direction: column;
+  gap: var(--nms-space-4);
+  padding-right: var(--nms-space-3);
+  color: var(--nms-color-fg-muted);
+  line-height: 1.7;
+  /* Fades the last line rather than cutting it mid-stroke, so it reads as
+     more text below rather than as a clipping bug. */
+  mask-image: linear-gradient(180deg, #000 85%, transparent);
+}
+
 .transcriptToggle {
   align-self: center;
   display: inline-flex;

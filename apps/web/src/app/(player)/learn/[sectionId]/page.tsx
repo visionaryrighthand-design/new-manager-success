@@ -1,20 +1,22 @@
 import { notFound } from 'next/navigation';
 import type { Metadata } from 'next';
 import { findSection, module01, nextSection } from '@nms/content';
-import { SectionPlayer } from '@/components/SectionPlayer';
 import { SectionLesson } from '@/components/SectionLesson';
 
-/**
- * Sections published as a filmed lesson, which render the lesson page rather
- * than the card feed.
+/*
+ * Every section renders the lesson feed.
  *
- * A list rather than a flag on the content because it is temporary: the other
- * seven sections have no footage, and a feed of their script is a better
- * lesson than a page with an empty video frame at the top. When 1.2 is filmed
- * it joins this list; when all eight are, the list and the branch below both
- * come out and the feed player goes with them.
+ * This used to branch: 1.1 got the lesson, the rest got the older beat-based
+ * card player, because a lesson built around a video made a poor show of a
+ * section with no video. That is handled inside the lesson now — an unfilmed
+ * section presents its script in place of the film and the rest of the
+ * lesson is identical — so the branch is gone and every section behaves the
+ * same way.
+ *
+ * `SectionPlayer` is no longer routed to. It is left in the tree rather than
+ * deleted because it is the only record of the beat-per-card design, and
+ * restoring it is one import.
  */
-const FILMED_SECTIONS = new Set(['m1-s1']);
 
 export function generateStaticParams() {
   return module01.sections.map((section) => ({ sectionId: section.id }));
@@ -36,9 +38,5 @@ export default async function SectionPage({ params }: { params: Promise<{ sectio
   const section = findSection(sectionId);
   if (!section) notFound();
 
-  const nextSectionId = nextSection(section.id)?.id;
-  if (FILMED_SECTIONS.has(section.id)) {
-    return <SectionLesson section={section} nextSectionId={nextSectionId} />;
-  }
-  return <SectionPlayer section={section} nextSectionId={nextSectionId} />;
+  return <SectionLesson section={section} nextSectionId={nextSection(section.id)?.id} />;
 }
