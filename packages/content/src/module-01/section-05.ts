@@ -24,6 +24,18 @@ export const section05: Section = {
     'Self-awareness and self-regulation are the foundation of effective leadership.',
   topics: ['emotional intelligence', 'self-regulation', 'empathy', 'triggers', 'react vs respond'],
 
+  /*
+   * The rev78 cut, 1080x1920. Single file.
+   *
+   * The stored filename truncates the title to `...for-new-manage-`, so the
+   * slug cannot be derived from the section title. Copied from storage.
+   *
+   * NOT VERIFIED FROM THE BUILD ENVIRONMENT: supabase.co is blocked by this
+   * container's network policy, so this URL has never been fetched here.
+   */
+  videoUrl:
+    'https://rhteswkgmndgijpllvjt.supabase.co/storage/v1/object/public/videos/module-1-5-emotional-intelligence-for-new-manage-rev78-1080x1920-30fps.mp4',
+
   beats: [
     {
       id: 'b1',
@@ -169,106 +181,140 @@ export const section05: Section = {
     },
   ],
 
+  /*
+   * Section quiz, ten questions drawn from this section's script.
+   *
+   * NOT from the approved quiz document, which stops after 1.2. Every stem,
+   * option and line of feedback below is ours, written against the beats and
+   * going no further than what the script actually says.
+   */
   quiz: [
     {
       id: 'm1-s5-q1',
       kind: 'recall',
+      format: 'multiple_choice',
       source: '1.5',
-      stem: 'Which component of Emotional Intelligence should a new manager focus on first, and why?',
+      stem: 'What does the section say research identifies as the strongest predictor of management effectiveness?',
       options: [
-        {
-          id: 'a',
-          text: 'Empathy, because relationships come first.',
-          correct: false,
-          feedback: 'Empathy matters, but it is hard to access when you have not yet learned to pause.',
-        },
-        {
-          id: 'b',
-          text: 'Self-regulation, because it directly affects everything else.',
-          correct: true,
-          feedback: 'Pause before you react. Everything else in EI runs downstream of that.',
-        },
-        {
-          id: 'c',
-          text: 'Social skills, because managers spend their day communicating.',
-          correct: false,
-          feedback: 'Important, but not named as the first priority.',
-        },
-        {
-          id: 'd',
-          text: 'Self-awareness, because you cannot change what you cannot see.',
-          correct: false,
-          feedback:
-            'A close and defensible answer, but the section names self-regulation specifically as the one to focus on first.',
-        },
+        { id: 'a', text: 'IQ', correct: false, feedback: 'The section rules this out by name.' },
+        { id: 'b', text: 'Technical expertise', correct: false, feedback: 'Ruled out by name, and 1.2 already covered why being the best doer does not carry over.' },
+        { id: 'c', text: 'Emotional Intelligence', correct: true, feedback: 'Not IQ, not technical expertise, not years of experience.' },
+        { id: 'd', text: 'Years of experience', correct: false, feedback: 'The section rules this out by name.' },
       ],
     },
     {
       id: 'm1-s5-q2',
       kind: 'recall',
+      format: 'multiple_choice',
       source: '1.5',
-      stem: 'Empathy, as defined in this section, means:',
+      stem: 'How does the section define Emotional Intelligence?',
       options: [
-        {
-          id: 'a',
-          text: 'Agreeing with your team member’s perspective.',
-          correct: false,
-          feedback: 'Explicitly not. Empathy is not agreement.',
-        },
-        {
-          id: 'b',
-          text: 'Softening hard decisions to spare people’s feelings.',
-          correct: false,
-          feedback: 'Also explicitly ruled out. Empathy does not change the feedback.',
-        },
-        {
-          id: 'c',
-          text: 'Understanding where someone is coming from before you respond to them.',
-          correct: true,
-          feedback:
-            'It does not change the feedback. It changes the conversation, and the outcome.',
-        },
-        {
-          id: 'd',
-          text: 'Feeling the same emotion your team member is feeling.',
-          correct: false,
-          feedback: 'That is emotional mirroring. The working definition here is about understanding, then responding.',
-        },
+        { id: 'a', text: 'Staying positive regardless of what happens', correct: false, feedback: 'That is closer to the performed happiness 1.4 warned against.' },
+        { id: 'b', text: 'Recognising, understanding and managing your own emotions, and recognising and influencing those of the people around you', correct: true, feedback: 'Both halves matter: yours, and theirs.' },
+        { id: 'c', text: 'Avoiding emotional conversations at work', correct: false, feedback: 'The section is about navigating emotions, not avoiding them.' },
+        { id: 'd', text: 'Being liked by your team', correct: false, feedback: '1.3 is explicit that being liked is not the goal.' },
       ],
     },
     {
       id: 'm1-s5-q3',
-      kind: 'scenario',
+      kind: 'recall',
+      format: 'multiple_choice',
       source: '1.5',
-      stem: 'An employee makes a costly mistake and you feel your frustration spike. Applying self-regulation, what happens next?',
+      stem: 'Why does the section say EI matters more for a manager than for an individual contributor?',
       options: [
-        {
-          id: 'a',
-          text: 'You suppress the frustration and act as if nothing happened.',
-          correct: false,
-          feedback:
-            'Suppression is not regulation. Section 1.4 is clear that your team sees through the performance.',
-        },
-        {
-          id: 'b',
-          text: 'You name the emotion internally, create a few seconds of space, and choose a response based on what the situation needs.',
-          correct: true,
-          feedback: 'Naming it gives you power over it. Even a few seconds changes everything.',
-        },
-        {
-          id: 'c',
-          text: 'You address it immediately while the details are fresh, however you are feeling.',
-          correct: false,
-          feedback:
-            'Speed is not the priority here. The same conversation an hour later, regulated, goes very differently.',
-        },
-        {
-          id: 'd',
-          text: 'You wait until your next scheduled one-on-one, whenever that is.',
-          correct: false,
-          feedback:
-            'Creating space is a matter of seconds or hours, not weeks. Delay this long and the moment is gone.',
-        },
+        { id: 'a', text: 'Because managers attend more meetings', correct: false, feedback: 'The section makes no such argument.' },
+        { id: 'b', text: 'Because feedback, trust, conflict and motivation all run through your ability to navigate emotions', correct: true, feedback: 'For an individual contributor it is a useful skill. For a manager it is the skill.' },
+        { id: 'c', text: 'Because managers are judged on likeability', correct: false, feedback: 'Likeability is not the measure this course uses.' },
+        { id: 'd', text: 'Because managers have less technical work to do', correct: false, feedback: 'Workload is not the reason the section gives.' },
+      ],
+    },
+    {
+      id: 'm1-s5-q4',
+      kind: 'recall',
+      format: 'multiple_choice',
+      source: '1.5',
+      stem: 'Which of these is NOT one of the four components of EI the section lists?',
+      options: [
+        { id: 'a', text: 'Self-Awareness', correct: false, feedback: 'Listed first: knowing what you are feeling and why.' },
+        { id: 'b', text: 'Self-Regulation', correct: false, feedback: 'Listed, and the one the section says to focus on first.' },
+        { id: 'c', text: 'Resilience', correct: true, feedback: 'The four are Self-Awareness, Self-Regulation, Empathy and Social Skills. Resilience is not among them.' },
+        { id: 'd', text: 'Empathy', correct: false, feedback: 'Listed: understanding what others feel and seeing their perspective.' },
+      ],
+    },
+    {
+      id: 'm1-s5-q5',
+      kind: 'recall',
+      format: 'multiple_choice',
+      source: '1.5',
+      stem: 'Which component does the section tell a new manager to focus on first, and why?',
+      options: [
+        { id: 'a', text: 'Empathy, because it builds trust fastest', correct: false, feedback: 'Empathy matters, but it is not the one the section puts first.' },
+        { id: 'b', text: 'Self-Regulation, because it directly affects everything else', correct: true, feedback: 'The ability to pause before you react is what makes the other three usable.' },
+        { id: 'c', text: 'Social Skills, because managers communicate constantly', correct: false, feedback: 'Listed as a component, but not the starting point.' },
+        { id: 'd', text: 'Self-Awareness, because you cannot change what you cannot see', correct: false, feedback: 'A reasonable argument, but the section names self-regulation as the first focus.' },
+      ],
+    },
+    {
+      id: 'm1-s5-q6',
+      kind: 'recall',
+      format: 'multiple_choice',
+      source: '1.5',
+      stem: 'How does the section define self-regulation?',
+      options: [
+        { id: 'a', text: 'Never showing emotion at work', correct: false, feedback: 'The section asks you to manage emotions, not erase them.' },
+        { id: 'b', text: 'Pausing before you react, and responding thoughtfully rather than impulsively', correct: true, feedback: 'Staying calm and intentional when the situation around you is not.' },
+        { id: 'c', text: 'Keeping your workload under control', correct: false, feedback: 'Self-regulation here is emotional, not organisational.' },
+        { id: 'd', text: 'Following a fixed process for every decision', correct: false, feedback: 'The section asks you to choose the response the situation needs, not to apply one process.' },
+      ],
+    },
+    {
+      id: 'm1-s5-q7',
+      kind: 'recall',
+      format: 'multiple_choice',
+      source: '1.5',
+      stem: 'The section says naming an emotion internally before reacting does what?',
+      options: [
+        { id: 'a', text: 'Gives you power over it', correct: true, feedback: 'One of the four practices, alongside creating space, knowing your triggers, and choosing your response.' },
+        { id: 'b', text: 'Makes the feeling go away', correct: false, feedback: 'The section does not promise the feeling disappears, only that naming it changes your relationship to it.' },
+        { id: 'c', text: 'Signals to your team that you are struggling', correct: false, feedback: 'The naming is internal, before you react.' },
+        { id: 'd', text: 'Prevents you from making the decision at all', correct: false, feedback: 'The point is to choose your response, not to avoid responding.' },
+      ],
+    },
+    {
+      id: 'm1-s5-q8',
+      kind: 'recall',
+      format: 'multiple_choice',
+      source: '1.5',
+      stem: 'What does the section say empathy is NOT?',
+      options: [
+        { id: 'a', text: 'Understanding where someone is coming from', correct: false, feedback: 'That is exactly what the section says empathy is.' },
+        { id: 'b', text: 'Agreeing with everyone, or avoiding hard decisions to spare feelings', correct: true, feedback: 'The section is explicit that empathy does not mean either of those.' },
+        { id: 'c', text: 'Getting curious about what is driving a reaction', correct: false, feedback: 'That is the behaviour the section describes as empathy in practice.' },
+        { id: 'd', text: 'Asking what someone might be dealing with that you cannot see', correct: false, feedback: 'That is the empathetic question the section models.' },
+      ],
+    },
+    {
+      id: 'm1-s5-q9',
+      kind: 'scenario',
+      format: 'multiple_choice',
+      source: '1.5',
+      stem: 'A team member is resistant to feedback. What does the section say separates a manager with empathy from one without?',
+      options: [
+        { id: 'a', text: 'The manager with empathy softens the feedback', correct: false, feedback: 'The section is explicit: the curiosity does not change the feedback.' },
+        { id: 'b', text: 'The manager without empathy gets frustrated; the manager with empathy gets curious', correct: true, feedback: 'Same feedback, different conversation, different outcome.' },
+        { id: 'c', text: 'The manager with empathy postpones the conversation', correct: false, feedback: 'Nothing in the section suggests delay.' },
+        { id: 'd', text: 'The manager with empathy agrees with the pushback', correct: false, feedback: 'Empathy is not agreement. The section says so directly.' },
+      ],
+    },
+    {
+      id: 'm1-s5-q10',
+      kind: 'recall',
+      format: 'true_false',
+      source: '1.5',
+      stem: 'You are born with a fixed level of Emotional Intelligence that cannot meaningfully change.',
+      options: [
+        { id: 'true', text: 'True', correct: false, feedback: 'The section says the opposite: EI responds to practice, feedback and intentional effort, like any other skill.' },
+        { id: 'false', text: 'False', correct: true, feedback: 'EI grows with every intentional choice — every pause instead of a reaction, every attempt to understand before being understood.' },
       ],
     },
   ],
