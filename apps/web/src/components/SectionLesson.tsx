@@ -2,7 +2,13 @@
 
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import Link from 'next/link';
-import { sectionMinutes, sectionTranscript, type Section, type QuizQuestion } from '@nms/content';
+import {
+  sectionMinutes,
+  sectionTranscript,
+  sectionVideoParts,
+  type Section,
+  type QuizQuestion,
+} from '@nms/content';
 import {
   answerSubmitEvent,
   isCorrectOption,
@@ -70,7 +76,9 @@ export function SectionLesson({
     [section, answers],
   );
 
-  const answeredAll = Object.keys(answers).length === section.quiz.length;
+  // Only the section quiz counts towards completion. Knowledge-check answers
+  // live in the same map but are not part of the assessment.
+  const answeredAll = section.quiz.every((q) => answers[q.id]);
 
   /*
    * The quiz submits itself when the last question is answered. In a feed
@@ -93,7 +101,25 @@ export function SectionLesson({
   const choose = useCallback(
     (question: QuizQuestion, optionId: string) => {
       setAnswers((prev) => (prev[question.id] ? prev : { ...prev, [question.id]: optionId }));
-      browserSink.recordEvent(answerSubmitEvent(section, question.id, optionId, new Date()));
+      /*
+       * `answerSubmitEvent` resolves correctness by looking the question up
+       * in `section.quiz`, which a knowledge-check question is not part of —
+       * it would log every check answer as wrong. Checks are logged with
+       * correctness read off the question itself.
+       */
+      const inSectionQuiz = section.quiz.some((q) => q.id === question.id);
+      browserSink.recordEvent(
+        inSectionQuiz
+          ? answerSubmitEvent(section, question.id, optionId, new Date())
+          : {
+              type: 'answer_submit',
+              module_id: section.moduleNumber,
+              section_id: section.id,
+              question_id: question.id,
+              correct: isCorrect(question, optionId),
+              at: new Date().toISOString(),
+            },
+      );
     },
     [section],
   );
@@ -130,7 +156,7 @@ export function SectionLesson({
   }, [revealed]);
 
   const questionCards = cards.filter((c) => c.kind === 'quiz');
-  const answeredCount = Object.keys(answers).length;
+  const answeredCount = section.quiz.filter((q) => answers[q.id]).length;
 
   return (
     /* `data-surface="feed"` switches the token set to the dark one. The feed
@@ -157,7 +183,30 @@ export function SectionLesson({
               />
             );
           case 'video':
-            return <VideoCard key={card.key} index={i} section={section} />;
+            return (
+              <VideoCard
+                key={card.key}
+                index={i}
+                section={section}
+                url={card.url}
+                part={card.part}
+                parts={card.parts}
+              />
+            );
+          case 'check':
+            return (
+              <QuizCard
+                key={card.key}
+                index={i}
+                section={section}
+                question={card.question}
+                position={card.position}
+                total={card.total}
+                chosen={answers[card.question.id]}
+                onChoose={choose}
+                variant="check"
+              />
+            );
           case 'quiz':
             return (
               <QuizCard
@@ -189,33 +238,75 @@ export function SectionLesson({
   );
 }
 
+/**
+ * Correctness read straight off the question.
+ *
+ * `isCorrectOption` looks the question up in `section.quiz`, which a
+ * knowledge-check question is deliberately not part of — it would return
+ * false for every option and mark a right answer wrong.
+ */
+function isCorrect(question: QuizQuestion, optionId: string): boolean {
+  return question.options.find((o) => o.id === optionId)?.correct === true;
+}
+
 /* ---- Card list --------------------------------------------------------- */
 
 type Card =
   | { kind: 'open'; key: string }
-  | { kind: 'video'; key: string }
+  | { kind: 'video'; key: string; url?: string; part: number; parts: number }
+  /** A mid-film knowledge check. Answered like a quiz card, not scored like one. */
+  | { kind: 'check'; key: string; question: QuizQuestion; position: number; total: number }
   | { kind: 'quiz'; key: string; question: QuizQuestion; position: number }
   | { kind: 'result'; key: string };
 
 function buildCards(section: Section): Card[] {
-  return [
-    { kind: 'open', key: `open-${section.id}` },
-    { kind: 'video', key: `video-${section.id}` },
-    ...section.quiz.map((question, i) => ({
-      kind: 'quiz' as const,
-      key: `q-${question.id}`,
-      question,
-      position: i + 1,
-    })),
-    { kind: 'result', key: `result-${section.id}` },
-  ];
+  const parts = sectionVideoParts(section);
+  const cards: Card[] = [{ kind: 'open', key: `open-${section.id}` }];
+
+  if (parts.length === 0) {
+    // Unfilmed: one card, carrying the script in place of the film.
+    cards.push({ kind: 'video', key: `video-${section.id}`, part: 1, parts: 1 });
+  } else {
+    parts.forEach((part, i) => {
+      cards.push({
+        kind: 'video',
+        key: `video-${section.id}-${i}`,
+        url: part.url,
+        part: i + 1,
+        parts: parts.length,
+      });
+      // The check sits between this part and the next, so what was just
+      // watched gets retrieved before more arrives on top of it.
+      part.check?.forEach((question, j) =>
+        cards.push({
+          kind: 'check',
+          key: `c-${question.id}`,
+          question,
+          position: j + 1,
+          total: part.check!.length,
+        }),
+      );
+    });
+  }
+
+  section.quiz.forEach((question, i) =>
+    cards.push({ kind: 'quiz', key: `q-${question.id}`, question, position: i + 1 }),
+  );
+  cards.push({ kind: 'result', key: `result-${section.id}` });
+  return cards;
 }
 
-/** The feed ends at the first unanswered question. See the note on the gate. */
+/**
+ * The feed ends at the first unanswered question. See the note on the gate.
+ *
+ * Checks gate the same way quiz questions do — that is the whole point of
+ * putting one between two halves of a film — so both kinds stop the feed.
+ */
 function revealedCount(cards: Card[], answers: Record<string, string>): number {
   for (let i = 0; i < cards.length; i++) {
     const card = cards[i]!;
-    if (card.kind === 'quiz' && !answers[card.question.id]) return i + 1;
+    const isQuestion = card.kind === 'quiz' || card.kind === 'check';
+    if (isQuestion && !answers[card.question.id]) return i + 1;
   }
   return cards.length;
 }
@@ -324,17 +415,40 @@ function OpenCard({
   );
 }
 
-function VideoCard({ index, section }: { index: number; section: Section }) {
+function VideoCard({
+  index,
+  section,
+  url,
+  part,
+  parts,
+}: {
+  index: number;
+  section: Section;
+  url?: string;
+  part: number;
+  parts: number;
+}) {
   const [transcriptOpen, setTranscriptOpen] = useState(false);
   const transcript = sectionTranscript(section);
+  // Unique per card: a two-part section renders two of these, and a repeated
+  // id makes aria-controls point at whichever one the browser found first.
+  const panelId = `transcript-${section.id}-${part}`;
 
   return (
-    <section className={styles.card} data-index={index} data-card="video">
+    <section className={styles.card} data-index={index} data-card="video" data-part={part}>
+      {/* Only when there is more than one, so a single-file section is not
+          labelled "Part 1 of 1". */}
+      {parts > 1 ? (
+        <p className={styles.partLabel}>
+          Part {part} of {parts}
+        </p>
+      ) : null}
+
       <div className={styles.videoWrap}>
-        {section.videoUrl ? (
+        {url ? (
           <video
             className={styles.video}
-            src={section.videoUrl}
+            src={url}
             poster={section.posterUrl}
             controls
             playsInline
@@ -358,14 +472,17 @@ function VideoCard({ index, section }: { index: number; section: Section }) {
         )}
       </div>
 
-      {section.videoUrl && transcript.text ? (
+      {/* Keyed off this card's own file, not `section.videoUrl` — a section
+          delivered in parts has no `videoUrl`, and testing it there hid the
+          script toggle on every multi-part lesson. */}
+      {url && transcript.text ? (
         <>
           <button
             type="button"
             className={styles.transcriptToggle}
             onClick={() => setTranscriptOpen(true)}
             aria-expanded={transcriptOpen}
-            aria-controls="transcript-body"
+            aria-controls={panelId}
             hidden={transcriptOpen}
           >
             {transcript.isFinal ? 'Transcript' : 'Script'}
@@ -381,7 +498,7 @@ function VideoCard({ index, section }: { index: number; section: Section }) {
               The sheet carries its own close control. The opening button sits
               mid-card, which the sheet covers — leaving that as the only way
               out meant a transcript you could open and not close. */}
-          <div id="transcript-body" className={styles.transcriptSheet} hidden={!transcriptOpen}>
+          <div id={panelId} className={styles.transcriptSheet} hidden={!transcriptOpen}>
             <div className={styles.sheetHead}>
               {/* Named for what it actually is. Until a section has been
                   through an edit, this is the script it was shot from, and
@@ -420,6 +537,7 @@ function QuizCard({
   total,
   chosen,
   onChoose,
+  variant = 'quiz',
 }: {
   index: number;
   section: Section;
@@ -428,23 +546,25 @@ function QuizCard({
   total: number;
   chosen?: string;
   onChoose: (question: QuizQuestion, optionId: string) => void;
+  variant?: 'quiz' | 'check';
 }) {
   const answered = chosen != null;
-  const gotItRight = answered && isCorrectOption(section, question.id, chosen);
+  const gotItRight = answered && isCorrect(question, chosen);
+  const isCheck = variant === 'check';
 
   return (
     <section
       className={styles.card}
       data-index={index}
-      data-card="quiz"
+      data-card={isCheck ? 'check' : 'quiz'}
       /* Seeds the per-card wash so consecutive questions do not share a
          background. A feed where every card looks identical reads as one long
          page that keeps snapping. */
       data-tint={position % 4}
     >
       <div className={styles.quizInner}>
-        <p className={styles.quizLabel}>
-          Question {position} of {total}
+        <p className={isCheck ? styles.checkLabel : styles.quizLabel}>
+          {isCheck ? `Quick check · ${position} of ${total}` : `Question ${position} of ${total}`}
         </p>
         <p className={styles.stem}>{question.stem}</p>
 
@@ -489,7 +609,17 @@ function QuizCard({
         ) : null}
       </div>
 
-      {answered ? <SwipeCue>{position === total ? 'See your score' : 'Next question'}</SwipeCue> : null}
+      {answered ? (
+        <SwipeCue>
+          {isCheck
+            ? position === total
+              ? 'Back to the film'
+              : 'Next check'
+            : position === total
+              ? 'See your score'
+              : 'Next question'}
+        </SwipeCue>
+      ) : null}
     </section>
   );
 }

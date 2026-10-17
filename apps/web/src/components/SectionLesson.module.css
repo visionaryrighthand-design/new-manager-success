@@ -732,3 +732,29 @@
   font-size: var(--nms-font-caption-size);
   color: var(--nms-color-fg-subtle);
 }
+
+/* ---- Knowledge check --------------------------------------------------- */
+
+/*
+ * A check reads as a pause in the film, not as the exam. Same card and same
+ * controls, different label colour, so the learner can tell at a glance that
+ * this one does not count towards the score.
+ */
+.checkLabel {
+  font-size: var(--nms-font-label-size);
+  font-weight: var(--nms-font-label-weight);
+  letter-spacing: var(--nms-font-label-tracking);
+  text-transform: uppercase;
+  color: var(--nms-color-bright);
+}
+
+.partLabel {
+  align-self: flex-start;
+  width: 100%;
+  max-width: var(--nms-feed-max-width);
+  font-size: var(--nms-font-label-size);
+  font-weight: var(--nms-font-label-weight);
+  letter-spacing: var(--nms-font-label-tracking);
+  text-transform: uppercase;
+  color: var(--nms-color-fg-muted);
+}

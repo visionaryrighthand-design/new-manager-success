@@ -8,8 +8,10 @@ import {
   module01,
   validateContent,
   estimateSectionTotalSeconds,
+  sectionChecks,
   sectionMinutes,
   sectionTranscript,
+  sectionVideos,
   splitListItem,
   splitMomentLines,
 } from '@nms/content';
@@ -233,6 +235,58 @@ describe('every section can be delivered as a lesson', () => {
   });
 });
 
+describe('knowledge checks', () => {
+  /*
+   * A check sits between two parts of a film. It is formative — it exists to
+   * make the learner retrieve what they just watched before more arrives —
+   * so it is deliberately not part of `section.quiz` and must not reach the
+   * score.
+   */
+  test('check questions are not part of the section quiz', () => {
+    for (const section of module01.sections) {
+      const quizIds = new Set(section.quiz.map((q) => q.id));
+      for (const check of sectionChecks(section)) {
+        assert.equal(
+          quizIds.has(check.id),
+          false,
+          `${section.number}/${check.id}: a check question is also in the graded quiz`,
+        );
+      }
+    }
+  });
+
+  test('a check only ever follows a part that is not the last', () => {
+    // A check after the final part is just the quiz with a different name.
+    for (const section of module01.sections) {
+      const parts = section.videoParts ?? [];
+      if (parts.length === 0) continue;
+      assert.ok(
+        !parts[parts.length - 1]?.check?.length,
+        `${section.number}: the last part carries a check`,
+      );
+    }
+  });
+
+  test('check questions are well formed, like any other question', () => {
+    for (const section of module01.sections) {
+      for (const q of sectionChecks(section)) {
+        const expected = q.format === 'true_false' ? 2 : 4;
+        assert.equal(q.options.length, expected, `${q.id}: wrong option count`);
+        assert.equal(q.options.filter((o) => o.correct).length, 1, `${q.id}: not one correct`);
+        for (const o of q.options) {
+          assert.ok(o.feedback.length > 0, `${q.id}/${o.id}: no feedback`);
+        }
+      }
+    }
+  });
+
+  test('1.3 checks the learner between its two parts', () => {
+    const section = module01.sections.find((s) => s.number === '1.3')!;
+    assert.equal(sectionVideos(section).length, 2);
+    assert.ok(sectionChecks(section).length > 0, '1.3 has no knowledge check');
+  });
+});
+
 describe('transcripts', () => {
   test('a filmed lesson stores its transcript', () => {
     const section = module01.sections.find((r) => r.id === 'm1-s1')!;
@@ -255,23 +309,54 @@ describe('transcripts', () => {
 });
 
 describe('video wiring', () => {
-  test('no two lessons point at the same film', () => {
+  test('no two lessons point at the same file, counting every part', () => {
     const owners = new Map<string, string>();
     for (const section of module01.sections) {
-      if (!section.videoUrl) continue;
-      const first = owners.get(section.videoUrl);
-      assert.equal(first, undefined, `${section.number} duplicates the film on ${first}`);
-      owners.set(section.videoUrl, section.number);
+      for (const url of sectionVideos(section)) {
+        const first = owners.get(url);
+        assert.equal(first, undefined, `${section.number} duplicates a file on ${first}`);
+        owners.set(url, section.number);
+      }
     }
   });
 
   test('every wired film is a direct URL, not a share page', () => {
     for (const section of module01.sections) {
-      if (!section.videoUrl) continue;
-      // The extension is read off the path: a signed URL carries its token in
-      // the query, so the last characters are never the file type.
-      const path = new URL(section.videoUrl).pathname;
-      assert.match(path, /\.(mp4|m3u8|webm)$/, `${section.number}: not a direct video URL`);
+      for (const url of sectionVideos(section)) {
+        // The extension is read off the path: a signed URL carries its token
+        // in the query, so the last characters are never the file type.
+        assert.match(
+          new URL(url).pathname,
+          /\.(mp4|m3u8|webm)$/,
+          `${section.number}: not a direct video URL`,
+        );
+      }
+    }
+  });
+
+  test('a section does not set both videoUrl and videoParts', () => {
+    // One of them would be silently ignored.
+    for (const section of module01.sections) {
+      assert.ok(
+        !(section.videoUrl && section.videoParts?.length),
+        `${section.number}: sets both`,
+      );
+    }
+  });
+
+  test('multi-part films are listed in running order', () => {
+    // The part number in the filename is the authority — the revision numbers
+    // do not order them, and 1.3's parts were handed over back to front.
+    for (const section of module01.sections) {
+      const parts = sectionVideos(section);
+      if (parts.length < 2) continue;
+      parts.forEach((url, i) => {
+        assert.match(
+          url,
+          new RegExp(`part-${i + 1}-`),
+          `${section.number}: file at position ${i + 1} is not part ${i + 1}`,
+        );
+      });
     }
   });
 

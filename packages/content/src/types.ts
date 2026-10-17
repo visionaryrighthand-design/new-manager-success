@@ -190,6 +190,24 @@ export interface ContentAddition {
 // Sections and Modules
 // ---------------------------------------------------------------------------
 
+/** One file of a film that was delivered in several. */
+export interface VideoPart {
+  /** Direct, streamable URL. A share page is not one. */
+  url: string;
+  /**
+   * A short check on what this part covered, shown before the next part
+   * starts.
+   *
+   * Formative, not graded: it is there to make the learner retrieve what they
+   * just watched before more arrives, which is the point at which it sticks.
+   * It gives the same immediate feedback as the section quiz but does not
+   * count towards the score, because a mid-lesson comprehension check and an
+   * end-of-lesson assessment are different instruments and averaging them
+   * makes the score mean neither.
+   */
+  check?: QuizQuestion[];
+}
+
 export interface Section {
   /** Stable id, e.g. 'm1-s3'. */
   id: string;
@@ -231,6 +249,20 @@ export interface Section {
    * Must be a direct, streamable URL (MP4 or HLS). A share page is not one.
    */
   videoUrl?: string;
+  /**
+   * The film, when it was delivered in more than one file, in running order.
+   *
+   * Some sections are shot and exported in parts. The lesson is still one
+   * lesson — the parts play in order and the section quiz follows all of
+   * them — so this is a list of files rather than a way to split a section
+   * in two.
+   *
+   * Mutually exclusive with `videoUrl`, which is the one-file shorthand.
+   * Setting both is a content error and `validateContent` reports it. Read
+   * through `sectionVideos()` rather than either field, so a renderer never
+   * has to know which shape a section used.
+   */
+  videoParts?: VideoPart[];
   /**
    * The URL `videoUrl` replaced, kept so a bad publish can be rolled back by
    * swapping two lines rather than digging through git history.

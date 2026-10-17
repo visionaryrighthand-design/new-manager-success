@@ -9,6 +9,7 @@ import type {
   CourseModule,
   QuizQuestion,
   Section,
+  VideoPart,
   ScriptDeviation,
 } from './types.js';
 
@@ -136,6 +137,33 @@ export function splitMomentLines(text: string): string[] {
   const parts = text.trim().match(/[^.!?]+[.!?]+["'’”]?\s*/g);
   if (!parts || parts.length < 2) return [text.trim()];
   return parts.map((p) => p.trim()).filter(Boolean);
+}
+
+/**
+ * The section's film, as a list of files in running order.
+ *
+ * The one read path for video. A section may store a single `videoUrl` or a
+ * list of `videoParts`, and nothing downstream should care which: this
+ * returns `[]` for an unfilmed section, one entry for a single-file one, and
+ * the parts in order for a split one.
+ */
+export function sectionVideoParts(section: Section): VideoPart[] {
+  if (section.videoParts?.length) return section.videoParts;
+  return section.videoUrl ? [{ url: section.videoUrl }] : [];
+}
+
+export function sectionVideos(section: Section): string[] {
+  return sectionVideoParts(section).map((part) => part.url);
+}
+
+/** Every mid-film knowledge-check question in the section, in running order. */
+export function sectionChecks(section: Section): QuizQuestion[] {
+  return sectionVideoParts(section).flatMap((part) => part.check ?? []);
+}
+
+/** Whether the section has any film at all. */
+export function isFilmed(section: Section): boolean {
+  return sectionVideos(section).length > 0;
 }
 
 /**
@@ -283,12 +311,20 @@ export function validateContent(): string[] {
    */
   const seenVideos = new Map<string, string>();
   for (const section of allSections()) {
-    if (!section.videoUrl) continue;
-    const first = seenVideos.get(section.videoUrl);
-    if (first) {
-      problems.push(`${section.number}: shares its video with ${first} — one file on two lessons`);
-    } else {
-      seenVideos.set(section.videoUrl, section.number);
+    if (section.videoUrl && section.videoParts?.length) {
+      problems.push(
+        `${section.number}: sets both videoUrl and videoParts — one of them is being ignored`,
+      );
+    }
+    // Checks every part, not just the first: two halves of one section
+    // pointing at the same export is the mistake this is here to catch.
+    for (const url of sectionVideos(section)) {
+      const first = seenVideos.get(url);
+      if (first) {
+        problems.push(`${section.number}: shares a video file with ${first}`);
+      } else {
+        seenVideos.set(url, section.number);
+      }
     }
   }
 
