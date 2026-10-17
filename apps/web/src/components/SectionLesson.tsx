@@ -229,7 +229,15 @@ export function SectionLesson({
           case 'apply':
             return <ApplyCard key={card.key} index={i} section={section} />;
           case 'reinforce':
-            return <ReinforceCard key={card.key} index={i} section={section} />;
+            return (
+              <ReinforceCard
+                key={card.key}
+                index={i}
+                section={section}
+                nextSectionId={nextSectionId}
+                unlocked={unlocked}
+              />
+            );
           case 'result':
             return (
               <ResultCard
@@ -258,6 +266,21 @@ export function SectionLesson({
 function isCorrect(question: QuizQuestion, optionId: string): boolean {
   return question.options.find((o) => o.id === optionId)?.correct === true;
 }
+
+/**
+ * The four stages, in order, as the learner meets them.
+ *
+ * Watch and Practice happen in the app in one sitting. Apply happens at work
+ * in the days after. Reinforce comes back to both. Written here once and
+ * rendered on the cold open, so the model is something the learner is told
+ * rather than something only the content model knows.
+ */
+const STAGES: ReadonlyArray<{ name: string; what: string }> = [
+  { name: 'Watch', what: 'The film' },
+  { name: 'Practice', what: 'Questions, with answers' },
+  { name: 'Apply', what: 'One real task at work' },
+  { name: 'Reinforce', what: 'It comes back, and someone asks' },
+];
 
 /* ---- Card list --------------------------------------------------------- */
 
@@ -428,6 +451,18 @@ function OpenCard({
         </ul>
 
         <p className={styles.openIdea}>{section.keyIdea}</p>
+
+        {/* The shape of the lesson, stated up front. A learner who knows a
+            workplace task is coming watches the film differently from one who
+            thinks they are about to be quizzed and released. */}
+        <ol className={styles.stageStrip}>
+          {STAGES.map((stage) => (
+            <li key={stage.name}>
+              <strong>{stage.name}</strong>
+              <span>{stage.what}</span>
+            </li>
+          ))}
+        </ol>
       </div>
 
       <SwipeCue loud>Swipe up</SwipeCue>
@@ -458,11 +493,9 @@ function VideoCard({
     <section className={styles.card} data-index={index} data-card="video" data-part={part}>
       {/* Only when there is more than one, so a single-file section is not
           labelled "Part 1 of 1". */}
-      {parts > 1 ? (
-        <p className={styles.partLabel}>
-          Part {part} of {parts}
-        </p>
-      ) : null}
+      <p className={styles.stageLabel}>
+        Watch{parts > 1 ? ` · part ${part} of ${parts}` : ''}
+      </p>
 
       <div className={styles.videoWrap}>
         {url ? (
@@ -584,7 +617,9 @@ function QuizCard({
     >
       <div className={styles.quizInner}>
         <p className={isCheck ? styles.checkLabel : styles.quizLabel}>
-          {isCheck ? `Quick check · ${position} of ${total}` : `Question ${position} of ${total}`}
+          {isCheck
+            ? `Quick check · ${position} of ${total}`
+            : `Practice · ${position} of ${total}`}
         </p>
         <p className={styles.stem}>{question.stem}</p>
 
@@ -668,12 +703,16 @@ function ResultCard({
         </p>
         {xp > 0 ? <p className={styles.resultXp}>+{xp} XP</p> : null}
 
+        {/*
+          * No "Next section" here.
+          *
+          * The result used to carry it, and it sat two cards before the end
+          * of the lesson — so the obvious thing to tap took the learner
+          * straight to 1.2 and Apply and Reinforce were never seen. The exit
+          * now lives on the last card, which is where the lesson actually
+          * ends.
+          */}
         <div className={styles.resultActions}>
-          {nextSectionId && unlocked ? (
-            <Link href={`/learn/${nextSectionId}`} className="nms-btn nms-btn--bright">
-              Next section
-            </Link>
-          ) : null}
           <button type="button" className="nms-btn nms-btn--ghost" onClick={onTryAgain}>
             Try again
           </button>
@@ -682,6 +721,7 @@ function ResultCard({
             the door is open before they decide the app is judging them. */}
         <p className={styles.resultNote}>No pass mark. Retake it as often as you like.</p>
       </div>
+      <SwipeCue loud>Now put it to work</SwipeCue>
     </section>
   );
 }
@@ -749,7 +789,17 @@ function ApplyCard({ index, section }: { index: number; section: Section }) {
  * that a question returns later, and that a real person will ask how the task
  * went — only change behaviour if the learner knows they are coming.
  */
-function ReinforceCard({ index, section }: { index: number; section: Section }) {
+function ReinforceCard({
+  index,
+  section,
+  nextSectionId,
+  unlocked,
+}: {
+  index: number;
+  section: Section;
+  nextSectionId?: string;
+  unlocked: boolean;
+}) {
   const reinforcement = sectionReinforcement(section);
   if (!reinforcement) return null;
 
@@ -780,6 +830,14 @@ function ReinforceCard({ index, section }: { index: number; section: Section }) 
           Nothing here is marked. The app cannot see your workplace — the point is that a person
           you respect asks how it went.
         </p>
+
+        {nextSectionId && unlocked ? (
+          <div className={styles.resultActions}>
+            <Link href={`/learn/${nextSectionId}`} className="nms-btn nms-btn--bright">
+              Next section
+            </Link>
+          </div>
+        ) : null}
       </div>
     </section>
   );

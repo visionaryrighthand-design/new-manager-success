@@ -860,3 +860,50 @@
   line-height: 1.5;
   color: var(--nms-color-fg-subtle);
 }
+
+/* The four stages, listed on the cold open. */
+.stageStrip {
+  list-style: none;
+  margin: var(--nms-space-4) 0 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--nms-space-2);
+  counter-reset: stage;
+}
+
+.stageStrip li {
+  counter-increment: stage;
+  display: flex;
+  align-items: baseline;
+  gap: var(--nms-space-3);
+  padding: var(--nms-space-2) var(--nms-space-3);
+  border-radius: var(--nms-radius-sm);
+  background: color-mix(in srgb, var(--nms-color-surface) 55%, transparent);
+}
+
+.stageStrip li::before {
+  content: counter(stage);
+  flex: 0 0 auto;
+  width: 1.4em;
+  height: 1.4em;
+  display: grid;
+  place-items: center;
+  border-radius: var(--nms-radius-pill);
+  background: var(--nms-color-accent-soft);
+  color: var(--nms-color-accent-text);
+  font-family: var(--nms-font-mono);
+  font-size: 0.65rem;
+  font-weight: 700;
+}
+
+.stageStrip strong {
+  font-size: var(--nms-font-caption-size);
+  font-weight: 700;
+  letter-spacing: 0.04em;
+}
+
+.stageStrip span {
+  font-size: var(--nms-font-caption-size);
+  color: var(--nms-color-fg-muted);
+}

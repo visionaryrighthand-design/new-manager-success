@@ -203,90 +203,142 @@ export const section06: Section = {
 
 
 
+  /*
+   * Section quiz, ten questions drawn from this section's script.
+   *
+   * NOT from the approved quiz document, which stops after 1.2. Every stem,
+   * option and line of feedback below is ours, written against the beats.
+   *
+   * The model is named "The Readiness Dial" throughout, per deviation D6 —
+   * see IP_PUNCH_LIST.md. No question here uses the trademarked name.
+   */
   quiz: [
     {
       id: 'm1-s6-q1',
       kind: 'recall',
+      format: 'multiple_choice',
       source: '1.6',
-      stem: 'Readiness is made up of which two things?',
+      stem: 'What does the section say about treating everyone on your team exactly the same way?',
       options: [
-        {
-          id: 'a',
-          text: 'Skill level and confidence level for that specific task.',
-          correct: true,
-          feedback: 'Both, and always for a specific task, not for the person in general.',
-        },
-        { id: 'b', text: 'Experience and seniority.', correct: false, feedback: 'Neither is what readiness measures.' },
-        { id: 'c', text: 'Motivation and attitude.', correct: false, feedback: 'Motivation shows up inside the levels, but readiness is skill plus confidence.' },
-        { id: 'd', text: 'Performance history and potential.', correct: false, feedback: 'Those are evaluation terms, not readiness.' },
+        { id: 'a', text: 'It is the fairest approach available to a manager', correct: false, feedback: 'The section says it sounds fair on the surface, then explains why it is not.' },
+        { id: 'b', text: 'It does not make you fair — it makes you inflexible', correct: true, feedback: 'Different people need different things, and the same person needs different things on different tasks.' },
+        { id: 'c', text: 'It works until the team grows past about ten people', correct: false, feedback: 'The section makes no argument about team size.' },
+        { id: 'd', text: 'It is the only defensible approach for a new manager', correct: false, feedback: 'The section calls it a common and costly mistake.' },
       ],
     },
     {
       id: 'm1-s6-q2',
       kind: 'recall',
+      format: 'multiple_choice',
       source: '1.6',
-      stem: 'What is the most common mistake managers make when applying the readiness levels?',
+      stem: 'Readiness is made up of which two things?',
       options: [
-        {
-          id: 'a',
-          text: 'Treating the levels as person-specific rather than task-specific.',
-          correct: true,
-          feedback:
-            'Your Level 4 on their daily work can be a Level 2 the moment the task changes. The dial moves with the task.',
-        },
-        {
-          id: 'b',
-          text: 'Assuming everyone starts at Level 1.',
-          correct: false,
-          feedback: 'A smaller error, and not the one the section calls out.',
-        },
-        {
-          id: 'c',
-          text: 'Moving people through the levels too quickly.',
-          correct: false,
-          feedback: 'Not the named mistake.',
-        },
-        {
-          id: 'd',
-          text: 'Telling people what level they are at.',
-          correct: false,
-          feedback: 'Not addressed in this section.',
-        },
+        { id: 'a', text: 'Experience and seniority', correct: false, feedback: 'Years served is not what the section measures.' },
+        { id: 'b', text: 'Skill level and confidence level, for that specific task', correct: true, feedback: 'Both, and always for a particular task rather than in general.' },
+        { id: 'c', text: 'Attitude and availability', correct: false, feedback: 'Willingness appears at Level 2, but the two components are skill and confidence.' },
+        { id: 'd', text: 'Performance and potential', correct: false, feedback: 'That is a different framework. This section uses skill and confidence.' },
       ],
     },
     {
       id: 'm1-s6-q3',
-      kind: 'scenario',
+      kind: 'recall',
+      format: 'multiple_choice',
       source: '1.6',
-      stem: 'Someone on your team has the skill to run a project alone but keeps checking in for reassurance before every decision. Which level, and which response?',
+      stem: 'Someone is new to a task with low skill and low confidence. Which level, and what do they need?',
       options: [
-        {
-          id: 'a',
-          text: 'Level 1, Direct. Give specific instructions and check in frequently.',
-          correct: false,
-          feedback: 'They already have the skill. Directing them will confirm the doubt they already have.',
-        },
-        {
-          id: 'b',
-          text: 'Level 3, Support. Encourage, ask questions, step back and let them lead while staying close.',
-          correct: true,
-          feedback:
-            'Able but unsure. The gap is confidence, not capability, so the answer is presence, not instruction.',
-        },
-        {
-          id: 'c',
-          text: 'Level 4, Delegate. Hand it over and get out of the way.',
-          correct: false,
-          feedback:
-            'Skill says Level 4, confidence says otherwise. Full withdrawal at this point usually stalls the work.',
-        },
-        {
-          id: 'd',
-          text: 'Level 2, Coach. Explain the why and involve them in problem-solving.',
-          correct: false,
-          feedback:
-            'Coaching addresses a skill gap. There isn’t one here, teaching them what they already know can read as condescension.',
-        },
+        { id: 'a', text: 'Level 1 — clear direction', correct: true, feedback: 'Unable and Unsure. Be specific, give clear instructions, check in frequently.' },
+        { id: 'b', text: 'Level 2 — coaching and encouragement', correct: false, feedback: 'Level 2 is low skill but eager and motivated. This person is also low on confidence.' },
+        { id: 'c', text: 'Level 3 — support and reassurance', correct: false, feedback: 'Level 3 already has the skill and lacks only confidence.' },
+        { id: 'd', text: 'Level 4 — autonomy and trust', correct: false, feedback: 'Level 4 is high skill and high confidence.' },
+      ],
+    },
+    {
+      id: 'm1-s6-q4',
+      kind: 'recall',
+      format: 'multiple_choice',
+      source: '1.6',
+      stem: 'Which response does the section pair with Level 3, Able but Unsure?',
+      options: [
+        { id: 'a', text: 'Direct — be specific and check in frequently', correct: false, feedback: 'Directing someone who already has the skill reads as micromanagement.' },
+        { id: 'b', text: 'Coach — explain the why and involve them in problem-solving', correct: false, feedback: 'Coaching is the Level 2 response, where the skill is still being built.' },
+        { id: 'c', text: 'Support — encourage, ask questions, step back and let them lead while staying close', correct: true, feedback: 'The skill is there. What is missing is confidence, so you stay close without taking over.' },
+        { id: 'd', text: 'Delegate — set the goal and get out of the way', correct: false, feedback: 'Delegating to someone who is unsure leaves them stranded.' },
+      ],
+    },
+    {
+      id: 'm1-s6-q5',
+      kind: 'recall',
+      format: 'multiple_choice',
+      source: '1.6',
+      stem: 'What does the section say is the response for Level 4, Able and Confident?',
+      options: [
+        { id: 'a', text: 'Delegate — hand it over, set the goal and get out of the way', correct: true, feedback: 'High skill and high confidence need autonomy and trust.' },
+        { id: 'b', text: 'Support — stay close in case they falter', correct: false, feedback: 'Staying close is the Level 3 response.' },
+        { id: 'c', text: 'Direct — keep standards visible', correct: false, feedback: 'Directing a Level 4 removes the autonomy they have earned.' },
+        { id: 'd', text: 'Step back entirely and stop meeting with them', correct: false, feedback: 'Delegating is handing over the work, not withdrawing from the relationship.' },
+      ],
+    },
+    {
+      id: 'm1-s6-q6',
+      kind: 'recall',
+      format: 'true_false',
+      source: '1.6',
+      stem: 'Readiness levels describe the person overall, so once someone reaches Level 4 they stay there.',
+      options: [
+        { id: 'true', text: 'True', correct: false, feedback: 'The section calls this the part that trips up most new managers. The levels are task-specific, not person-specific.' },
+        { id: 'false', text: 'False', correct: true, feedback: 'Your strongest employee can be Level 4 on daily work and Level 2 on an unfamiliar project.' },
+      ],
+    },
+    {
+      id: 'm1-s6-q7',
+      kind: 'scenario',
+      format: 'multiple_choice',
+      source: '1.6',
+      stem: 'Maria has run her process confidently for three years. You give her a brand-new responsibility and she starts asking more questions and second-guessing herself. What has happened?',
+      options: [
+        { id: 'a', text: 'She has got worse at her job', correct: false, feedback: 'The section is explicit: she did not get worse.' },
+        { id: 'b', text: 'She has moved to a new task where she is a Level 2 right now, and needs coaching rather than distance', correct: true, feedback: 'Same person, different task, different level. Managing her as you did yesterday would be the wrong call.' },
+        { id: 'c', text: 'She needs to be left alone until her confidence returns', correct: false, feedback: 'The section says she needs your coaching, not your distance.' },
+        { id: 'd', text: 'She was never really a Level 4', correct: false, feedback: 'She is still Level 4 on the work she does every day. The level belongs to the task.' },
+      ],
+    },
+    {
+      id: 'm1-s6-q8',
+      kind: 'recall',
+      format: 'multiple_choice',
+      source: '1.6',
+      stem: 'Complete the section’s line: "Flexibility is not inconsistency. It’s ___."',
+      options: [
+        { id: 'a', text: 'kindness', correct: false, feedback: 'The section is making a case about judgement, not warmth.' },
+        { id: 'b', text: 'intelligence', correct: true, feedback: 'Adapting your style to the person and the task is the smart response, not a loss of standards.' },
+        { id: 'c', text: 'fairness', correct: false, feedback: 'Close to the theme, but not the word. The section says managing everyone identically does not make you fair.' },
+        { id: 'd', text: 'leadership', correct: false, feedback: 'Not the word the section uses here.' },
+      ],
+    },
+    {
+      id: 'm1-s6-q9',
+      kind: 'recall',
+      format: 'multiple_choice',
+      source: '1.6',
+      stem: 'What single question does the section say to ask yourself before every interaction with a team member?',
+      options: [
+        { id: 'a', text: 'What does this person need from me personally?', correct: false, feedback: 'Close, but the section ties the question to the task rather than to the person in general.' },
+        { id: 'b', text: 'For this task, where is this person on the readiness scale right now?', correct: true, feedback: 'Answer that and you know how to show up for them.' },
+        { id: 'c', text: 'Have I been consistent with everyone this week?', correct: false, feedback: 'Identical treatment is what the section argues against.' },
+        { id: 'd', text: 'Is this person performing at the level I expect?', correct: false, feedback: 'The question is about readiness for the task, not a performance judgement.' },
+      ],
+    },
+    {
+      id: 'm1-s6-q10',
+      kind: 'scenario',
+      format: 'multiple_choice',
+      source: '1.6',
+      stem: 'A team member is low on skill for a task but genuinely eager and motivated. What does the section say they need?',
+      options: [
+        { id: 'a', text: 'Clear instructions and frequent check-ins', correct: false, feedback: 'That is the Level 1 response, for someone who is also low on confidence.' },
+        { id: 'b', text: 'Coaching — explain the why, involve them in problem-solving, celebrate progress', correct: true, feedback: 'Level 2 is Unable but Willing. The motivation is there; the skill is what you are building.' },
+        { id: 'c', text: 'Autonomy and trust', correct: false, feedback: 'Handing over a task they cannot yet do sets them up to fail.' },
+        { id: 'd', text: 'Reassurance, because their confidence is the problem', correct: false, feedback: 'Their confidence is not the problem here — they are eager. The skill is.' },
       ],
     },
   ],

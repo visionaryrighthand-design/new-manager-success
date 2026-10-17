@@ -94,21 +94,28 @@ describe('a lesson is a video and then a quiz', () => {
 
 describe('quizzes', () => {
   /*
-   * The approved quiz document specifies ten four-option questions per
-   * section, and from 1.2 onward two of them are review from earlier sections.
-   * Only 1.1 and 1.2 have been written; the rest carry placeholders and are
-   * tracked in IP_PUNCH_LIST.md.
+   * Ten four-option questions per section, with review questions from earlier
+   * sections mixed in from 1.2 onward.
    *
-   * A five-question form was published to 1.1 briefly and withdrawn. Ten is
-   * the standard, and this asserts the count directly so a section cannot
-   * quietly ship a shorter quiz again.
+   * 1.1 and 1.2 are the approved quiz document's, verbatim. 1.3 to 1.8 are
+   * ours, written against each section's script because the document stops
+   * after 1.2 — recorded in IP_PUNCH_LIST.md and awaiting the author's
+   * sign-off. The placeholder quizzes they replaced are gone.
    */
-  const AUTHORED = ['1.1', '1.2'];
+  const FROM_APPROVED_DOCUMENT = ['1.1', '1.2'];
 
-  test('the authored lessons carry the full ten questions', () => {
-    for (const number of AUTHORED) {
+  test('every section carries the full ten questions', () => {
+    for (const section of module01.sections) {
+      assert.equal(section.quiz.length, 10, `${section.number}: expected 10 questions`);
+    }
+  });
+
+  test('the two sections the quiz document covers are still the document’s', () => {
+    // A ratchet in the other direction: if the document is ever extended,
+    // this list grows rather than the distinction being quietly lost.
+    for (const number of FROM_APPROVED_DOCUMENT) {
       const section = module01.sections.find((r) => r.number === number)!;
-      assert.equal(section.quiz.length, 10, `${number}: expected 10 questions`);
+      assert.equal(section.quiz.length, 10, `${number}`);
     }
   });
 
@@ -163,13 +170,20 @@ describe('quizzes', () => {
     assert.ok(review.length >= 2, `expected at least 2 review questions, found ${review.length}`);
   });
 
-  test('the lessons still awaiting Tom’s questions are exactly the ones we know about', () => {
-    // A ratchet. When this list is empty the placeholder note in the punch
-    // list comes out too.
-    const placeholder = module01.sections
-      .filter((r) => !AUTHORED.includes(r.number))
-      .map((r) => r.number);
-    assert.deepEqual(placeholder, ['1.3', '1.4', '1.5', '1.6', '1.7', '1.8']);
+  test('no section is left on a short placeholder quiz', () => {
+    const short = module01.sections.filter((r) => r.quiz.length < 10).map((r) => r.number);
+    assert.deepEqual(short, []);
+  });
+
+  test('every question is attributed to the section it is drawn from', () => {
+    // Review questions carry the number of the section they test, not the one
+    // they appear in, which is what makes spaced repetition traceable.
+    const numbers = new Set(module01.sections.map((s) => s.number));
+    for (const section of module01.sections) {
+      for (const q of section.quiz) {
+        assert.ok(numbers.has(q.source), `${section.number}/${q.id}: unknown source ${q.source}`);
+      }
+    }
   });
 });
 
