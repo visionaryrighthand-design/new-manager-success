@@ -368,7 +368,7 @@ function VideoCard({ index, section }: { index: number; section: Section }) {
             aria-controls="transcript-body"
             hidden={transcriptOpen}
           >
-            Transcript
+            {transcript.isFinal ? 'Transcript' : 'Script'}
             <span aria-hidden className={styles.chevron}>
               ⌄
             </span>

@@ -19,6 +19,22 @@ export const section02: Section = {
     'Your value as a manager is measured by your team’s output, not your own.',
   topics: ['doer trap', 'task vs people leadership', 'bottlenecks', 'what managers actually do'],
 
+  /*
+   * The rev31 cut, 1080x1920. First film for this section, so there is no
+   * videoUrlPrev to keep.
+   *
+   * The filename carries `isn-u2019` where the title has an apostrophe: the
+   * U+2019 was escaped rather than stripped when the file was named. It is
+   * only cosmetic, but it means the slug cannot be derived from the title —
+   * if this file is ever re-uploaded, the name has to be copied from storage
+   * rather than guessed.
+   *
+   * NOT VERIFIED FROM THE BUILD ENVIRONMENT: supabase.co is blocked by this
+   * container's network policy, so this URL has never been fetched here.
+   */
+  videoUrl:
+    'https://rhteswkgmndgijpllvjt.supabase.co/storage/v1/object/public/videos/module-1-2-why-being-great-at-your-job-isn-u2019-rev31-1080x1920-30fps.mp4',
+
   beats: [
     {
       id: 'b1',

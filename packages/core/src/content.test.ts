@@ -194,9 +194,20 @@ describe('every section can be delivered as a lesson', () => {
     }
   });
 
-  test('a filmed section reports its transcript as final', () => {
-    for (const section of module01.sections.filter((s) => s.videoUrl)) {
-      assert.equal(sectionTranscript(section).isFinal, true, `${section.number}`);
+  test('the words are reported as final only when a transcript was stored', () => {
+    /*
+     * Being filmed is not the same as having a transcript. 1.2 has a cut but
+     * no transcript of it, so what the panel shows is still the shooting
+     * script and it correctly labels itself "Script". This asserts the label
+     * tracks the stored transcript rather than the presence of a film, which
+     * is what an earlier version of this test got wrong.
+     */
+    for (const section of module01.sections) {
+      assert.equal(
+        sectionTranscript(section).isFinal,
+        Boolean(section.transcript),
+        `${section.number}: label does not match what is stored`,
+      );
     }
   });
 
