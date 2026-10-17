@@ -17,6 +17,28 @@ export const section01: Section = {
   keyIdea:
     'Most managers are promoted without preparation. That gap is real, and it is fixable.',
   topics: ['promotion transition', 'manager expectations', 'why new managers struggle'],
+
+  /*
+   * Apply: the real workplace task for this section.
+   *
+   * One task, not a menu. Nothing here is marked — the app cannot see whether
+   * this actually happened — so it states the task precisely, says what doing
+   * it well looks like, and comes back to ask.
+   */
+  apply: {
+    id: 'm1-s1-apply',
+    title: 'Name the gap, then ask about it',
+    task:
+      'Write down the three parts of your new job nobody trained you for. Pick the one that worries you most and book twenty minutes with your own manager to ask about it.',
+    lookFor: [
+      'Three things written down, specific enough that someone else would understand them',
+      'A meeting actually in the calendar, not an intention to book one',
+      'One question you will ask, written out in advance',
+    ],
+    withinDays: 5,
+    managerPrompt:
+      'Which part of the manager job are you least prepared for, and what have you done about it?',
+  },
   /*
    * The rev55 cut: 1080x1920, 30fps, H.264/AAC, 2:54, captions burned into
    * the file — which is why the lesson page renders no caption track of its

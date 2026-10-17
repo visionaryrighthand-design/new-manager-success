@@ -5,6 +5,7 @@ import Link from 'next/link';
 import {
   sectionMinutes,
   sectionTranscript,
+  sectionReinforcement,
   sectionVideoParts,
   type Section,
   type QuizQuestion,
@@ -17,7 +18,12 @@ import {
   sectionAttemptRow,
   sectionQuizXp,
 } from '@nms/core';
-import { attemptsForSection, browserSink } from '@/lib/section-quiz-store';
+import {
+  attemptsForSection,
+  browserSink,
+  hasCommitment,
+  saveCommitment,
+} from '@/lib/section-quiz-store';
 import styles from './SectionLesson.module.css';
 
 /**
@@ -220,6 +226,10 @@ export function SectionLesson({
                 onChoose={choose}
               />
             );
+          case 'apply':
+            return <ApplyCard key={card.key} index={i} section={section} />;
+          case 'reinforce':
+            return <ReinforceCard key={card.key} index={i} section={section} />;
           case 'result':
             return (
               <ResultCard
@@ -257,7 +267,11 @@ type Card =
   /** A mid-film knowledge check. Answered like a quiz card, not scored like one. */
   | { kind: 'check'; key: string; question: QuizQuestion; position: number; total: number }
   | { kind: 'quiz'; key: string; question: QuizQuestion; position: number }
-  | { kind: 'result'; key: string };
+  | { kind: 'result'; key: string }
+  /** Apply: the real workplace task. */
+  | { kind: 'apply'; key: string }
+  /** Reinforce: what comes back, and who asks. */
+  | { kind: 'reinforce'; key: string };
 
 function buildCards(section: Section): Card[] {
   const parts = sectionVideoParts(section);
@@ -293,6 +307,12 @@ function buildCards(section: Section): Card[] {
     cards.push({ kind: 'quiz', key: `q-${question.id}`, question, position: i + 1 }),
   );
   cards.push({ kind: 'result', key: `result-${section.id}` });
+  // Watch and Practice are done in the app; Apply happens at work and
+  // Reinforce comes back to both. They close the lesson rather than ending it.
+  if (section.apply) {
+    cards.push({ kind: 'apply', key: `apply-${section.id}` });
+    cards.push({ kind: 'reinforce', key: `reinforce-${section.id}` });
+  }
   return cards;
 }
 
@@ -661,6 +681,105 @@ function ResultCard({
         {/* Said once, here, because a learner who scored badly needs to know
             the door is open before they decide the app is judging them. */}
         <p className={styles.resultNote}>No pass mark. Retake it as often as you like.</p>
+      </div>
+    </section>
+  );
+}
+
+/* ---- Apply ------------------------------------------------------------- */
+
+/**
+ * The Apply stage: one real task, in the learner's own workplace.
+ *
+ * Committing is a stored intention, not an achievement. The app cannot see
+ * whether anyone delegated anything, so it does not pretend to: what it
+ * records is that the learner said they would, and when it falls due. The
+ * verification is a person asking, which is the Reinforce card.
+ */
+function ApplyCard({ index, section }: { index: number; section: Section }) {
+  const task = section.apply!;
+  const [committed, setCommitted] = useState(false);
+
+  useEffect(() => {
+    setCommitted(hasCommitment(section.id));
+  }, [section.id]);
+
+  const commit = useCallback(() => {
+    saveCommitment(section.id, task.id, task.withinDays);
+    setCommitted(true);
+  }, [section.id, task.id, task.withinDays]);
+
+  return (
+    <section className={styles.card} data-index={index} data-card="apply" data-tint="3">
+      <div className={styles.quizInner}>
+        <p className={styles.stageLabel}>Apply · at work</p>
+        <h2 className={styles.applyTitle}>{task.title}</h2>
+        <p className={styles.applyTask}>{task.task}</p>
+
+        <div className={styles.applyLookFor}>
+          <p className={styles.applyLookForHead}>Done properly means</p>
+          <ul>
+            {task.lookFor.map((item) => (
+              <li key={item}>{item}</li>
+            ))}
+          </ul>
+        </div>
+
+        {committed ? (
+          <p className={styles.applyCommitted} role="status">
+            Committed · due in {task.withinDays} working days
+          </p>
+        ) : (
+          <button type="button" className="nms-btn nms-btn--bright" onClick={commit}>
+            I'll do this
+          </button>
+        )}
+      </div>
+      <SwipeCue>What happens next</SwipeCue>
+    </section>
+  );
+}
+
+/* ---- Reinforce --------------------------------------------------------- */
+
+/**
+ * The Reinforce stage: what comes back, and who asks.
+ *
+ * Shown rather than hidden because the two things that make the stage work —
+ * that a question returns later, and that a real person will ask how the task
+ * went — only change behaviour if the learner knows they are coming.
+ */
+function ReinforceCard({ index, section }: { index: number; section: Section }) {
+  const reinforcement = sectionReinforcement(section);
+  if (!reinforcement) return null;
+
+  return (
+    <section className={styles.card} data-index={index} data-card="reinforce" data-tint="1">
+      <div className={styles.quizInner}>
+        <p className={styles.stageLabel}>Reinforce · later</p>
+        <h2 className={styles.applyTitle}>This comes back</h2>
+
+        <ul className={styles.reinforceList}>
+          <li>
+            <strong>In {reinforcement.dueInDays} working days</strong>
+            <span>
+              One question from this section returns, and you will be asked whether the task
+              actually happened.
+            </span>
+          </li>
+          <li>
+            <strong>Someone will ask</strong>
+            <span>
+              Your nominated contact gets one question to put to you:
+              <em> “{reinforcement.managerPrompt}”</em>
+            </span>
+          </li>
+        </ul>
+
+        <p className={styles.reinforceNote}>
+          Nothing here is marked. The app cannot see your workplace — the point is that a person
+          you respect asks how it went.
+        </p>
       </div>
     </section>
   );

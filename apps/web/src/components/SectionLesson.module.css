@@ -758,3 +758,105 @@
   text-transform: uppercase;
   color: var(--nms-color-fg-muted);
 }
+
+/* ---- Apply / Reinforce ------------------------------------------------- */
+
+/* Names the stage on the card, so Watch → Practice → Apply → Reinforce is
+   visible to the learner rather than only true in the data model. */
+.stageLabel {
+  font-size: var(--nms-font-label-size);
+  font-weight: var(--nms-font-label-weight);
+  letter-spacing: var(--nms-font-label-tracking);
+  text-transform: uppercase;
+  color: var(--nms-color-bright);
+}
+
+.applyTitle {
+  font-family: var(--nms-font-display);
+  font-size: var(--nms-font-h2-size);
+  line-height: var(--nms-font-h2-line);
+  letter-spacing: var(--nms-font-h2-tracking);
+  font-weight: var(--nms-font-h2-weight);
+  text-wrap: balance;
+}
+
+.applyTask {
+  font-size: var(--nms-font-body-size);
+  line-height: 1.6;
+  color: var(--nms-color-fg-muted);
+}
+
+.applyLookFor {
+  padding: var(--nms-space-4);
+  border: 1px solid var(--nms-color-border);
+  border-radius: var(--nms-radius-md);
+  background: color-mix(in srgb, var(--nms-color-surface) 70%, transparent);
+  backdrop-filter: blur(6px);
+}
+
+.applyLookForHead {
+  font-size: var(--nms-font-label-size);
+  font-weight: var(--nms-font-label-weight);
+  letter-spacing: var(--nms-font-label-tracking);
+  text-transform: uppercase;
+  color: var(--nms-color-fg-muted);
+  margin-bottom: var(--nms-space-3);
+}
+
+.applyLookFor ul {
+  margin: 0;
+  padding-left: var(--nms-space-5);
+  display: flex;
+  flex-direction: column;
+  gap: var(--nms-space-2);
+  font-size: var(--nms-font-caption-size);
+  line-height: 1.5;
+}
+
+.applyCommitted {
+  padding: var(--nms-space-3) var(--nms-space-4);
+  border-radius: var(--nms-radius-md);
+  border-left: 3px solid var(--nms-color-success);
+  background: color-mix(in srgb, var(--nms-color-success) 12%, transparent);
+  font-size: var(--nms-font-caption-size);
+  font-weight: 600;
+}
+
+.reinforceList {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--nms-space-4);
+}
+
+.reinforceList li {
+  display: flex;
+  flex-direction: column;
+  gap: var(--nms-space-1);
+  padding-left: var(--nms-space-4);
+  border-left: 2px solid var(--nms-color-accent);
+}
+
+.reinforceList strong {
+  font-size: var(--nms-font-body-strong-size);
+}
+
+.reinforceList span {
+  font-size: var(--nms-font-caption-size);
+  line-height: 1.6;
+  color: var(--nms-color-fg-muted);
+}
+
+.reinforceList em {
+  color: var(--nms-color-fg);
+  font-style: italic;
+}
+
+.reinforceNote {
+  margin-top: var(--nms-space-4);
+  font-size: var(--nms-font-caption-size);
+  line-height: 1.5;
+  color: var(--nms-color-fg-subtle);
+}

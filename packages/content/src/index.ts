@@ -156,6 +156,34 @@ export function sectionVideos(section: Section): string[] {
   return sectionVideoParts(section).map((part) => part.url);
 }
 
+/**
+ * The Reinforce stage, assembled from what the section already holds.
+ *
+ * Reinforce is two things: follow-up recall, and a person asking. The recall
+ * question is drawn from this section's own quiz rather than written
+ * separately, so a learner meets a question they have already answered once —
+ * which is the point of spaced retrieval, and which means reinforcement
+ * cannot drift away from what was taught. The prompt is the one a Level 3
+ * contact is given when the Apply task falls due.
+ *
+ * Returns undefined for a section with no Apply task, because there is
+ * nothing yet to come back about.
+ */
+export function sectionReinforcement(
+  section: Section,
+): { recall: QuizQuestion; managerPrompt: string; dueInDays: number } | undefined {
+  if (!section.apply) return undefined;
+  // The last question, not the first: it covers the end of the film, which is
+  // the part a learner is least likely to have retained a week later.
+  const recall = section.quiz[section.quiz.length - 1];
+  if (!recall) return undefined;
+  return {
+    recall,
+    managerPrompt: section.apply.managerPrompt,
+    dueInDays: section.apply.withinDays,
+  };
+}
+
 /** Every mid-film knowledge-check question in the section, in running order. */
 export function sectionChecks(section: Section): QuizQuestion[] {
   return sectionVideoParts(section).flatMap((part) => part.check ?? []);
@@ -331,6 +359,19 @@ export function validateContent(): string[] {
   for (const section of allSections()) {
     if (section.quiz.length === 0) {
       problems.push(`${section.number}: has no quiz, and a lesson is a video and a quiz`);
+    }
+
+    // Watch, Practice, Apply, Reinforce. A section without an Apply task is
+    // missing a stage, and Reinforce has nothing to come back about.
+    if (!section.apply) {
+      problems.push(`${section.number}: has no Apply task — the lesson stops at Practice`);
+    } else {
+      if (section.apply.lookFor.length < 2) {
+        problems.push(`${section.number}: the Apply task needs at least two markers of done`);
+      }
+      if (section.apply.withinDays < 1) {
+        problems.push(`${section.number}: the Apply task has no window to be done in`);
+      }
     }
 
     const seenBeatIds = new Set<string>();

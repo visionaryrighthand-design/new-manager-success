@@ -97,6 +97,28 @@ export const section03: Section = {
     'setting the tone early',
   ],
 
+  /*
+   * Apply: the real workplace task for this section.
+   *
+   * One task, not a menu. Nothing here is marked — the app cannot see whether
+   * this actually happened — so it states the task precisely, says what doing
+   * it well looks like, and comes back to ask.
+   */
+  apply: {
+    id: 'm1-s3-apply',
+    title: 'Have the conversation you have been working around',
+    task:
+      'Identify the one working relationship you have been managing around rather than managing. Say the thing you have been avoiding, and name out loud that the relationship has changed.',
+    lookFor: [
+      'The conversation actually happened, face to face or on a call',
+      'You said the uncomfortable part rather than hinting at it',
+      'You left with one clear expectation both of you agreed to',
+    ],
+    withinDays: 7,
+    managerPrompt:
+      'Which working relationship have you had to renegotiate since the promotion, and how did that conversation go?',
+  },
+
   beats: [
     {
       id: 'b1',

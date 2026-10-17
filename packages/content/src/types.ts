@@ -190,6 +190,54 @@ export interface ContentAddition {
 // Sections and Modules
 // ---------------------------------------------------------------------------
 
+/**
+ * The four stages a section moves a learner through.
+ *
+ * Watch → Practice → Apply → Reinforce. The first two happen in the app in
+ * one sitting; the third happens at work, in the days after; the fourth comes
+ * back to both. Naming them in the type means a card can say which stage it
+ * belongs to, and means a section with no `apply` is visibly missing a stage
+ * rather than quietly shorter than the others.
+ */
+export type LessonStage = 'watch' | 'practice' | 'apply' | 'reinforce';
+
+/**
+ * The Apply stage: one real task, in the learner's own workplace.
+ *
+ * Deliberately a single task rather than a list of suggestions. A manager who
+ * has just watched a film and answered ten questions has minutes of attention
+ * left and a job to get back to, and a menu of five good ideas reliably
+ * produces none of them.
+ *
+ * Nothing here is marked or scored. The app cannot see whether someone
+ * actually delegated anything, and pretending to verify it would be theatre.
+ * What the app can do is state the task precisely, say what doing it well
+ * looks like, and come back to ask.
+ */
+export interface ApplyTask {
+  id: string;
+  /** Short and imperative — what the learner is going to go and do. */
+  title: string;
+  /** The task itself, in their own workplace, in plain words. */
+  task: string;
+  /** Two or three concrete markers that it was done properly, not just started. */
+  lookFor: string[];
+  /**
+   * Working days before the Reinforce stage asks about it. Varies by task:
+   * handing over a piece of work can happen this week, changing how you
+   * manage one person needs longer to show anything.
+   */
+  withinDays: number;
+  /**
+   * What a Level 3 contact is invited to ask once the task is due.
+   *
+   * This is the "manager feedback" half of Reinforce. It is a question a real
+   * person asks, not a notification: the thing that makes a workplace task
+   * stick is someone the learner respects asking how it went.
+   */
+  managerPrompt: string;
+}
+
 /** One file of a film that was delivered in several. */
 export interface VideoPart {
   /** Direct, streamable URL. A share page is not one. */
@@ -280,6 +328,14 @@ export interface Section {
    * been filmed, this is the authority on its words.
    */
   transcript?: string;
+  /**
+   * The Apply stage: the real workplace task for this section.
+   *
+   * Optional on the type so a section in production is not unbuildable, but
+   * every shipped section is expected to have one and `validateContent`
+   * reports the ones that do not.
+   */
+  apply?: ApplyTask;
   scriptDeviations?: ScriptDeviation[];
   /** Everything in this Section that the approved script does not contain. */
   contentAdditions?: ContentAddition[];

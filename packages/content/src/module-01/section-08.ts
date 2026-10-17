@@ -25,6 +25,28 @@ export const section08: Section = {
     'The best managers don’t just watch and move on. They reflect, connect the dots, and make it stick.',
   topics: ['module 1 review', 'applying the mindset shift'],
 
+  /*
+   * Apply: the real workplace task for this section.
+   *
+   * One task, not a menu. Nothing here is marked — the app cannot see whether
+   * this actually happened — so it states the task precisely, says what doing
+   * it well looks like, and comes back to ask.
+   */
+  apply: {
+    id: 'm1-s8-apply',
+    title: 'Decide the one thing, and put it in the calendar',
+    task:
+      'Write the single sentence you would want your team to say about how you manage, six months from now. Then pick the one change from Module 1 that gets you closest, and put it in your calendar as a recurring commitment.',
+    lookFor: [
+      'One sentence, in your words, about how you manage rather than what you achieve',
+      'One change chosen — not a list of all seven sections',
+      'A recurring slot in the calendar, with a start date that has already passed or is this week',
+    ],
+    withinDays: 5,
+    managerPrompt:
+      'What is the one thing you decided to change, and has it actually happened yet?',
+  },
+
   beats: [
     {
       id: 'b1',

@@ -66,3 +66,44 @@ export const browserSink: SectionQuizSink = {
     write(EVENTS_KEY, rows.slice(-MAX_EVENTS));
   },
 };
+
+/* ---- Apply commitments ------------------------------------------------- */
+
+const COMMITMENTS_KEY = 'nms.apply_commitments';
+
+/**
+ * A learner saying they will do the Apply task, and when it falls due.
+ *
+ * Shaped like a row of an `apply_commitments` table for the same reason the
+ * quiz rows are: there is no database yet, and when there is one this becomes
+ * a different sink rather than a different idea. `done_at` is deliberately
+ * absent — completion is reported by a person, not detected by the app.
+ */
+export interface ApplyCommitmentRow {
+  section_id: string;
+  task_id: string;
+  committed_at: string;
+  /** Working days from commitment. Resolved to a date by whoever follows up. */
+  due_in_days: number;
+}
+
+export function readCommitments(): ApplyCommitmentRow[] {
+  return read<ApplyCommitmentRow>(COMMITMENTS_KEY);
+}
+
+export function hasCommitment(sectionId: string): boolean {
+  return readCommitments().some((row) => row.section_id === sectionId);
+}
+
+export function saveCommitment(sectionId: string, taskId: string, dueInDays: number): void {
+  if (hasCommitment(sectionId)) return;
+  write(COMMITMENTS_KEY, [
+    ...readCommitments(),
+    {
+      section_id: sectionId,
+      task_id: taskId,
+      committed_at: new Date().toISOString(),
+      due_in_days: dueInDays,
+    },
+  ]);
+}

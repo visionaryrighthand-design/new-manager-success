@@ -35,6 +35,28 @@ export const section06: Section = {
     'Different people need different things, and the same person needs different things on different tasks. Flexibility is not inconsistency.',
   topics: ['readiness dial', 'adapting your style', 'task-specific readiness', 'autonomy vs direction'],
 
+  /*
+   * Apply: the real workplace task for this section.
+   *
+   * One task, not a menu. Nothing here is marked — the app cannot see whether
+   * this actually happened — so it states the task precisely, says what doing
+   * it well looks like, and comes back to ask.
+   */
+  apply: {
+    id: 'm1-s6-apply',
+    title: 'Put one person on the dial, for one task',
+    task:
+      'Pick one person and one piece of work they are doing now. Decide where they sit on the readiness dial for that task specifically, then deliberately use the matching style — Direct, Coach, Support or Delegate — for the next two weeks.',
+    lookFor: [
+      'The person and the task both named, because the level changes with the task',
+      'The level you chose and the reason you chose it',
+      'Whether the style fitted, and what you would change',
+    ],
+    withinDays: 10,
+    managerPrompt:
+      'Who on your team needs a different level of involvement from you than they did six months ago?',
+  },
+
   beats: [
     {
       id: 'b1',

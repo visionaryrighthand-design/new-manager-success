@@ -27,6 +27,28 @@ export const section04: Section = {
     'https://rhteswkgmndgijpllvjt.supabase.co/storage/v1/object/public/videos/module-1-4-your-energy-sets-the-tone-rev34-1080x1920-30fps.mp4',
   topics: ['emotional contagion', 'self-awareness', 'presence', 'the pre-game routine'],
 
+  /*
+   * Apply: the real workplace task for this section.
+   *
+   * One task, not a menu. Nothing here is marked — the app cannot see whether
+   * this actually happened — so it states the task precisely, says what doing
+   * it well looks like, and comes back to ask.
+   */
+  apply: {
+    id: 'm1-s4-apply',
+    title: 'Run the two-minute pre-game, every day, for a week',
+    task:
+      'Before every team interaction for five working days: pause, name what you are carrying, decide what you are leaving at the door, and set your intention for what the team needs from you.',
+    lookFor: [
+      'Five days done, not three good ones and two you meant to do',
+      'At least one occasion you can point to where you left something at the door',
+      'One difference you noticed, in you or in the room',
+    ],
+    withinDays: 5,
+    managerPrompt:
+      'What did you notice about your own energy this week, and what did your team get because of it?',
+  },
+
   beats: [
     {
       id: 'b1',

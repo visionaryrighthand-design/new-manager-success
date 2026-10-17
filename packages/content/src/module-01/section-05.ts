@@ -25,6 +25,28 @@ export const section05: Section = {
   topics: ['emotional intelligence', 'self-regulation', 'empathy', 'triggers', 'react vs respond'],
 
   /*
+   * Apply: the real workplace task for this section.
+   *
+   * One task, not a menu. Nothing here is marked — the app cannot see whether
+   * this actually happened — so it states the task precisely, says what doing
+   * it well looks like, and comes back to ask.
+   */
+  apply: {
+    id: 'm1-s5-apply',
+    title: 'Catch yourself once',
+    task:
+      'The next time something at work spikes your frustration, create the space before you answer. Name the emotion to yourself, then choose the response the situation needs rather than the one you feel. Write down what happened the same day.',
+    lookFor: [
+      'The trigger named — what specifically set it off',
+      'The pause actually taken, before you responded rather than after',
+      'What you did instead of your first instinct, and what it changed',
+    ],
+    withinDays: 7,
+    managerPrompt:
+      'Tell me about a time recently you paused instead of reacting. What did it change?',
+  },
+
+  /*
    * The rev78 cut, 1080x1920. Single file.
    *
    * The stored filename truncates the title to `...for-new-manage-`, so the

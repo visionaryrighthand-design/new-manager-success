@@ -22,6 +22,28 @@ export const section07: Section = {
   keyIdea: 'Your team will not do what you say. They will do what you do.',
   topics: ['leading by example', 'consistency', 'ownership', 'servant leadership', 'culture'],
 
+  /*
+   * Apply: the real workplace task for this section.
+   *
+   * One task, not a menu. Nothing here is marked — the app cannot see whether
+   * this actually happened — so it states the task precisely, says what doing
+   * it well looks like, and comes back to ask.
+   */
+  apply: {
+    id: 'm1-s7-apply',
+    title: 'Stop tolerating one thing',
+    task:
+      'Name one standard your team has drifted on that you have been letting go. Model it yourself, visibly, this week — then address it with the team once, plainly.',
+    lookFor: [
+      'The standard named, and honest about how long it has been slipping',
+      'One occasion your team saw you hold it yourself',
+      'The conversation held once and clearly, not hinted at repeatedly',
+    ],
+    withinDays: 7,
+    managerPrompt:
+      'What standard have you set for the team that you are finding hardest to hold yourself to?',
+  },
+
   beats: [
     {
       id: 'b1',

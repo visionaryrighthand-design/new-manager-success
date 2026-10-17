@@ -20,6 +20,28 @@ export const section02: Section = {
   topics: ['doer trap', 'task vs people leadership', 'bottlenecks', 'what managers actually do'],
 
   /*
+   * Apply: the real workplace task for this section.
+   *
+   * One task, not a menu. Nothing here is marked — the app cannot see whether
+   * this actually happened — so it states the task precisely, says what doing
+   * it well looks like, and comes back to ask.
+   */
+  apply: {
+    id: 'm1-s2-apply',
+    title: 'Hand one thing over',
+    task:
+      'Find one task still on your plate that someone on your team could own. Give it to them this week with the context they need and a check-in date, then leave it alone.',
+    lookFor: [
+      'The task and the person both named, not \'something, someday\'',
+      'Context handed over in writing, so they are not guessing at what good looks like',
+      'A check-in date agreed, instead of you hovering',
+    ],
+    withinDays: 5,
+    managerPrompt:
+      'What did you hand over this week, and what did you do with the time it freed up?',
+  },
+
+  /*
    * The rev31 cut, 1080x1920. First film for this section, so there is no
    * videoUrlPrev to keep.
    *
