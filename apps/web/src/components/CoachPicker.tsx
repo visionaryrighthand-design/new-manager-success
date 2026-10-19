@@ -33,12 +33,23 @@ export function CoachPicker({
   return (
     <div className={variant === 'sheet' ? styles.sheet : styles.page} data-surface="feed">
       <div className={styles.inner}>
+        {/*
+          * "Who do you want to hear it from?" called the course "it" and asked
+          * a question with no stakes in it. The voice rules ask for the moment
+          * rather than the theory, and the honest moment here is that you are
+          * about to spend hours with one of these four and advice only works
+          * if it comes from someone you will actually take it from.
+          */}
         <header className={styles.head}>
           <p className={styles.eyebrow}>Your coach</p>
           <h1 className={styles.title}>
-            {variant === 'sheet' ? 'Switch coach' : 'Who do you want to hear it from?'}
+            {variant === 'sheet' ? 'Switch coach' : "Pick the voice you'll actually listen to."}
           </h1>
-          <p className={styles.sub}>Same course. Four people who teach it differently.</p>
+          <p className={styles.sub}>
+            {variant === 'sheet'
+              ? 'Your progress stays exactly where it is.'
+              : 'Same course either way. These four just land differently.'}
+          </p>
         </header>
 
         <ul className={styles.grid}>
