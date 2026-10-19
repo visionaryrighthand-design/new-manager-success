@@ -2,6 +2,10 @@
 
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
+import { CoachPicker } from '@/components/CoachPicker';
+import { findCoach, hasCoachVideos, sectionVideoFor, type CoachKey } from '@nms/content';
+import { readCoach, saveCoach } from '@/lib/coach-store';
 import {
   sectionMinutes,
   sectionTranscript,
@@ -64,13 +68,47 @@ export function SectionLesson({
   const priorAttempts = useRef(0);
   const feedRef = useRef<HTMLDivElement>(null);
 
+  /*
+   * Coach.
+   *
+   * `undefined` means "not read yet" and `null` means "read, and there isn't
+   * one" — the difference matters, because redirecting on the first render
+   * would bounce every learner to the picker before localStorage had been
+   * consulted.
+   */
+  const router = useRouter();
+  const [coach, setCoach] = useState<CoachKey | null | undefined>(undefined);
+  const [switching, setSwitching] = useState(false);
+
+  useEffect(() => setCoach(readCoach()), []);
+
+  useEffect(() => {
+    if (coach !== null) return;
+    /*
+     * Every section of Module 1 gates on the choice, not just the ones that
+     * have been shot four times.
+     *
+     * The first instinct was to ask only where it changes what plays, but
+     * that makes the question arrive at an arbitrary moment: a learner who
+     * starts at 1.2 would be interrupted later, mid-course, to pick a
+     * presenter. The choice belongs before the module, once.
+     */
+    router.replace(`/coach?next=${encodeURIComponent(`/learn/${section.id}`)}`);
+  }, [coach, router, section]);
+
+  const chooseCoach = useCallback((next: CoachKey) => {
+    saveCoach(next);
+    setCoach(next);
+    setSwitching(false);
+  }, []);
+
   useEffect(() => {
     const prior = attemptsForSection(section.id);
     priorAttempts.current = prior.length;
     setUnlocked(prior.length > 0);
   }, [section.id]);
 
-  const cards = useMemo(() => buildCards(section), [section]);
+  const cards = useMemo(() => buildCards(section, coach), [section, coach]);
   const revealed = revealedCount(cards, answers);
 
   const score = useMemo(
@@ -169,12 +207,23 @@ export function SectionLesson({
        is an immersive full-screen surface whatever the OS theme says, and
        without this the washes below are mixed against white paper. */
     <div className={styles.feed} ref={feedRef} data-surface="feed">
+      {switching ? (
+        <CoachPicker
+          current={coach ?? null}
+          onChoose={chooseCoach}
+          onCancel={() => setSwitching(false)}
+          variant="sheet"
+        />
+      ) : null}
+
       <ProgressBar
         total={cards.length}
         active={activeIndex}
         label={section.number}
         answered={answeredCount}
         questions={questionCards.length}
+        coach={coach}
+        onChangeCoach={hasCoachVideos(section) ? () => setSwitching(true) : undefined}
       />
 
       {cards.slice(0, revealed).map((card, i) => {
@@ -191,7 +240,7 @@ export function SectionLesson({
           case 'video':
             return (
               <VideoCard
-                key={card.key}
+                key={`${card.key}-${coach ?? 'none'}`}
                 index={i}
                 section={section}
                 url={card.url}
@@ -296,8 +345,9 @@ type Card =
   /** Reinforce: what comes back, and who asks. */
   | { kind: 'reinforce'; key: string };
 
-function buildCards(section: Section): Card[] {
+function buildCards(section: Section, coach?: CoachKey | null): Card[] {
   const parts = sectionVideoParts(section);
+  const coachUrl = sectionVideoFor(section, coach);
   const cards: Card[] = [{ kind: 'open', key: `open-${section.id}` }];
 
   if (parts.length === 0) {
@@ -308,7 +358,9 @@ function buildCards(section: Section): Card[] {
       cards.push({
         kind: 'video',
         key: `video-${section.id}-${i}`,
-        url: part.url,
+        // A multi-part section keeps its own parts; only a single-file
+        // section swaps to the coach's cut. No section is both.
+        url: parts.length === 1 ? (coachUrl ?? part.url) : part.url,
         part: i + 1,
         parts: parts.length,
       });
@@ -362,17 +414,33 @@ function ProgressBar({
   label,
   answered,
   questions,
+  coach,
+  onChangeCoach,
 }: {
   total: number;
   active: number;
   label: string;
   answered: number;
   questions: number;
+  coach?: CoachKey | null;
+  onChangeCoach?: () => void;
 }) {
+  const chosen = findCoach(coach);
   return (
     <div className={styles.chrome}>
       <div className={styles.chromeRow}>
         <span className={styles.chromeTag}>{label}</span>
+        {chosen && onChangeCoach ? (
+          <span className={styles.coachTag}>
+            Coach: {chosen.name}
+            <span aria-hidden>·</span>
+            {/* The chrome is pointer-events: none so swipes pass through it,
+                so this one control has to opt back in. */}
+            <button type="button" className={styles.coachChange} onClick={onChangeCoach}>
+              Change
+            </button>
+          </span>
+        ) : null}
         <span className={styles.chromeCount}>
           {answered}/{questions}
         </span>

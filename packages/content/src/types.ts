@@ -190,6 +190,8 @@ export interface ContentAddition {
 // Sections and Modules
 // ---------------------------------------------------------------------------
 
+import type { CoachKey } from './coaches.js';
+
 /**
  * The four stages a section moves a learner through.
  *
@@ -297,6 +299,19 @@ export interface Section {
    * Must be a direct, streamable URL (MP4 or HLS). A share page is not one.
    */
   videoUrl?: string;
+  /**
+   * The film, once per coach.
+   *
+   * Same script, four presenters. Keyed by `CoachKey` so a learner's stored
+   * choice resolves straight to a file. Partial on purpose: a section that
+   * has only been shot with one coach lists only that one and everybody else
+   * falls through to `videoUrl`, which is how 1.2 onward keep working while
+   * only 1.1 has been re-shot.
+   *
+   * Resolution order is videos[coach] → videoUrl → the script panel. Read it
+   * through `sectionVideoFor()`; nothing should index this map directly.
+   */
+  videos?: Partial<Record<CoachKey, string>>;
   /**
    * The film, when it was delivered in more than one file, in running order.
    *

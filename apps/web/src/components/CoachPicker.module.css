@@ -1,0 +1,152 @@
+/*
+ * Coach picker. Full-screen and dark as a route, a sheet over the lesson when
+ * switching. Phone-first: a 2x2 grid of faces, which is the only layout where
+ * four portraits are all legible at 390px.
+ */
+
+.page,
+.sheet {
+  background: var(--nms-color-bg);
+  color: var(--nms-color-fg);
+}
+
+.page {
+  min-height: 100dvh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--nms-space-6) var(--nms-space-5);
+}
+
+.sheet {
+  position: fixed;
+  inset: 0;
+  z-index: 50;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  padding: var(--nms-space-6) var(--nms-space-5);
+  animation: sheetIn var(--nms-duration-base) var(--nms-ease-entrance);
+}
+
+@keyframes sheetIn {
+  from { opacity: 0; transform: translateY(2%); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.inner {
+  width: 100%;
+  max-width: 520px;
+  margin-inline: auto;
+  display: flex;
+  flex-direction: column;
+  gap: var(--nms-space-6);
+}
+
+.head {
+  display: flex;
+  flex-direction: column;
+  gap: var(--nms-space-2);
+}
+
+.eyebrow {
+  font-size: var(--nms-font-label-size);
+  font-weight: var(--nms-font-label-weight);
+  letter-spacing: var(--nms-font-label-tracking);
+  text-transform: uppercase;
+  color: var(--nms-color-accent-text);
+}
+
+.title {
+  font-family: var(--nms-font-display);
+  font-size: var(--nms-font-h2-size);
+  line-height: var(--nms-font-h2-line);
+  letter-spacing: var(--nms-font-h2-tracking);
+  font-weight: var(--nms-font-h2-weight);
+  text-wrap: balance;
+}
+
+.sub {
+  color: var(--nms-color-fg-muted);
+  font-size: var(--nms-font-body-size);
+}
+
+.grid {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--nms-space-3);
+}
+
+.card,
+.cardSelected {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  text-align: left;
+  padding: 0;
+  overflow: hidden;
+  border: 2px solid var(--nms-color-border);
+  border-radius: var(--nms-radius-lg);
+  background: var(--nms-color-surface);
+  cursor: pointer;
+  transition: border-color var(--nms-duration-quick) var(--nms-ease-standard),
+    transform var(--nms-duration-instant) var(--nms-ease-spring);
+}
+.card:hover {
+  border-color: var(--nms-color-border-strong);
+}
+.card:active,
+.cardSelected:active {
+  transform: scale(0.985);
+}
+
+.cardSelected {
+  border-color: var(--nms-color-bright);
+  box-shadow: var(--nms-shadow-accent-glow);
+}
+
+.portrait {
+  width: 100%;
+  aspect-ratio: 4 / 5;
+  object-fit: cover;
+  /* The stills are framed head-and-shoulders; anchoring to the top keeps the
+     face in frame when the card is shorter than the image. */
+  object-position: 50% 12%;
+  display: block;
+  background: var(--nms-color-surface-raised);
+}
+
+.cardBody {
+  display: flex;
+  flex-direction: column;
+  gap: var(--nms-space-1);
+  padding: var(--nms-space-3);
+}
+
+.name {
+  font-family: var(--nms-font-display);
+  font-size: var(--nms-font-h3-size);
+  font-weight: var(--nms-font-h3-weight);
+  line-height: 1.1;
+}
+
+.line {
+  font-size: var(--nms-font-caption-size);
+  line-height: 1.45;
+  color: var(--nms-color-fg-muted);
+}
+
+.actions {
+  display: flex;
+  flex-direction: column;
+  gap: var(--nms-space-3);
+}
+
+.note {
+  text-align: center;
+  font-size: var(--nms-font-caption-size);
+  color: var(--nms-color-fg-subtle);
+}

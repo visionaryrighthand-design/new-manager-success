@@ -907,3 +907,29 @@
   font-size: var(--nms-font-caption-size);
   color: var(--nms-color-fg-muted);
 }
+
+/* Who is presenting, and a way to change it. */
+.coachTag {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--nms-space-2);
+  margin-inline: auto;
+  font-size: var(--nms-font-label-size);
+  letter-spacing: var(--nms-font-label-tracking);
+  color: var(--nms-color-fg-muted);
+  text-transform: none;
+}
+
+.coachChange {
+  /* The chrome bar ignores pointer events so swipes pass through it; this
+     control has to opt back in or it cannot be tapped at all. */
+  pointer-events: auto;
+  padding: 2px var(--nms-space-3);
+  border: 1px solid var(--nms-color-border-strong);
+  border-radius: var(--nms-radius-pill);
+  background: var(--nms-color-surface-raised);
+  color: var(--nms-color-fg);
+  font-size: inherit;
+  font-weight: 700;
+  cursor: pointer;
+}

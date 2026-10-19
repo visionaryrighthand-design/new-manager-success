@@ -53,6 +53,30 @@ export const section01: Section = {
    * assumes the `videos` bucket is public, which is how the previous cut was
    * served. If the lesson plays a black frame, check that first.
    */
+  /*
+   * One cut per coach. Same script, four presenters.
+   *
+   * Filenames are capitalised and case-sensitive, and the `alex` key points
+   * at the Steve file — the key is the stable identifier, the name is copy.
+   *
+   * NOT VERIFIED: the spec asked for a HEAD request on each of these before
+   * writing them down. supabase.co is blocked by this container's network
+   * policy, so all four returned nothing rather than 200. The URLs are built
+   * from the links supplied and follow the public-bucket pattern the other
+   * sections already use, but nobody has confirmed from here that the files
+   * are there or that the bucket is public.
+   */
+  videos: {
+    alex: 'https://rhteswkgmndgijpllvjt.supabase.co/storage/v1/object/public/videos/module-1-1-the-invisible-promotion-Steve.mp4',
+    jordan:
+      'https://rhteswkgmndgijpllvjt.supabase.co/storage/v1/object/public/videos/module-1-1-the-invisible-promotion-Jordan.mp4',
+    riley:
+      'https://rhteswkgmndgijpllvjt.supabase.co/storage/v1/object/public/videos/module-1-1-the-invisible-promotion-Riley.mp4',
+    elena:
+      'https://rhteswkgmndgijpllvjt.supabase.co/storage/v1/object/public/videos/module-1-1-the-invisible-promotion-Elena.mp4',
+  },
+  /* Fallback for a learner with no coach chosen yet, and the cut that played
+     before the coach versions existed. */
   videoUrl:
     'https://rhteswkgmndgijpllvjt.supabase.co/storage/v1/object/public/videos/module-1-1-the-invisible-promotion-rev55-1080x1920-30fps.mp4',
   /** The cut rev55 replaced. Restorable by swapping the two lines above and below. */

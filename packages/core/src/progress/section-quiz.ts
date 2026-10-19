@@ -39,8 +39,9 @@ export interface QuizAttemptRow {
 
 /** One row of `activity_events`. */
 export interface ActivityEventRow {
-  type: 'answer_submit' | 'quiz_submit';
+  type: 'answer_submit' | 'quiz_submit' | 'coach_selected';
   module_id: number;
+  /** Empty for events that are not about one section, such as picking a coach. */
   section_id: string;
   /** Present on `answer_submit`. */
   question_id?: string;
@@ -48,6 +49,16 @@ export interface ActivityEventRow {
   correct?: boolean;
   /** Present on `quiz_submit`. */
   score_pct?: number;
+  /** Present on `coach_selected`. */
+  coach_key?: string;
+  /**
+   * Present on `coach_selected` when the learner already had one.
+   *
+   * Which coach people pick is interesting; how often they switch, and away
+   * from whom, is the thing that says whether the four are different enough
+   * to be worth filming four times.
+   */
+  previous_coach_key?: string;
   at: string;
 }
 

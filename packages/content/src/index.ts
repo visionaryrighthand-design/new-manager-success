@@ -1,8 +1,10 @@
 export * from './types.js';
+export * from './coaches.js';
 export { course, exams } from './course.js';
 export { module01 } from './module-01/index.js';
 
 import { course } from './course.js';
+import type { CoachKey } from './coaches.js';
 import type {
   Beat,
   ContentAddition,
@@ -147,6 +149,27 @@ export function splitMomentLines(text: string): string[] {
  * returns `[]` for an unfilmed section, one entry for a single-file one, and
  * the parts in order for a split one.
  */
+/**
+ * The file a given learner should see for a given section.
+ *
+ * videos[coach] → videoUrl → undefined, in that order. Undefined means the
+ * section has no film for this learner and the lesson shows its script
+ * instead, which is the same fallback an entirely unfilmed section uses.
+ *
+ * Takes the coach key rather than reading it from anywhere, so this stays a
+ * pure function and the one place that knows about stored choices is the web
+ * app.
+ */
+export function sectionVideoFor(section: Section, coach?: CoachKey | null): string | undefined {
+  if (coach && section.videos?.[coach]) return section.videos[coach];
+  return section.videoUrl;
+}
+
+/** True when the section has been shot with more than one coach. */
+export function hasCoachVideos(section: Section): boolean {
+  return Object.keys(section.videos ?? {}).length > 0;
+}
+
 export function sectionVideoParts(section: Section): VideoPart[] {
   if (section.videoParts?.length) return section.videoParts;
   return section.videoUrl ? [{ url: section.videoUrl }] : [];
