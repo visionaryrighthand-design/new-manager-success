@@ -45,10 +45,17 @@ export function CoachPicker({
           <h1 className={styles.title}>
             {variant === 'sheet' ? 'Switch coach' : "Pick the voice you'll actually listen to."}
           </h1>
+          {/*
+            * Precise on purpose. "Four people who teach it differently" said
+            * the teaching varies, and it does not: the script is identical
+            * word for word and only the delivery changes. Overstating that
+            * sets up a learner to switch coaches looking for different
+            * material and find the same sentences in a different voice.
+            */}
           <p className={styles.sub}>
             {variant === 'sheet'
-              ? 'Your progress stays exactly where it is.'
-              : 'Same course either way. These four just land differently.'}
+              ? 'Only the voice changes. Your progress stays where it is.'
+              : 'Same lessons, word for word. Only the voice changes.'}
           </p>
         </header>
 
