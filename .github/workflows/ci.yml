@@ -1,0 +1,61 @@
+name: CI
+
+# Runs on every push and pull request. Before this existed, nothing ran the
+# tests but a person remembering to — which is to say, nothing ran them.
+on:
+  push:
+    branches: ['**']
+  pull_request:
+
+concurrency:
+  # A second push supersedes the first; no point finishing a run nobody will read.
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  unit:
+    name: Unit tests and types
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - run: npm run build:packages
+      - run: npm test
+      - run: npm run typecheck
+
+  e2e:
+    name: Browser tests
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - run: npm run build:packages
+
+      # Chromium only. The product is phone-first and these tests run at
+      # 390x844; a second engine would triple the runtime to tell us about
+      # browsers the pilot does not target.
+      - name: Install Chromium
+        run: npx playwright install --with-deps chromium
+        working-directory: apps/web
+
+      - run: npm run build --workspace=@nms/web
+
+      - name: Run end-to-end tests
+        run: npm run test:e2e --workspace=@nms/web
+        working-directory: .
+
+      - name: Upload failure traces
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-traces
+          path: apps/web/test-results/
+          retention-days: 7

@@ -17,3 +17,8 @@ npm-debug.log*
 data/*.sqlite
 data/*.db
 dist-test/
+
+# Playwright
+apps/web/test-results/
+apps/web/playwright-report/
+apps/web/blob-report/
